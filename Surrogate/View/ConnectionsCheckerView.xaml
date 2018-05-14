@@ -1,0 +1,11 @@
+﻿<UserControl x:Class="Surrogate.View.ConnectionsChecker.ConnectionsCheckerView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <StackPanel DockPanel.Dock="Right" Margin="5">
+        <Label Margin="1" Background="Red" Content="Databasae"/>
+        <Label Margin="1" Background="Red" Content="Camera1"/>
+        <Label Margin="1" Background="Red" Content="Camera2"/>
+        <Label Margin="1" Background="Red" Content="Motor"/>
+        <Label Margin="1" Background="Red" Content="Touchpad"/>
+    </StackPanel>
+</UserControl>

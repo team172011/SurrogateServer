@@ -1,0 +1,3 @@
+﻿
+SQL-Server von Console aus starten
+-- sqlcmd -S MSI\SQLEXPRESS -E

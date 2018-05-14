@@ -1,0 +1,17 @@
+﻿<UserControl x:Class="Surrogate.View.MotorTestView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             >
+
+    <StackPanel Background="AliceBlue">
+        <Label Content="Wählen Sie die gewünschte Aktion"/>
+        <DockPanel >
+            <Button Width="50" DockPanel.Dock="Top" Click="Forwards" Content="Vorwärts"/>
+            <Button Width="50" DockPanel.Dock="Bottom" Click="Backwards" Content="Rückwärts"/>
+            <Button Width="50" DockPanel.Dock="Left" Click="Left" Content="Links"/>
+            <Button Width="50" DockPanel.Dock="Right" Click="Right" Content="Rechts"/>
+            <Button Width="50"  Click="StopTest" Content="Anhalten"/>
+        </DockPanel>
+
+    </StackPanel>
+</UserControl>

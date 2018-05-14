@@ -1,0 +1,64 @@
+﻿<Window x:Class="Surrogate.Main.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Surrogate.Main"
+        mc:Ignorable="d"
+        Title="MainWindow" ResizeMode="NoResize" WindowState="Maximized" Topmost="False"
+        xmlns:vwl="clr-namespace:Surrogate.View.Logging"
+        xmlns:ccs="clr-namespace:Surrogate.View.ConnectionsChecker">
+    <DockPanel>
+        <!---Sidebar on the left with header, modules list and processes list-->
+        <StackPanel DockPanel.Dock="Left" Orientation="Vertical">
+            <Label FontSize="20" FontWeight="Bold">Surrogate</Label>
+            <Label FontWeight="Bold" Content="Module"/>
+            <ListView x:Name="lvModules"
+                      ItemsSource="{Binding Path=modules}"
+                      Margin="0, 0, 0, 0"
+                      ScrollViewer.VerticalScrollBarVisibility="Visible">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <EventSetter Event="MouseDoubleClick" Handler="ListViewItem_MouseDoubleClick" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <StackPanel  Width="150" MaxHeight="50" Grid.Column="0" Grid.Row="0" Orientation="Horizontal" >
+                                <Image Source="{Binding Properties.ImagePath}"></Image>
+                                <TextBlock VerticalAlignment="Center" Text="{Binding Properties.Name}" FontWeight="ExtraBlack" TextWrapping="Wrap" Padding="10"/>
+                            </StackPanel>
+                            <StackPanel MaxWidth="200" Grid.Column="1" Grid.Row="0" Orientation="Vertical">
+                                <Label Content="Beschreibung:" FontSize="10"/>
+                                <TextBlock TextWrapping="Wrap" Text="{Binding Properties.Description}"  ></TextBlock>
+                            </StackPanel>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <Label FontWeight="Bold" Content="Prozesse"/>
+            <ListView x:Name="lvProcesses"
+                      ItemsSource="{Binding Path=processes}">
+            </ListView>
+        </StackPanel>
+        <WrapPanel DockPanel.Dock="Right">
+            <ccs:ConnectionsCheckerView/>
+        </WrapPanel>
+        <StackPanel DockPanel.Dock="Top"></StackPanel>
+        <StackPanel DockPanel.Dock="Bottom">
+            <Label FontWeight="Bold">Log</Label>
+            <vwl:LoggingView/>
+        </StackPanel>
+        <WrapPanel x:Name="spModule" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Label>Content of current module</Label>
+        </WrapPanel>
+    </DockPanel>
+</Window>
