@@ -1,4 +1,10 @@
-﻿using System;
+﻿// This file belongs to the source code of the "Surrogate Project"
+// Copyright (c) 2018 All Rights Reserved
+// Martin-Luther-Universitaet Halle-Wittenberg
+// Lehrstuhl Wirtschaftsinformatik und Operation Research
+// Autor: Wimmer, Simon-Justus Wimmer
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -28,29 +34,19 @@ namespace Surrogate.View
         {
             _parentModule = parentModule;
             InitializeComponent();
-            IsVisibleChanged += new DependencyPropertyChangedEventHandler(StartModule);
-            
+            btnStartCall.Click += _handleCall;
+
+
+        }
+
+        private void _handleCall(Object sender, RoutedEventArgs e)
+        {
+            _parentModule.Start(new VideoChatInfo()); // TODO add contact details in VideoChatInfo
         }
 
         public Module<VideoChatProperties, VideoChatInfo> GetModule()
         {
             return _parentModule;
-        }
-
-        private void StartModule(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            if(IsVisible && !_parentModule.IsRunning)
-            {
-                _parentModule.Start(new VideoChatInfo());
-            }
-            else if (!IsVisible && _parentModule.IsRunning)
-            {
-                _parentModule.Stop();
-            }
-            {
-
-            }
-                
         }
     }
 }

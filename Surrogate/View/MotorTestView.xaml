@@ -5,13 +5,19 @@
 
     <StackPanel Background="AliceBlue">
         <Label Content="Wählen Sie die gewünschte Aktion"/>
-        <DockPanel >
-            <Button Width="50" DockPanel.Dock="Top" Click="Forwards" Content="Vorwärts"/>
-            <Button Width="50" DockPanel.Dock="Bottom" Click="Backwards" Content="Rückwärts"/>
-            <Button Width="50" DockPanel.Dock="Left" Click="Left" Content="Links"/>
-            <Button Width="50" DockPanel.Dock="Right" Click="Right" Content="Rechts"/>
-            <Button Width="50"  Click="StopTest" Content="Anhalten"/>
-        </DockPanel>
+        <DockPanel>
+            <Button Width="auto" DockPanel.Dock="Top" Click="Forwards" Content="Vorwärts"/>
+            <Button Width="auto" DockPanel.Dock="Bottom" Click="Backwards" Content="Rückwärts"/>
+            <StackPanel  DockPanel.Dock="Left">
+                <Button Width="auto" Click="Left" Content="Links"/>
+                <Button Width="auto" Click="OnlyLeft" Content="Nur Links"/>
+            </StackPanel>
+            <StackPanel  DockPanel.Dock="Right">
+                <Button Width="auto" Click="Right" Content="Rechts"/>
+                <Button Width="auto" Click="OnlyRight" Content="Nur Rechts"/>
+            </StackPanel>
 
+            <Button Width="72"  Click="StopTest" Content="Anhalten"/>
+        </DockPanel>
     </StackPanel>
 </UserControl>

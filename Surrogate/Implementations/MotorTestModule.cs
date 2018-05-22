@@ -1,4 +1,10 @@
-﻿using System;
+﻿// This file belongs to the source code of the "Surrogate Project"
+// Copyright (c) 2018 All Rights Reserved
+// Martin-Luther-Universitaet Halle-Wittenberg
+// Lehrstuhl Wirtschaftsinformatik und Operation Research
+// Autor: Wimmer, Simon-Justus Wimmer
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,6 +20,8 @@ namespace Surrogate.Implementations
 
     public class MotorTestModule : Module<ModulProperties, ModuleInfo>
     {
+        public Motor _motor;
+
         public MotorTestModule(ModulProperties modulProperties) : base(modulProperties)
         {
         }
@@ -23,18 +31,29 @@ namespace Surrogate.Implementations
             return new MotorTestView(this);
         }
 
+        public override void OnDisselected()
+        {
+        }
+
+        public override void OnSelected()
+        {
+           _motor = Motor.GetInstance();
+           _motor.Start();
+        }
+
         public override void Start(ModuleInfo info)
         {
             MotorTestInfo mInfo = (MotorTestInfo)info;
+            
             switch (mInfo.GetDirection)
             {
                 case MotorTestInfo.Direction.Backwards:
                     {
                         try
                         {
-                        Motor motor = Motor.GetInstance();
-                        motor.SetLeftSpeed(-100);
-                        motor.SetRightSpeed(-100);
+
+                            _motor.LeftSpeed=(-100);
+                            _motor.RightSpeed=(-100);
                         } catch(Exception pnve)
                         {
                             log.Error("Could not connect to motor: " + pnve.Message + "\n " + pnve.StackTrace);
@@ -45,9 +64,8 @@ namespace Surrogate.Implementations
                     {
                         try
                         {
-                            Motor motor = Motor.GetInstance();
-                            motor.SetLeftSpeed(100);
-                            motor.SetRightSpeed(100);
+                            _motor.LeftSpeed = (100);
+                            _motor.RightSpeed = (100);
                         } catch (Exception pnve)
                         {
                             log.Error("Could not connect to motor: " + pnve.Message + "\n " + pnve.StackTrace);
@@ -58,9 +76,8 @@ namespace Surrogate.Implementations
                     {
                         try
                         {
-                            Motor motor = Motor.GetInstance();
-                            motor.SetLeftSpeed(-100);
-                            motor.SetRightSpeed(100);
+                            _motor.LeftSpeed = (-100);
+                            _motor.RightSpeed = (100);
                         } catch (Exception pnve)
                         {
                         log.Error("Could not connect to motor: " + pnve.Message + "\n " + pnve.StackTrace);
@@ -72,9 +89,37 @@ namespace Surrogate.Implementations
                         try
                         {
                             Motor motor = Motor.GetInstance();
-                            motor.SetLeftSpeed(100);
-                            motor.SetRightSpeed(-100);
+                            motor.LeftSpeed = (100);
+                            motor.RightSpeed = (-100);
                             } catch(Exception pnve)
+                        {
+                            log.Error("Could not connect to motor: " + pnve.Message + "\n " + pnve.StackTrace);
+                        }
+                        break;
+                    }
+                case MotorTestInfo.Direction.OnlyRight:
+                    {
+                        try
+                        {
+                            Motor motor = Motor.GetInstance();
+                            motor.LeftSpeed = (0);
+                            motor.RightSpeed = (200);
+                        }
+                        catch (Exception pnve)
+                        {
+                            log.Error("Could not connect to motor: " + pnve.Message + "\n " + pnve.StackTrace);
+                        }
+                        break;
+                    }
+                case MotorTestInfo.Direction.OnlyLeft:
+                    {
+                        try
+                        {
+                            Motor motor = Motor.GetInstance();
+                            motor.LeftSpeed=(100);
+                            motor.RightSpeed = (0);
+                        }
+                        catch (Exception pnve)
                         {
                             log.Error("Could not connect to motor: " + pnve.Message + "\n " + pnve.StackTrace);
                         }
@@ -116,7 +161,9 @@ namespace Surrogate.Implementations
                 Forwards,
                 Backwards,
                 Left,
+                OnlyLeft,
                 Right,
+                OnlyRight,
                 Stop
             }
         }

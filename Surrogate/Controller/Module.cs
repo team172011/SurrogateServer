@@ -1,4 +1,10 @@
-﻿using System;
+﻿// This file belongs to the source code of the "Surrogate Project"
+// Copyright (c) 2018 All Rights Reserved
+// Martin-Luther-Universitaet Halle-Wittenberg
+// Lehrstuhl Wirtschaftsinformatik und Operation Research
+// Autor: Wimmer, Simon-Justus Wimmer
+
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -50,14 +56,9 @@ namespace Surrogate.Modules
         public string ImagePath { get => _imagePath; set => _imagePath = value; }
     }
 
-    public abstract class ModuleInfo
+    public class ModuleInfo
     {
-
-    }
-
-    public class EmptyModuleInfo : ModuleInfo
-    {
-
+        static readonly ModuleInfo EmptyModuleInfo;
     }
 
     /// <summary>
@@ -71,6 +72,13 @@ namespace Surrogate.Modules
         /// Static reference to a logger. Enables logging to console, gui (TextBox) and file
         /// </summary>
         protected static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+        /// <summary>
+        /// Event hanlder triggered if the module has been selected
+        /// </summary>
+        protected event EventHandler ModuleSelected;
+        protected event EventHandler ModuleDisselected;
+
         /// <summary>
         /// Field for the properties of a module
         /// </summary>
@@ -78,35 +86,89 @@ namespace Surrogate.Modules
 
         public P Properties { get => _properties; }
 
+        /// <summary>
+        /// Constructor. Expects a ModulProperties instance
+        /// </summary>
+        /// <param name="modulProperties"></param>
         public Module(P modulProperties)
         {
             _properties = modulProperties;
         }
 
+        public void Start()
+        {
+            Start(null);
+        }
+
+        /// <summary>
+        /// Starts the functionality 
+        /// </summary>
+        /// <param name="info">Informations that can be necessary for starting the module</param>
         public abstract void Start(I info);
+
 
         public abstract ContentControl GetPage();
 
-        public override string ToString()
+        public string GetDescription()
         {
             return _properties.Name + ": " + _properties.Description;
         }
 
         public abstract void Stop();
+
+        public virtual void OnSelected()
+        {
+            ModuleSelected?.Invoke(this, EventArgs.Empty);
+        }
+
+        public virtual void OnDisselected()
+        {
+            ModuleDisselected?.Invoke(this, EventArgs.Empty);
+        }
+
+        public virtual void Log(string message)
+        {
+            log.Info(message);
+        }
     }
 
     public interface IModule
     {
+        /// <summary>
+        /// Starts the functionality
+        /// </summary>
+        void Start();
+
         /// <summary>
         /// Calling this function should stop all current activities run by a IModule
         /// </summary>
         void Stop();
 
         /// <summary>
+        /// Called if the module is selected (e.g. user clicked on the entry).
+        /// Can be used to initialize and (re-)load content
+        /// </summary>
+        void OnSelected();
+
+        /// <summary>
+        /// Called if the module is deselected (e.g. user clicked on another entry of the module list).
+        /// Can be used to store content or close connections etc.
+        /// </summary>
+        void OnDisselected();
+
+        /// <summary>
         /// Possibility to get the view element of the IModule
         /// </summary>
         /// <returns>a ContentControl object that can be added to center of the mainWindow</returns>
         ContentControl GetPage();
-    }
 
+        string GetDescription();
+
+        /// <summary>
+        /// Logs a message to the console, gui or file, depending on the
+        /// logger configuration
+        /// </summary>
+        /// <param name="message"></param>
+        void Log(string message);
+    }
 }

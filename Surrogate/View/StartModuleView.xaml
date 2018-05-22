@@ -12,7 +12,7 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <Label Grid.Column="0" Grid.Row="0" 
-               FontSize="20" FontStyle="Oblique" FontWeight="Heavy" Content="Surrogate Application Framework"/>
-        <TextBlock Grid.Column="0" Grid.Row="1" TextWrapping="Wrap">Willkomen im Surrogate Programm Framework. Wählen Sie das gewünschte Modul aus der Liste am Rand.</TextBlock>
+               FontSize="80" FontStyle="Oblique" FontWeight="Heavy" Content="Surrogate Application Framework"/>
+        <TextBlock FontSize="20" Grid.Column="0" Grid.Row="1" TextWrapping="Wrap">Willkomen im Surrogate Programm Framework. Wählen Sie das gewünschte Modul aus der Liste am Rand.</TextBlock>
     </Grid>
 </UserControl>

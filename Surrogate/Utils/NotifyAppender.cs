@@ -1,4 +1,10 @@
-﻿namespace Surrogate.Utils.Logging
+﻿// This file belongs to the source code of the "Surrogate Project"
+// Copyright (c) 2018 All Rights Reserved
+// Martin-Luther-Universitaet Halle-Wittenberg
+// Lehrstuhl Wirtschaftsinformatik und Operation Research
+// Autor: Wimmer, Simon-Justus Wimmer
+
+namespace Surrogate.Utils.Logging
 {
     using log4net.Appender;
     using System.ComponentModel;

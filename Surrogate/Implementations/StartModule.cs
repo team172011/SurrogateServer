@@ -1,4 +1,10 @@
-﻿namespace Surrogate.Implementations
+﻿// This file belongs to the source code of the "Surrogate Project"
+// Copyright (c) 2018 All Rights Reserved
+// Martin-Luther-Universitaet Halle-Wittenberg
+// Lehrstuhl Wirtschaftsinformatik und Operation Research
+// Autor: Wimmer, Simon-Justus Wimmer
+
+namespace Surrogate.Implementations
 {
     using System;
     using System.Collections.Generic;
@@ -10,8 +16,10 @@
     using Surrogate.Modules;
     using Surrogate.View;
 
-    class StartModule : Module<ModulProperties, EmptyModuleInfo>
+    class StartModule : Module<ModulProperties, ModuleInfo>
     {
+        private readonly StartModuleView _view = new StartModuleView();
+
         public StartModule() : base(new ModulProperties("Start","Startbildschirm",false,false,false,false))
         {
             
@@ -19,10 +27,18 @@
 
         public override ContentControl GetPage()
         {
-            return new StartModuleView();
+            return _view;
         }
 
-        public override void Start(EmptyModuleInfo info)
+        public override void OnDisselected()
+        {
+        }
+
+        public override void OnSelected()
+        {
+        }
+
+        public override void Start(ModuleInfo info)
         {
             throw new NotImplementedException();
         }

@@ -11,6 +11,7 @@
             <Label Content="Kontakte" FontWeight="Bold"/>
             <ListView >
             </ListView>
+            <Button x:Name="btnStartCall" Content="Anruf Starten"/>
         </StackPanel>
         <StackPanel DockPanel.Dock="Top">
             <TextBlock Text="Videochatgespräch mit:" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>

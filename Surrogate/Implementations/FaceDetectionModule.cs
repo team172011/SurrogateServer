@@ -1,4 +1,10 @@
-﻿namespace Surrogate.Implementations.FaceDetection
+﻿// This file belongs to the source code of the "Surrogate Project"
+// Copyright (c) 2018 All Rights Reserved
+// Martin-Luther-Universitaet Halle-Wittenberg
+// Lehrstuhl Wirtschaftsinformatik und Operation Research
+// Autor: Wimmer, Simon-Justus Wimmer
+
+namespace Surrogate.Implementations.FaceDetection
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -14,6 +20,16 @@
         public override ContentControl GetPage()
         {
             throw new System.NotImplementedException();
+        }
+
+        public override void OnDisselected()
+        {
+            
+        }
+
+        public override void OnSelected()
+        {
+            
         }
 
         public override void Start(FaceDetectionInfo info)

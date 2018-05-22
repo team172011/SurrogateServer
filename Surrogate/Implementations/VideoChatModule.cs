@@ -1,4 +1,10 @@
-﻿using System;
+﻿// This file belongs to the source code of the "Surrogate Project"
+// Copyright (c) 2018 All Rights Reserved
+// Martin-Luther-Universitaet Halle-Wittenberg
+// Lehrstuhl Wirtschaftsinformatik und Operation Research
+// Autor: Wimmer, Simon-Justus Wimmer
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -64,10 +70,16 @@ namespace Surrogate.Implementations
 
         public override void Stop()
         {
+            if(_session != null)
+            {
+                _session.Disconnect();
+            }
+
             if (_publisher != null)
             {
                 _publisher.Dispose();
             }
+            
             _isRunning = false;
         }
 
@@ -84,7 +96,7 @@ namespace Surrogate.Implementations
 
         private void Session_Error(object sender, Session.ErrorEventArgs e)
         {
-            log.Debug("Session error:" + e.ErrorCode);
+            log.Debug("Session error: " + e.ErrorCode);
         }
 
         private void Session_StreamReceived(object sender, Session.StreamEventArgs e)
@@ -92,6 +104,16 @@ namespace Surrogate.Implementations
             log.Debug("Stream received in session.");
             Subscriber subscriber = new Subscriber(Context.Instance, e.Stream, _view.SubscriberVideo);
             _session.Subscribe(subscriber);
+        }
+
+        public override void OnSelected()
+        {
+            
+        }
+
+        public override void OnDisselected()
+        {
+            Stop();
         }
     }
 

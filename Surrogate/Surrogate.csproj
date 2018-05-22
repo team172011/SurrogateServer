@@ -87,6 +87,7 @@
     <Compile Include="Roboter\MMotor.cs" />
     <Compile Include="Utils\ConectionsChecker.cs" />
     <Compile Include="Utils\ConsoleManager.cs" />
+    <Compile Include="Utils\Event.cs" />
     <Compile Include="View\IView.cs" />
     <Compile Include="View\MotorTestView.xaml.cs">
       <DependentUpon>MotorTestView.xaml</DependentUpon>
@@ -119,7 +120,7 @@
     <Compile Include="Utils\Properties.cs" />
     <Compile Include="Utils\NotifyAppender.cs" />
     <Compile Include="Utils\Log.cs" />
-    <Compile Include="Model\Module.cs" />
+    <Compile Include="Controller\Module.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
