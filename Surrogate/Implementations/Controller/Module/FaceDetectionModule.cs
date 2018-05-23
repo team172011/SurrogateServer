@@ -10,7 +10,7 @@ namespace Surrogate.Implementations.FaceDetection
     using System.Windows.Controls;
     using Surrogate.Modules;
 
-    public class FaceDetectionModule : Module<FaceDetectionProperties, FaceDetectionInfo>
+    public class FaceDetectionModule : VisualModule<FaceDetectionProperties, FaceDetectionInfo>
     {
         public FaceDetectionModule() : base(new FaceDetectionProperties())
         {
@@ -48,7 +48,7 @@ namespace Surrogate.Implementations.FaceDetection
         }
     }
 
-    public class FaceDetectionProperties : ModulProperties
+    public class FaceDetectionProperties : ModuleProperties
     {
         public FaceDetectionProperties() : base("Gesichtserkennung", "Module zum visuellen Vorführen der Gesichtserkennund mithilfe der Opencv Bibliotheken", false, true, false,false, false)
         {

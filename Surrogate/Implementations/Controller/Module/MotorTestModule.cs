@@ -18,11 +18,11 @@ namespace Surrogate.Implementations
     using Surrogate.View;
     using Surrogate.Roboter.MMotor;
 
-    public class MotorTestModule : Module<ModulProperties, ModuleInfo>
+    public class MotorTestModule : VisualModule<ModuleProperties, ModuleInfo>
     {
         public Motor _motor;
 
-        public MotorTestModule(ModulProperties modulProperties) : base(modulProperties)
+        public MotorTestModule(ModuleProperties modulProperties) : base(modulProperties)
         {
         }
 

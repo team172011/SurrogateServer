@@ -18,12 +18,12 @@ namespace Surrogate.View.Logging
         {
             InitializeComponent();
 
-            tbLogging.TextChanged += scrollToEnd;
+            tbLogging.TextChanged += ScrollToEnd;
 
             log.Info("Scroll To End");
         }
 
-        public void scrollToEnd(object e, EventArgs args)
+        public void ScrollToEnd(object e, EventArgs args)
         {
             tbLogging.ScrollToEnd();
         }

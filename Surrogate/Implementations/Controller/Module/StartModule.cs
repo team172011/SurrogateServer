@@ -16,11 +16,11 @@ namespace Surrogate.Implementations
     using Surrogate.Modules;
     using Surrogate.View;
 
-    class StartModule : Module<ModulProperties, ModuleInfo>
+    class StartModule : VisualModule<ModuleProperties, ModuleInfo>
     {
         private readonly StartModuleView _view = new StartModuleView();
 
-        public StartModule() : base(new ModulProperties("Start","Startbildschirm",false,false,false,false))
+        public StartModule() : base(new ModuleProperties("Start","Startbildschirm",false,false,false,false))
         {
             
         }

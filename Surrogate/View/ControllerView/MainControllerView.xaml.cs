@@ -1,10 +1,4 @@
-﻿// This file belongs to the source code of the "Surrogate Project"
-// Copyright (c) 2018 All Rights Reserved
-// Martin-Luther-Universitaet Halle-Wittenberg
-// Lehrstuhl Wirtschaftsinformatik und Operation Research
-// Autor: Wimmer, Simon-Justus Wimmer
-
-using Surrogate.Implementations;
+﻿using Surrogate.Implementations;
 using Surrogate.Modules;
 using System;
 using System.Collections.Generic;
@@ -19,17 +13,13 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Surrogate.Main
+namespace Surrogate.View.ControllerView
 {
-    /// <summary>
-    /// Interaktionslogik für MainWindow.xaml
-    /// partial class will be combined with xaml file at runtime
-    /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainControllerView : Window
     {
+
         /// <summary>
         /// Static logger instance to log on gui, console or write log to file
         /// </summary>
@@ -43,12 +33,12 @@ namespace Surrogate.Main
         /// <summary>
         /// Module that is selected and shown in gui
         /// </summary>
-        private IModule _currentModule;
+        private IVisualModule _currentModule;
 
         public ObservableCollection<IModule> Modules { get => _modules; }
 
 
-        public MainWindow()
+        public MainControllerView()
         {
             InitializeComponent();
             InitLocal();
@@ -60,17 +50,17 @@ namespace Surrogate.Main
             lvModules.ItemsSource = _modules;
             StartModule startModule = new StartModule();
             _modules.Add(startModule);
-            _modules.Add(new ControllerTestModule(new ModulProperties("ControllerTest", "Modul zum testen eines Controllers", false, false, false, false)));
-            _modules.Add(new MotorTestModule(new ModulProperties("MotorTest", "Modul zum testen des angeschlossenen Motors", true, false, false, false)));
+            _modules.Add(new ControllerTestModule(new ModuleProperties("ControllerTest", "Modul zum testen eines Controllers", false, false, false, false)));
+            _modules.Add(new MotorTestModule(new ModuleProperties("MotorTest", "Modul zum testen des angeschlossenen Motors", true, false, false, false)));
             _modules.Add(new VideoChatModule(new VideoChatProperties()));
-            SelectModule(startModule);
+            SelectModule((IVisualModule)startModule);
         }
 
-        private void SelectModule(IModule m)
+        private void SelectModule(IVisualModule m)
         {
-            if(_currentModule != m)
+            if (_currentModule != m)
             {
-                if(_currentModule != null)
+                if (_currentModule != null)
                 {
                     _currentModule.OnDisselected();
                 }
@@ -79,7 +69,7 @@ namespace Surrogate.Main
                 spModule.Children.Add(m.GetPage());
                 _currentModule = m;
             }
-            
+
         }
 
         /// <summary>
@@ -90,17 +80,18 @@ namespace Surrogate.Main
         private void ListViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             var item = sender as ListViewItem;
-            IModule module = (IModule) item.Content;
+            IVisualModule module = (IVisualModule)item.Content;
 
             try
             {
                 log.Info("Loading Module: " + module.GetDescription());
                 SelectModule(module);
-            } catch(Exception ex)
-            {
-                log.Error("Fehler beim Laden eines Moduls:"+ex.Message+"\n "+ex.StackTrace);
             }
-            
+            catch (Exception ex)
+            {
+                log.Error("Fehler beim Laden eines Moduls:" + ex.Message + "\n " + ex.StackTrace);
+            }
+
         }
     }
 }

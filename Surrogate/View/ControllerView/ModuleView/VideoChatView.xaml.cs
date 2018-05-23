@@ -44,7 +44,7 @@ namespace Surrogate.View
             _parentModule.Start(new VideoChatInfo()); // TODO add contact details in VideoChatInfo
         }
 
-        public Module<VideoChatProperties, VideoChatInfo> GetModule()
+        public VisualModule<VideoChatProperties, VideoChatInfo> GetModule()
         {
             return _parentModule;
         }

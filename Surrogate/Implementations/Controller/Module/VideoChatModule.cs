@@ -24,7 +24,7 @@ namespace Surrogate.Implementations
     /// <summary>
     /// Module for the video chat application using the TopBox libraries
     /// </summary>
-    public class VideoChatModule : Module<VideoChatProperties, VideoChatInfo>
+    public class VideoChatModule : VisualModule<VideoChatProperties, VideoChatInfo>
     {
         private Session _session;
         private Publisher _publisher;
@@ -117,7 +117,7 @@ namespace Surrogate.Implementations
         }
     }
 
-    public class VideoChatProperties : ModulProperties
+    public class VideoChatProperties : ModuleProperties
     {
         private readonly string _API_KEY;
         private readonly string _SESSION_ID;

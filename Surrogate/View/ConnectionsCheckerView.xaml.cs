@@ -4,8 +4,10 @@
 // Lehrstuhl Wirtschaftsinformatik und Operation Research
 // Autor: Wimmer, Simon-Justus Wimmer
 
+using Surrogate.Model;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,14 +22,18 @@ using System.Windows.Shapes;
 
 namespace Surrogate.View.ConnectionsChecker
 {
+    
     /// <summary>
     /// Interaktionslogik für Window1.xaml
     /// </summary>
     public partial class ConnectionsCheckerView : UserControl
     {
+        private ObservableCollection<IConnection> connections;
+
         public ConnectionsCheckerView()
         {
             InitializeComponent();
         }
+
     }
 }

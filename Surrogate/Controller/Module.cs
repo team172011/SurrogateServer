@@ -16,16 +16,16 @@ using System.Windows.Media;
 
 namespace Surrogate.Modules
 {
-    public class ModulProperties
+    public class ModuleProperties
     {
-        public ModulProperties(string name, string description, bool motor = false, bool faceCam = false, bool floorCam = false, bool microphone = false, bool database = false, bool internet = false)
+        public ModuleProperties(string name, string description, bool motor = false, bool faceCam = false, bool floorCam = false, bool microphone = false, bool database = false, bool internet = false)
         {
             _name = name;
             _description = description;
             _motor = motor;
             _faceCam = faceCam;
             _floorCam = floorCam;
-            _microphone= microphone;
+            _microphone = microphone;
             _database = database;
             _imagePath = @"C:\Users\ITM1\source\repos\Surrogate\Surrogate\resources\robot.jpg";
             _internet = false;
@@ -58,20 +58,19 @@ namespace Surrogate.Modules
 
     public class ModuleInfo
     {
-        static readonly ModuleInfo EmptyModuleInfo;
+        public static readonly ModuleInfo EmptyModuleInfo = new ModuleInfo();
+        public ModuleInfo() { }
     }
 
     /// <summary>
     /// An Module extending class represents a single functionallity that can be executed from/for the robot
+    /// and that has a visual componente e.g. <see cref="ContentControl"/>
+    /// Extends the <see cref="Controller"/> class
     /// </summary>
     /// <typeparam name="P">Generic class parameter extending <see cref="MofulProperties"/></typeparam>
     /// <typeparam name="I">Generic class parameter extending <see cref="MofulProperties"/></typeparam>
-    public abstract class Module<P, I> : IModule where P : ModulProperties where I : ModuleInfo
+    public abstract class VisualModule<P, I> : Controller, IVisualModule where P : ModuleProperties where I : ModuleInfo
     {
-        /// <summary>
-        /// Static reference to a logger. Enables logging to console, gui (TextBox) and file
-        /// </summary>
-        protected static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         /// <summary>
         /// Event hanlder triggered if the module has been selected
@@ -90,14 +89,16 @@ namespace Surrogate.Modules
         /// Constructor. Expects a ModulProperties instance
         /// </summary>
         /// <param name="modulProperties"></param>
-        public Module(P modulProperties)
+        public VisualModule(P modulProperties)
         {
             _properties = modulProperties;
         }
 
         public void Start()
         {
-            Start(null);
+            Type infoType = typeof(I);
+            var info = Activator.CreateInstance(infoType);
+            Start((I)info);
         }
 
         /// <summary>
@@ -125,11 +126,6 @@ namespace Surrogate.Modules
         {
             ModuleDisselected?.Invoke(this, EventArgs.Empty);
         }
-
-        public virtual void Log(string message)
-        {
-            log.Info(message);
-        }
     }
 
     public interface IModule
@@ -145,18 +141,6 @@ namespace Surrogate.Modules
         void Stop();
 
         /// <summary>
-        /// Called if the module is selected (e.g. user clicked on the entry).
-        /// Can be used to initialize and (re-)load content
-        /// </summary>
-        void OnSelected();
-
-        /// <summary>
-        /// Called if the module is deselected (e.g. user clicked on another entry of the module list).
-        /// Can be used to store content or close connections etc.
-        /// </summary>
-        void OnDisselected();
-
-        /// <summary>
         /// Possibility to get the view element of the IModule
         /// </summary>
         /// <returns>a ContentControl object that can be added to center of the mainWindow</returns>
@@ -170,5 +154,38 @@ namespace Surrogate.Modules
         /// </summary>
         /// <param name="message"></param>
         void Log(string message);
+    }
+
+    /// <summary>
+    /// Interface describing a visual Module. A visual Module is a <see cref="IModule"/> with
+    /// an <see cref="UserControl"/> as view component and can be selected or disselected from
+    /// the user
+    /// </summary>
+    public interface IVisualModule : IModule
+    {
+        void OnSelected();
+        void OnDisselected();
+
+    }
+
+    /// <summary>
+    /// Class representing a Controller rule in the MVC concept
+    /// </summary>
+    public abstract class Controller
+    {
+        /// <summary>
+        /// Static reference to a logger. Enables logging to console, gui (TextBox) and file
+        /// </summary>
+        protected static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+        public virtual void Log(string message)
+        {
+            log.Info(message);
+        }
+    }
+
+    public interface IMainController{
+
+        Window GetWindow();
     }
 }

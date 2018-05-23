@@ -4,6 +4,7 @@
 // Lehrstuhl Wirtschaftsinformatik und Operation Research
 // Autor: Wimmer, Simon-Justus Wimmer
 
+using Surrogate.Model;
 using System;
 using System.IO.Ports;
 using System.Windows;
@@ -15,13 +16,14 @@ namespace Surrogate.Roboter.MMotor
     /// Class for connecting and controlling the motor via serial usb port
     /// Singeton pattern, get instance with <see cref="GetInstance"/> function.
     /// </summary>
-    public class Motor
+    public class Motor : IConnection
     {
         protected static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly Motor _instance = new Motor();
+
 
         private volatile bool _shouldStop = false;
-        private SerialPort port;
-        private static Motor _instance;
+        private SerialPort port;   
         private volatile int _leftSpeedValue;
         private volatile int _rightSpeedValue;
         /// <summary>
@@ -60,6 +62,14 @@ namespace Surrogate.Roboter.MMotor
         /// </summary>
         public event EventHandler SpeedChanged;
 
+        /// <summary>
+        /// Private Consturctor.
+        /// </summary>
+        private Motor()
+        {
+            Connect();
+        }
+
         public virtual void OnSpeedChanged()
         {
             SpeedChanged?.Invoke(this, EventArgs.Empty);
@@ -80,13 +90,7 @@ namespace Surrogate.Roboter.MMotor
             M4F = 41
         }
 
-        /// <summary>
-        /// Private Consturctor.
-        /// </summary>
-        private Motor()
-        {
-            Connect();
-        }
+
 
         /// <summary>
         /// Returns the instance representing the motor. During first initialization of this instance a
@@ -96,11 +100,6 @@ namespace Surrogate.Roboter.MMotor
         /// <returns>The Instance representing the motor api</returns>
         public static Motor GetInstance()
         {
-            if (_instance != null)
-            {
-                return _instance;
-            }
-            _instance = new Motor();
             return _instance;
         }
 
@@ -140,7 +139,6 @@ namespace Surrogate.Roboter.MMotor
                 port.Handshake = Handshake.None;
                 port.Open();
             }
-
             return IsReady();
         }
 
@@ -191,7 +189,7 @@ namespace Surrogate.Roboter.MMotor
             }
         }
 
-        /*****helper functions to build micro commands of byte arrays*******/
+        /***** helper functions to build micro commands of byte arrays *******/
         private byte[] GetM4Command()
         {
             int speed = _leftSpeedValue;
@@ -264,11 +262,17 @@ namespace Surrogate.Roboter.MMotor
 
         public static void Kill()
         {
-            if(_instance.port != null)
-            {
-                _instance.port.Close();
-                _instance = null;
-            }
+            _instance?.port?.Close();
+        }
+
+        public bool IsConnected()
+        {
+            return IsReady();
+        }
+
+        public bool Connect()
+        {
+            throw new NotImplementedException();
         }
     }
 

@@ -16,6 +16,8 @@ using System.Windows;
 
 using Surrogate.Parameters;
 using Surrogate.Utils;
+using System.Windows.Controls;
+using Surrogate.Implementations;
 
 namespace Surrogate.Main
 {
@@ -27,7 +29,6 @@ namespace Surrogate.Main
     {
         private static readonly log4net.ILog log = 
             log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        MainWindow mainWindow;
         /// <summary>
         /// Application_Startup function called from xaml part
         /// </summary>
@@ -43,9 +44,8 @@ namespace Surrogate.Main
                 }
                 
             }
-            
-            mainWindow = new MainWindow();
-            mainWindow.Show();
+            IMainController controller = SurrogateFramework.GetMainController();
+            controller.GetWindow().Show();
         }
 
         /// <summary>
@@ -78,10 +78,12 @@ namespace Surrogate.Main
 
         private void Application_Exit(object sender, ExitEventArgs e)
         {
-            foreach(var m in mainWindow.Modules)
+            /*
+            foreach(var m in m.Modules)
             {
                 m.Stop();
             }
+            */
         }
     }
 }

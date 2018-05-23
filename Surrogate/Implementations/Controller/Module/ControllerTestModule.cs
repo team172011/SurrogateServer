@@ -25,7 +25,7 @@ namespace Surrogate.Implementations
     using Surrogate.Roboter.MMotor;
     using Surrogate.Utils.Event;
 
-    public class ControllerTestModule : Module<ModulProperties, ControllerTestInfo>
+    public class ControllerTestModule : VisualModule<ModuleProperties, ControllerTestInfo>
     {
         public event EventHandler<BooleanEventArgs> MotorAvailable;
         public event EventHandler<BooleanEventArgs> ControllerAvailable;
@@ -36,7 +36,7 @@ namespace Surrogate.Implementations
         private Motor _motor;
         private readonly XInputController controller = new XInputController();
 
-        public ControllerTestModule(ModulProperties modulProperties) : base(modulProperties)
+        public ControllerTestModule(ModuleProperties modulProperties) : base(modulProperties)
         {
             ModuleSelected += Selected;
             ModuleDisselected += Disselected;
