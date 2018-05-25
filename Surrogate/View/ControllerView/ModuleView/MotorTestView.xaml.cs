@@ -20,7 +20,7 @@ namespace Surrogate.View
     /// <summary>
     /// View Component of the ControllerTestModule
     /// </summary>
-    public partial class MotorTestView
+    public partial class MotorTestView : ModuleView
     {
 
         // referenc to the module

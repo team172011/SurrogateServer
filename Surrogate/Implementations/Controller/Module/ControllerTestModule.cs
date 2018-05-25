@@ -24,6 +24,7 @@ namespace Surrogate.Implementations
     using SharpDX.XInput;
     using Surrogate.Roboter.MMotor;
     using Surrogate.Utils.Event;
+    using Surrogate.Model.Module;
 
     public class ControllerTestModule : VisualModule<ModuleProperties, ControllerTestInfo>
     {
@@ -33,10 +34,15 @@ namespace Surrogate.Implementations
 
         private volatile bool _shouldStop = false;
         private volatile bool searchController = true;
-        private Motor _motor;
         private readonly XInputController controller = new XInputController();
 
         public ControllerTestModule(ModuleProperties modulProperties) : base(modulProperties)
+        {
+            ModuleSelected += Selected;
+            ModuleDisselected += Disselected;
+        }
+
+        public ControllerTestModule() : base(new ModuleProperties("Controller Test", "Modul zum testen des Controllers und der Steuerung", true, false, false, false, false, false))
         {
             ModuleSelected += Selected;
             ModuleDisselected += Disselected;
@@ -90,7 +96,7 @@ namespace Surrogate.Implementations
             IsRunningChanged?.Invoke(this, new BooleanEventArgs(isRunning));
         }
 
-        public override ContentControl GetPage()
+        public override ModuleView GetPage()
         {
             ControllerTestView view = new ControllerTestView(this);
             FireChangeEvents();
@@ -137,22 +143,22 @@ namespace Surrogate.Implementations
             {
                 if (!simulate)
                 {
-                    _motor.Start();
+                    Motor.Instance.Start();
                 }
                 Tuple<int, int> speedValues = Tuple.Create(0, 0);
                 while (!_shouldStop)
                 {
                     if (controller.buttons.Equals(GamepadButtonFlags.A))
                     {
-                        _motor.PullUp();
+                        Motor.Instance.PullUp();
                         Stop();
                     }
                     Tuple<int, int> nextSpeedValues = CalculateSpeedValues(controller);
                     // only update if values changed
                     {
                         speedValues = nextSpeedValues;
-                        _motor.LeftSpeed = (speedValues.Item1);
-                        _motor.RightSpeed = (speedValues.Item2);
+                        Motor.Instance.LeftSpeed = (speedValues.Item1);
+                        Motor.Instance.RightSpeed = (speedValues.Item2);
                             if (simulate)
                             {
                                 System.Diagnostics.Debug.WriteLine(String.Format("Leftspeed: {0}, Rightspeed: {1}", speedValues.Item1, speedValues.Item2));
@@ -236,7 +242,6 @@ namespace Surrogate.Implementations
 
         private void Selected(Object sender, EventArgs e)
         {
-            _motor = Motor.GetInstance();
             SearchController();
             FireChangeEvents();
         }
@@ -250,7 +255,7 @@ namespace Surrogate.Implementations
 
         private void FireChangeEvents()
         {
-            OnMotorAvailableChanged(_motor.IsReady());
+            OnMotorAvailableChanged(Motor.Instance.IsReady());
             OnControllerAvailableChanged(controller.connected);
         }
     }

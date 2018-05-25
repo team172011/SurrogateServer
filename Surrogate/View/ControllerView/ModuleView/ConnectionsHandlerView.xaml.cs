@@ -26,9 +26,8 @@ namespace Surrogate.View.ConnectionsChecker
     /// <summary>
     /// Interaktionslogik für Window1.xaml
     /// </summary>
-    public partial class ConnectionsCheckerView : UserControl
+    public partial class ConnectionsCheckerView : ModuleView
     {
-        private ObservableCollection<IConnection> connections;
 
         public ConnectionsCheckerView()
         {

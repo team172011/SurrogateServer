@@ -44,8 +44,12 @@ namespace Surrogate.Main
                 }
                 
             }
+            FrameworkElement.StyleProperty.OverrideMetadata(typeof(Window), new FrameworkPropertyMetadata(TryFindResource(typeof(Window))));
+            SurrogateFramework.AddModule(new StartModule());
+            SurrogateFramework.AddModule(new ControllerTestModule());
+            SurrogateFramework.AddModule(new VideoChatModule());
             IMainController controller = SurrogateFramework.GetMainController();
-            controller.GetWindow().Show();
+            controller.MainWindow.Show();
         }
 
         /// <summary>

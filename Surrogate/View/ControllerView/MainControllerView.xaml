@@ -1,4 +1,4 @@
-﻿<Window x:Class="Surrogate.View.ControllerView.MainControllerView"
+﻿<base:MainView x:Class="Surrogate.View.ControllerView.MainControllerView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -7,19 +7,20 @@
         mc:Ignorable="d"
         Title="MainWindow" ResizeMode="NoResize" WindowState="Maximized" Topmost="False"
         xmlns:vwl="clr-namespace:Surrogate.View.Logging"
-        xmlns:ccs="clr-namespace:Surrogate.View.ConnectionsChecker">
+        xmlns:ccs="clr-namespace:Surrogate.View.ConnectionsChecker"
+        xmlns:base="clr-namespace:Surrogate.View">
     <DockPanel>
         <!---Sidebar on the left with header, modules list and processes list-->
         <StackPanel DockPanel.Dock="Left" Orientation="Vertical">
             <Label FontSize="20" FontWeight="Bold">Surrogate</Label>
             <Label FontWeight="Bold" Content="Module"/>
             <ListView x:Name="lvModules"
-                      ItemsSource="{Binding Path=modules}"
                       Margin="0, 0, 0, 0"
                       ScrollViewer.VerticalScrollBarVisibility="Visible">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
-                        <EventSetter Event="MouseDoubleClick" Handler="ListViewItem_MouseDoubleClick" />
+                        <EventSetter Event="MouseDoubleClick" 
+                                     Handler="ListViewItem_MouseDoubleClick" />
                     </Style>
                 </ListView.ItemContainerStyle>
                 <ListView.ItemTemplate>
@@ -63,4 +64,4 @@
             </StackPanel>
         </Grid>
     </DockPanel>
-</Window>
+</base:MainView>

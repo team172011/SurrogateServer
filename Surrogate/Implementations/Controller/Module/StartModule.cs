@@ -13,6 +13,7 @@ namespace Surrogate.Implementations
     using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Controls;
+    using Surrogate.Model.Module;
     using Surrogate.Modules;
     using Surrogate.View;
 
@@ -25,7 +26,7 @@ namespace Surrogate.Implementations
             
         }
 
-        public override ContentControl GetPage()
+        public override ModuleView GetPage()
         {
             return _view;
         }

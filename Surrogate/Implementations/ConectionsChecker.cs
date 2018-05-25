@@ -4,7 +4,9 @@
 // Lehrstuhl Wirtschaftsinformatik und Operation Research
 // Autor: Wimmer, Simon-Justus Wimmer
 
+using Surrogate.Model.Module;
 using Surrogate.Modules;
+using Surrogate.View;
 using Surrogate.View.ConnectionsChecker;
 using System;
 using System.Collections.Generic;
@@ -14,7 +16,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 
-namespace Surrogate.Implementations
+namespace Surrogate.Implementations.Handler
 {
     public class ConnectionsCheckerModule : VisualModule<ModuleProperties, ModuleInfo>
     {
@@ -22,7 +24,7 @@ namespace Surrogate.Implementations
         {
         }
 
-        public override ContentControl GetPage()
+        public override ModuleView GetPage()
         {
             throw new NotImplementedException();
         }

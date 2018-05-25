@@ -25,7 +25,7 @@ namespace Surrogate.View
     /// <summary>
     /// Interaktionslogik für VideoChatView.xaml
     /// </summary>
-    public partial class VideoChatView : UserControl, IView<VideoChatProperties, VideoChatInfo>
+    public partial class VideoChatView : ModuleView
     {
         private readonly VideoChatModule _parentModule;
         
@@ -44,9 +44,5 @@ namespace Surrogate.View
             _parentModule.Start(new VideoChatInfo()); // TODO add contact details in VideoChatInfo
         }
 
-        public VisualModule<VideoChatProperties, VideoChatInfo> GetModule()
-        {
-            return _parentModule;
-        }
     }
 }

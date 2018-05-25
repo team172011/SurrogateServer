@@ -21,7 +21,8 @@ namespace Surrogate.View
     /// <summary>
     /// View Component of the ControllerTestModule
     /// </summary>
-    public partial class ControllerTestView {
+    public partial class ControllerTestView : ModuleView
+    {
 
         private ControllerTestModule parentModule;
         private bool motor;

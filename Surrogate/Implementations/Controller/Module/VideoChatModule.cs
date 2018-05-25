@@ -20,6 +20,7 @@ namespace Surrogate.Implementations
     using System.Collections.ObjectModel;
     using Newtonsoft.Json.Linq;
     using Surrogate.Roboter;
+    using Surrogate.Model.Module;
 
     /// <summary>
     /// Module for the video chat application using the TopBox libraries
@@ -46,7 +47,16 @@ namespace Surrogate.Implementations
             _view = new VideoChatView(this);
         }
 
-        public override ContentControl GetPage()
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="modulProperties"></param>
+        public VideoChatModule() : this(new VideoChatProperties())
+        {
+            _view = new VideoChatView(this);
+        }
+
+        public override ModuleView GetPage()
         {
             return _view;
         }

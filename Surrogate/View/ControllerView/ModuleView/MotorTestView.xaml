@@ -1,7 +1,7 @@
-﻿<UserControl x:Class="Surrogate.View.MotorTestView"
+﻿<base:ModuleView x:Class="Surrogate.View.MotorTestView"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             >
+      xmlns:base="clr-namespace:Surrogate.View">
 
     <StackPanel Background="AliceBlue">
         <Label Content="Wählen Sie die gewünschte Aktion"/>
@@ -20,4 +20,4 @@
             <Button Width="72"  Click="StopTest" Content="Anhalten"/>
         </DockPanel>
     </StackPanel>
-</UserControl>
+</base:ModuleView>

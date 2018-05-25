@@ -4,6 +4,7 @@
 // Lehrstuhl Wirtschaftsinformatik und Operation Research
 // Autor: Wimmer, Simon-Justus Wimmer
 
+using Surrogate.Implementations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,9 +25,9 @@ namespace Surrogate.View
     /// <summary>
     /// Interaktionslogik für StartModuleView.xaml
     /// </summary>
-    public partial class StartModuleView : UserControl
+    public partial class StartModuleView : ModuleView
     {
-        public StartModuleView()
+        public StartModuleView():base(null)
         {
             InitializeComponent();
         }

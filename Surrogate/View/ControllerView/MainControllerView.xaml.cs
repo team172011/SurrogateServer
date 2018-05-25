@@ -1,76 +1,50 @@
-﻿using Surrogate.Implementations;
+﻿using Surrogat.Handler;
+using Surrogate.Implementations.Controller;
 using Surrogate.Modules;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+
 
 namespace Surrogate.View.ControllerView
 {
-    public partial class MainControllerView : Window
+    public partial class MainControllerView : MainView
     {
+        private readonly ObservableCollection<IVisualModule> _visualModules = new ObservableCollection<IVisualModule>();
+        public ObservableCollection<IVisualModule> VisualModules { get => _visualModules; }
 
-        /// <summary>
-        /// Static logger instance to log on gui, console or write log to file
-        /// </summary>
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private IVisualModule _selectedModule;
 
-        /// <summary>
-        /// List of all available modules
-        /// </summary>
-        private static ObservableCollection<IModule> _modules = new ObservableCollection<IModule>();
-
-        /// <summary>
-        /// Module that is selected and shown in gui
-        /// </summary>
-        private IVisualModule _currentModule;
-
-        public ObservableCollection<IModule> Modules { get => _modules; }
-
-
-        public MainControllerView()
+        public MainControllerView(MainController controller):base(controller)
         {
+            controller.ModulHandler.ModuleAdded += new EventHandler<ModuleArgs>(OnModuleAdded);
+            controller.ModulHandler.ModuleRemoved += new EventHandler<ModuleArgs>(OnModuleRemoved);
             InitializeComponent();
-            InitLocal();
-            log.Info("GUI Initiaization finished");
-        }
-
-        private void InitLocal()
-        {
-            lvModules.ItemsSource = _modules;
-            StartModule startModule = new StartModule();
-            _modules.Add(startModule);
-            _modules.Add(new ControllerTestModule(new ModuleProperties("ControllerTest", "Modul zum testen eines Controllers", false, false, false, false)));
-            _modules.Add(new MotorTestModule(new ModuleProperties("MotorTest", "Modul zum testen des angeschlossenen Motors", true, false, false, false)));
-            _modules.Add(new VideoChatModule(new VideoChatProperties()));
-            SelectModule((IVisualModule)startModule);
-        }
-
-        private void SelectModule(IVisualModule m)
-        {
-            if (_currentModule != m)
+            Logger.Debug("GUI Initiaization finished");
+            lvModules.ItemsSource = VisualModules;
+            foreach (IModule module in controller.ModulHandler.GetModules())
             {
-                if (_currentModule != null)
+                if(module is IVisualModule)
                 {
-                    _currentModule.OnDisselected();
+                    _visualModules.Add(module as IVisualModule);
                 }
-                spModule.Children.Clear();
-                m.OnSelected();
-                spModule.Children.Add(m.GetPage());
-                _currentModule = m;
             }
-
+            
         }
+
+        private void OnModuleAdded(object sender, ModuleArgs mArgs)
+        {
+            if (mArgs.Module is IVisualModule visualModule)
+            {
+                _visualModules.Add(visualModule);
+            }
+        }
+
+        private void OnModuleRemoved(object sender, ModuleArgs mArgs){
+            _visualModules.Remove(mArgs as IVisualModule);
+        }
+
 
         /// <summary>
         /// This function will be called if the user selects a new module from the lvModules
@@ -79,19 +53,11 @@ namespace Surrogate.View.ControllerView
         /// <param name="e"></param>
         private void ListViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
+            
             var item = sender as ListViewItem;
-            IVisualModule module = (IVisualModule)item.Content;
-
-            try
-            {
-                log.Info("Loading Module: " + module.GetDescription());
-                SelectModule(module);
-            }
-            catch (Exception ex)
-            {
-                log.Error("Fehler beim Laden eines Moduls:" + ex.Message + "\n " + ex.StackTrace);
-            }
-
+            IVisualModule module = item.Content as IVisualModule;
+            spModule.Children.Clear();
+            spModule.Children.Add(((IMainController)_controller).ModulHandler.GetView(module));
         }
     }
 }

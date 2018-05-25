@@ -17,6 +17,7 @@ namespace Surrogate.Implementations
     using Surrogate.Roboter;
     using Surrogate.View;
     using Surrogate.Roboter.MMotor;
+    using Surrogate.Model.Module;
 
     public class MotorTestModule : VisualModule<ModuleProperties, ModuleInfo>
     {
@@ -26,7 +27,7 @@ namespace Surrogate.Implementations
         {
         }
 
-        public override ContentControl GetPage()
+        public override ModuleView GetPage()
         {
             return new MotorTestView(this);
         }
@@ -37,8 +38,6 @@ namespace Surrogate.Implementations
 
         public override void OnSelected()
         {
-           _motor = Motor.GetInstance();
-           _motor.Start();
         }
 
         public override void Start(ModuleInfo info)
@@ -88,9 +87,8 @@ namespace Surrogate.Implementations
                     {
                         try
                         {
-                            Motor motor = Motor.GetInstance();
-                            motor.LeftSpeed = (100);
-                            motor.RightSpeed = (-100);
+                            Motor.Instance.LeftSpeed = (100);
+                            Motor.Instance.RightSpeed = (-100);
                             } catch(Exception pnve)
                         {
                             log.Error("Could not connect to motor: " + pnve.Message + "\n " + pnve.StackTrace);
@@ -101,9 +99,9 @@ namespace Surrogate.Implementations
                     {
                         try
                         {
-                            Motor motor = Motor.GetInstance();
-                            motor.LeftSpeed = (0);
-                            motor.RightSpeed = (200);
+
+                            Motor.Instance.LeftSpeed = (0);
+                            Motor.Instance.RightSpeed = (200);
                         }
                         catch (Exception pnve)
                         {
@@ -115,9 +113,8 @@ namespace Surrogate.Implementations
                     {
                         try
                         {
-                            Motor motor = Motor.GetInstance();
-                            motor.LeftSpeed=(100);
-                            motor.RightSpeed = (0);
+                            Motor.Instance.LeftSpeed =(100);
+                            Motor.Instance.RightSpeed = (0);
                         }
                         catch (Exception pnve)
                         {
@@ -129,8 +126,7 @@ namespace Surrogate.Implementations
                     {
                         try
                         {
-                            Motor motor = Motor.GetInstance();
-                            motor.PullUp();
+                            Motor.Instance.PullUp();
                         } catch(Exception pnve)
                         {
                             log.Error("Could not connect to motor: " + pnve.Message + "\n " + pnve.StackTrace);

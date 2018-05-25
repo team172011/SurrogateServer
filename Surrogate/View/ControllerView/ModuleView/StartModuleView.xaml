@@ -1,7 +1,7 @@
-﻿<UserControl x:Class="Surrogate.View.StartModuleView"
+﻿<base:ModuleView x:Class="Surrogate.View.StartModuleView"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             >
+      xmlns:base="clr-namespace:Surrogate.View">
 
     <Grid Background="AliceBlue">
         <Grid.RowDefinitions>
@@ -17,4 +17,4 @@
                    FontSize="15"
                    TextWrapping="Wrap">Willkomen im Surrogate Programm Framework. Wählen Sie das gewünschte Modul aus der Liste am Rand.</TextBlock>
     </Grid>
-</UserControl>
+</base:ModuleView>

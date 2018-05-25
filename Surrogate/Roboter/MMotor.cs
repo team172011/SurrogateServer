@@ -19,8 +19,26 @@ namespace Surrogate.Roboter.MMotor
     public class Motor : IConnection
     {
         protected static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        private static readonly Motor _instance = new Motor();
+        private static volatile Motor _instance;
+        private static object syncRoot = new Object();
+        public static Motor Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    lock (syncRoot)
+                    {
+                        if (_instance == null)
+                        {
+                            _instance = new Motor();
+                        }
 
+                    }
+                }
+                return _instance;
+            }
+        }
 
         private volatile bool _shouldStop = false;
         private SerialPort port;   
@@ -91,18 +109,6 @@ namespace Surrogate.Roboter.MMotor
         }
 
 
-
-        /// <summary>
-        /// Returns the instance representing the motor. During first initialization of this instance a
-        /// thread responsible for sending motor controlls will be started. (See also Constructor: <see cref="Motor"/>)
-        /// </summary>
-        /// <exception cref="PortNotValidException">If ther is no port connected to the motor controller</exception>
-        /// <returns>The Instance representing the motor api</returns>
-        public static Motor GetInstance()
-        {
-            return _instance;
-        }
-
         /// <summary>
         /// Search for the serial port and connect to the motor controller (if not simulation)
         /// Starting the motor thread (see <see cref="Start"/> and <see cref="RunEngine(SerialPort)"/>)
@@ -121,7 +127,7 @@ namespace Surrogate.Roboter.MMotor
             }
         }
 
-        private bool Connect(int portId = 0)
+        public bool Connect(int portId = 0)
         {
             port = new SerialPort();
             {
@@ -272,7 +278,7 @@ namespace Surrogate.Roboter.MMotor
 
         public bool Connect()
         {
-            throw new NotImplementedException();
+            return Connect(0);
         }
     }
 

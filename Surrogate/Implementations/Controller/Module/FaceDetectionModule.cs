@@ -8,7 +8,9 @@ namespace Surrogate.Implementations.FaceDetection
 {
     using System.Windows;
     using System.Windows.Controls;
+    using Surrogate.Model.Module;
     using Surrogate.Modules;
+    using Surrogate.View;
 
     public class FaceDetectionModule : VisualModule<FaceDetectionProperties, FaceDetectionInfo>
     {
@@ -17,7 +19,7 @@ namespace Surrogate.Implementations.FaceDetection
                 
         }
 
-        public override ContentControl GetPage()
+        public override ModuleView GetPage()
         {
             throw new System.NotImplementedException();
         }
