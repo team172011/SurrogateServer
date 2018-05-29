@@ -3,11 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Surrogate.Main"
         mc:Ignorable="d"
         Title="MainWindow" ResizeMode="NoResize" WindowState="Maximized" Topmost="False"
         xmlns:vwl="clr-namespace:Surrogate.View.Logging"
-        xmlns:ccs="clr-namespace:Surrogate.View.ConnectionsChecker"
+        xmlns:ccs="clr-namespace:Surrogate.View.Handler"
         xmlns:base="clr-namespace:Surrogate.View">
     <DockPanel>
         <!---Sidebar on the left with header, modules list and processes list-->
@@ -50,9 +49,9 @@
                       ItemsSource="{Binding Path=processes}">
             </ListView>
         </StackPanel>
-        <WrapPanel DockPanel.Dock="Right">
-            <ccs:ConnectionsCheckerView/>
-        </WrapPanel>
+        <StackPanel x:Name="connectionsPanel" DockPanel.Dock="Right">
+            
+        </StackPanel>
         <StackPanel DockPanel.Dock="Top"></StackPanel>
         <StackPanel DockPanel.Dock="Bottom">
             <Label FontWeight="Bold">Log</Label>

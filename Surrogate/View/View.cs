@@ -1,4 +1,6 @@
-﻿using Surrogate.Modules;
+﻿using Surrogate.Controller;
+using Surrogate.Implementations;
+using Surrogate.Modules;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -7,31 +9,35 @@ namespace Surrogate.View
     public abstract class MainView : Window, IView
     {
 
-        protected readonly Controller _controller;
-        public Controller Controller { get => _controller; }
+        protected readonly AbstractController _controller;
+        public AbstractController Controller { get => _controller; }
         public virtual log4net.ILog Logger { get => _controller.Logger; }
 
-        public MainView(Controller controller)
+        public MainView(AbstractController controller)
         {
             _controller = controller;
         }
+
+        public MainView() => _controller = SurrogateFramework.MainController;
     }
 
     public abstract class ModuleView : UserControl, IView
     {
-        private readonly Controller _controller;
-        public Controller Controller { get => _controller; }
+        private readonly AbstractController _controller;
+        public AbstractController Controller { get => _controller; }
         public virtual log4net.ILog Logger { get => _controller.Logger; }
 
-        public ModuleView(Controller controller=null)
+        public ModuleView(AbstractController controller =null)
         {
             _controller = controller;
         }
+
+        public ModuleView() { }
 
     }
 
     public interface IView
     {
-        Controller Controller { get; }
+        AbstractController Controller { get; }
     }
 }

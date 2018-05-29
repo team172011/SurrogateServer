@@ -1,6 +1,8 @@
 ﻿using Surrogat.Handler;
+using Surrogate.Controller;
 using Surrogate.Implementations.Handler;
 using Surrogate.Main;
+using Surrogate.Model.Handler;
 using Surrogate.Modules;
 using Surrogate.View.ControllerView;
 using System;
@@ -14,7 +16,7 @@ namespace Surrogate.Implementations.Controller
 {
     
 
-    public class MainController : Modules.Controller, IMainController
+    public class MainController : AbstractController, IMainController
     {
         private readonly IModuleHandler _modulHandler= new ModuleHandler();
         private readonly IConnectionHandler _connectionHandler = new ConnectionsHandler();
@@ -26,10 +28,10 @@ namespace Surrogate.Implementations.Controller
         public IConnectionHandler ConnectionHandler => _connectionHandler;
         public IProcessHandler ProcessHandler => _processHandler;
 
-
         public MainController()
         {
             _view = new MainControllerView(this);
+            _view.connectionsPanel.Children.Add(_connectionHandler.GetPage());
         }
 
 

@@ -21,6 +21,7 @@ namespace Surrogate.Implementations
     using Newtonsoft.Json.Linq;
     using Surrogate.Roboter;
     using Surrogate.Model.Module;
+    using Surrogate.Model;
 
     /// <summary>
     /// Module for the video chat application using the TopBox libraries

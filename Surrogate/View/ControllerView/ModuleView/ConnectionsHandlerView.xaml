@@ -1,5 +1,5 @@
 ﻿<base:ModuleView 
-    x:Class="Surrogate.View.ConnectionsChecker.ConnectionsCheckerView"
+    x:Class="Surrogate.View.Handler.ConnectionsHandlerView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:base="clr-namespace:Surrogate.View">
@@ -10,8 +10,43 @@
                 <Setter Property="FontWeight" Value="Bold"/>
             </Style>
         </StackPanel.Resources>
-        <ListView x:Name="lvConnections"
-                  ItemsSource="{Binding Path=connections}">
+        <ListView x:Name="lvConnections">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="{x:Type ListViewItem}">
+                    <EventSetter Event="MouseDoubleClick" Handler="ListViewItem_MouseDoubleClick" />
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.Resources>
+                <Style TargetType="ListViewItem">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Color}" Value="Green">
+                            <Setter Property="Background" Value="Green"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Color}" Value="Red">
+                            <Setter Property="Background" Value="Red"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Color}" Value="Yellow">
+                            <Setter Property="Background" Value="Yellow"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ListView.Resources>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <StackPanel  Width="150" MaxHeight="50" Grid.Column="0" Grid.Row="0" Orientation="Horizontal" >
+                            <TextBlock VerticalAlignment="Center" Text="{Binding Name}" FontWeight="ExtraBlack" TextWrapping="Wrap" Padding="10"/>
+                        </StackPanel>
+                    </Grid>
+
+                </DataTemplate>
+            </ListView.ItemTemplate>
         </ListView>
     </StackPanel>
 </base:ModuleView>

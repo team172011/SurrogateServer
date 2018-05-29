@@ -4,6 +4,7 @@
 // Lehrstuhl Wirtschaftsinformatik und Operation Research
 // Autor: Wimmer, Simon-Justus Wimmer
 
+using Surrogate.Implementations;
 using Surrogate.Model;
 using System;
 using System.IO.Ports;
@@ -16,7 +17,7 @@ namespace Surrogate.Roboter.MMotor
     /// Class for connecting and controlling the motor via serial usb port
     /// Singeton pattern, get instance with <see cref="GetInstance"/> function.
     /// </summary>
-    public class Motor : IConnection
+    public class Motor : AbstractConnection
     {
         protected static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private static volatile Motor _instance;
@@ -72,6 +73,23 @@ namespace Surrogate.Roboter.MMotor
             get
             {
                 return _rightSpeedValue;
+            }
+        }
+
+        public override string Name => FrameworkConstants.MotorName;
+
+        public override ConnectionStatus Status
+        {
+            get
+            {
+                if (IsReady())
+                {
+                    return ConnectionStatus.Ready;
+                }
+                else
+                {
+                    return ConnectionStatus.Disconnected;
+                }
             }
         }
 
@@ -276,7 +294,7 @@ namespace Surrogate.Roboter.MMotor
             return IsReady();
         }
 
-        public bool Connect()
+        public override bool Connect()
         {
             return Connect(0);
         }

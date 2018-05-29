@@ -5,19 +5,15 @@
 // Autor: Wimmer, Simon-Justus Wimmer
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Surrogate.Modules;
+using Surrogate.View;
+using Surrogate.Roboter.MMotor;
+using Surrogate.Model.Module;
+using Surrogate.Model;
 
 namespace Surrogate.Implementations
 {
-    using System.Windows.Controls;
-    using Surrogate.Modules;
-    using Surrogate.Roboter;
-    using Surrogate.View;
-    using Surrogate.Roboter.MMotor;
-    using Surrogate.Model.Module;
+
 
     public class MotorTestModule : VisualModule<ModuleProperties, ModuleInfo>
     {

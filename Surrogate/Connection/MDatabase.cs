@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace Surrogate.Roboter.MDatabase
 {
+    using Surrogate.Implementations;
     using Surrogate.Model;
     using System.Data.SqlClient;
 
@@ -20,11 +21,16 @@ namespace Surrogate.Roboter.MDatabase
     /// Class to connect to a sql database and for creating, inserting and loading data and tables for
     /// different modules
     /// </summary>
-    public class Database : IConnection
+    public class Database : AbstractConnection
     {
         private static SqlConnection _connection = null;
 
-        public bool Connect()
+        public override string Name => FrameworkConstants.DatabaseName;
+
+        public override ConnectionStatus Status => ConnectionStatus.Disconnected;
+
+
+        public override bool Connect()
         {
             throw new NotImplementedException();
         }

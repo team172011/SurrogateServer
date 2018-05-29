@@ -17,14 +17,13 @@ namespace Surrogate.Implementations
     using Surrogate.View;
     using System.Threading.Tasks;
 
-    using Surrogate.Utils;
-    using log4net;
     using System.Windows;
     using System.Windows.Threading;
     using SharpDX.XInput;
     using Surrogate.Roboter.MMotor;
     using Surrogate.Utils.Event;
     using Surrogate.Model.Module;
+    using Surrogate.Model;
 
     public class ControllerTestModule : VisualModule<ModuleProperties, ControllerTestInfo>
     {
@@ -34,7 +33,7 @@ namespace Surrogate.Implementations
 
         private volatile bool _shouldStop = false;
         private volatile bool searchController = true;
-        private readonly XInputController controller = new XInputController();
+        private readonly XBoxController controller = new XBoxController();
 
         public ControllerTestModule(ModuleProperties modulProperties) : base(modulProperties)
         {
@@ -51,22 +50,22 @@ namespace Surrogate.Implementations
         private async void SearchController()
         {
             {
-                OnControllerAvailableChanged(controller.connected);
+                OnControllerAvailableChanged(controller.Connected);
                 await Task.Run(() =>
                 {
-                    bool lastState = controller.connected;
+                    bool lastState = controller.Connected;
                     while (searchController)
                     {
                         
-                        if (controller.connected && lastState != true)
+                        if (controller.Connected && lastState != true)
                         { 
-                            OnControllerAvailableChanged(controller.connected);
+                            OnControllerAvailableChanged(controller.Connected);
                         }
-                        else if (!controller.connected && lastState == true)
+                        else if (!controller.Connected && lastState == true)
                         {
-                            OnControllerAvailableChanged(controller.connected);
+                            OnControllerAvailableChanged(controller.Connected);
                         }
-                        lastState = controller.connected;
+                        lastState = controller.Connected;
                         Thread.Sleep(1000);
                     }
                 });
@@ -136,7 +135,7 @@ namespace Surrogate.Implementations
             }
         }
 
-        private void TestMotorControl(XInputController controller, bool simulate = false)
+        private void TestMotorControl(XBoxController controller, bool simulate = false)
         {
             OnIsRunngingChanged(true);
             try
@@ -182,7 +181,7 @@ namespace Surrogate.Implementations
         /// </summary>
         /// <param name="controller"></param>
         /// <returns>A Tuple(int, int) with left and right speed values</int></returns>
-        private Tuple<int,int> CalculateSpeedValues(XInputController controller)
+        private Tuple<int,int> CalculateSpeedValues(XBoxController controller)
         {
             controller.Update();
             float rightTrigger = controller.rightTrigger;
@@ -219,7 +218,7 @@ namespace Surrogate.Implementations
         /// </summary>
         /// <param name="controller"></param>
         /// <returns></returns>
-        private bool TestConrollerOutputs(XInputController controller)
+        private bool TestConrollerOutputs(XBoxController controller)
         {
             OnIsRunngingChanged(true);
             while (!_shouldStop)
@@ -256,7 +255,7 @@ namespace Surrogate.Implementations
         private void FireChangeEvents()
         {
             OnMotorAvailableChanged(Motor.Instance.IsReady());
-            OnControllerAvailableChanged(controller.connected);
+            OnControllerAvailableChanged(controller.Connected);
         }
     }
 

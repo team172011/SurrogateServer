@@ -110,23 +110,31 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controller\AbstractConroller.cs" />
+    <Compile Include="Controller\IController.cs" />
+    <Compile Include="Controller\IMainController.cs" />
+    <Compile Include="Controller\IModule.cs" />
+    <Compile Include="Controller\IVisualModule.cs" />
     <Compile Include="Implementations\Controller\MainController.cs" />
     <Compile Include="Implementations\Handler\ConnectionsHandler.cs" />
     <Compile Include="Implementations\Handler\ModuleHandler.cs" />
-    <Compile Include="Implementations\ConectionsChecker.cs" />
     <Compile Include="Implementations\Controller\Module\ControllerTestModule.cs" />
     <Compile Include="Implementations\Controller\Module\FaceDetectionModule.cs" />
     <Compile Include="Implementations\Controller\Module\MotorTestModule.cs" />
     <Compile Include="Implementations\Controller\Module\StartModule.cs" />
     <Compile Include="Implementations\Controller\Module\VideoChatModule.cs" />
     <Compile Include="Implementations\SurrogateFramework.cs" />
-    <Compile Include="Model\Connection.cs" />
-    <Compile Include="Model\Module.cs" />
-    <Compile Include="Model\ModuleHandler.cs" />
-    <Compile Include="Roboter\MController.cs" />
-    <Compile Include="Roboter\MDatabase.cs" />
-    <Compile Include="Roboter\MInternet.cs" />
-    <Compile Include="Roboter\MMotor.cs" />
+    <Compile Include="Model\AbstractConnection.cs" />
+    <Compile Include="Model\Handler\IConnectionHandler.cs" />
+    <Compile Include="Model\Handler\IProcessHandler.cs" />
+    <Compile Include="Model\IConnection.cs" />
+    <Compile Include="Model\ModuleInfo.cs" />
+    <Compile Include="Model\Handler\IModuleHandler.cs" />
+    <Compile Include="Model\ModuleProperties.cs" />
+    <Compile Include="Connection\MController.cs" />
+    <Compile Include="Connection\MDatabase.cs" />
+    <Compile Include="Connection\MInternet.cs" />
+    <Compile Include="Connection\MMotor.cs" />
     <Compile Include="Utils\ConsoleManager.cs" />
     <Compile Include="Utils\Event.cs" />
     <Compile Include="Utils\UI.cs" />
@@ -160,7 +168,7 @@
     <Compile Include="Utils\Properties.cs" />
     <Compile Include="Utils\NotifyAppender.cs" />
     <Compile Include="Utils\Log.cs" />
-    <Compile Include="Controller\Module.cs" />
+    <Compile Include="Controller\VisualModule.cs" />
     <Page Include="View\ControllerView\MainControllerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

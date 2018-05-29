@@ -6,6 +6,7 @@ using Surrogate.Model;
 using Surrogate.Modules;
 using System.Linq;
 using Surrogate.View;
+using Surrogate.Controller;
 
 namespace Surrogate.Implementations.Handler
 {

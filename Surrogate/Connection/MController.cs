@@ -11,31 +11,32 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using SharpDX.XInput;
+using Surrogate.Implementations;
+using Surrogate.Model;
 
 namespace Surrogate.Roboter.MController
 {
     /// <summary>
     /// Class to connect and receive controller inputs
     /// </summary>
-    class XInputController
+    class XBoxController : AbstractConnection
     {
-        Controller controller;
+        SharpDX.XInput.Controller controller = new SharpDX.XInput.Controller(UserIndex.One);
         Gamepad gamepad;
-        public bool connected { get => controller.IsConnected; }
+        public bool Connected { get => controller.IsConnected; }
+
+        public override string Name => FrameworkConstants.ControllerName;
+
         public int deadband = 2500;
         public Point leftThumb, rightThumb = new Point(0, 0);
         public float leftTrigger, rightTrigger;
         public GamepadButtonFlags buttons;
 
-        public XInputController()
-        {
-            controller = new Controller(UserIndex.One);
-        }
 
         // Call this method to update all class values
         public void Update()
         {
-            if (!connected)
+            if (!Connected)
                 return;
 
             gamepad = controller.GetState().Gamepad;
@@ -52,6 +53,25 @@ namespace Surrogate.Roboter.MController
         public BatteryInformation GetBatteryInformation()
         {
             return controller.GetBatteryInformation(BatteryDeviceType.Gamepad);
+        }
+
+        public override bool Connect()
+        {
+            bool connected = false;
+            if(controller != null)
+            {
+                connected = controller.IsConnected;
+                if (connected)
+                {
+                    Status = ConnectionStatus.Ready;
+                }
+            }
+
+            else
+            {
+                Status = ConnectionStatus.Disconnected;
+            }
+            return connected;
         }
     }
 }

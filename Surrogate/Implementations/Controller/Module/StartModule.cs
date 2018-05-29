@@ -4,18 +4,15 @@
 // Lehrstuhl Wirtschaftsinformatik und Operation Research
 // Autor: Wimmer, Simon-Justus Wimmer
 
+using System;
+using Surrogate.Model;
+using Surrogate.Model.Module;
+using Surrogate.Modules;
+using Surrogate.View;
+
 namespace Surrogate.Implementations
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using System.Windows;
-    using System.Windows.Controls;
-    using Surrogate.Model.Module;
-    using Surrogate.Modules;
-    using Surrogate.View;
+
 
     class StartModule : VisualModule<ModuleProperties, ModuleInfo>
     {

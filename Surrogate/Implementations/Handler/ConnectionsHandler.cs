@@ -1,31 +1,47 @@
 
 
 using System;
+using System.Collections.Generic;
 using System.Windows.Controls;
 using Surrogat.Handler;
 using Surrogate.Model;
+using Surrogate.Model.Handler;
 using Surrogate.Model.Module;
 using Surrogate.Modules;
 using Surrogate.View;
-using Surrogate.View.ConnectionsChecker;
+using Surrogate.View.Handler;
 
 namespace Surrogate.Implementations.Handler
 {
+    /// <summary>
+    /// Class managing different connections
+    /// <see cref="ConnectionsHandlerView"/>
+    /// </summary>
     public class ConnectionsHandler : VisualModule<ModuleProperties, ModuleInfo>, IConnectionHandler
     {
-        public event EventHandler<ConnectionArgs> ConnectionEstablished;
-        public event EventHandler<ConnectionArgs> ConnectionReady;
-        public event EventHandler<ConnectionArgs> ConnectionClosed;
+        public event EventHandler<ConnectionArgs> ConnectionChangedStatus;
+        public event EventHandler<ConnectionArgs> ConnectionAdded;
 
-        private readonly ConnectionsCheckerView _view = new ConnectionsCheckerView();
+        private readonly ConnectionsHandlerView _view; 
+        private readonly Dictionary<string, IConnection> _connections = new Dictionary<string, IConnection>();
+        public Dictionary<string, IConnection> Connections { get => _connections; }
 
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="modulProperties"></param>
         public ConnectionsHandler(ModuleProperties modulProperties) : base(modulProperties)
         {
-
+            _view = new ConnectionsHandlerView(this);
         }
 
+        /// <summary>
+        /// Empty Constructor.
+        /// </summary>
         public ConnectionsHandler():this(new ModuleProperties("Verbindungsmanager", "API zum managen verschiedener Verbindungen"))
         {
+            _view = new ConnectionsHandlerView(this);
         }
 
         public override ModuleView GetPage()
@@ -53,14 +69,24 @@ namespace Surrogate.Implementations.Handler
             throw new System.NotImplementedException();
         }
 
-        public override void Stop()
+        public void RegisterConnection(string name, IConnection connection)
         {
-            throw new System.NotImplementedException();
+            _connections.Add(name, connection);
+            connection.ConnectionStatusHandler += OnConnectionStatusChanged;
+            ConnectionAdded?.Invoke(this, new ConnectionArgs(connection));
         }
 
-        public void RegisterConnection(IConnection connection)
+        public void Connect(string name)
         {
-            throw new NotImplementedException();
+            _connections[name].Connect();
+        }
+
+        private void OnConnectionStatusChanged(object sender, ConnectionStatus e)
+        {
+            if(sender is IConnection connection)
+            {
+                ConnectionChangedStatus?.Invoke(this, new ConnectionArgs(connection));
+            }
         }
     }
 }

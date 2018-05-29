@@ -1,4 +1,5 @@
 ﻿using Surrogat.Handler;
+using Surrogate.Controller;
 using Surrogate.Implementations.Controller;
 using Surrogate.Modules;
 using System;

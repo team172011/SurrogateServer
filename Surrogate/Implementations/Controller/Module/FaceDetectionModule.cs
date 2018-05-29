@@ -8,6 +8,7 @@ namespace Surrogate.Implementations.FaceDetection
 {
     using System.Windows;
     using System.Windows.Controls;
+    using Surrogate.Model;
     using Surrogate.Model.Module;
     using Surrogate.Modules;
     using Surrogate.View;

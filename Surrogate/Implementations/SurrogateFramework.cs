@@ -1,23 +1,18 @@
-﻿using Surrogat.Handler;
+﻿using Surrogate.Controller;
 using Surrogate.Implementations.Controller;
 using Surrogate.Model;
-using Surrogate.Modules;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Surrogate.Implementations
 {
-    public class SurrogateFramework
+    /// <summary>
+    /// Static class. Representing the Surrogate Framework API.
+    /// </summary>
+    public static class SurrogateFramework
     {
         private static readonly MainController _controller = new MainController();
-        public MainController MainController { get; }
-        public static IMainController GetMainController()
-        {
-            return _controller;
-        }
+        public static MainController MainController { get => _controller; }
+        public static double two = 2;
 
         public static void AddModule(IModule module)
         {
@@ -26,9 +21,23 @@ namespace Surrogate.Implementations
             // if module is connection, register the connection
             if (module is IConnection connection)
             {
-                _controller.ConnectionHandler.RegisterConnection(connection);
+                AddConnection(connection);
             }
             
         }
+
+        public static void AddConnection(IConnection connection)
+        {
+            _controller.ConnectionHandler.RegisterConnection(connection.Name, connection);
+        }
+    }
+
+    public static class FrameworkConstants
+    {
+        public static readonly String MotorName = "Motor";
+        public static readonly String DatabaseName = "Datenbank";
+        public static readonly String InternetName = "Internet";
+        public static readonly String ControllerName = "Controller";
+        public static readonly String TouchpadName = "Touchpad";
     }
 }

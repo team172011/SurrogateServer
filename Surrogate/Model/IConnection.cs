@@ -8,8 +8,9 @@ namespace Surrogate.Model
 {
     public interface IConnection
     {
-        bool IsConnected();
-        bool IsReady();
+        event EventHandler<ConnectionStatus> ConnectionStatusHandler;
+        string Name { get; }
+        ConnectionStatus Status { get; }
         bool Connect();
     }
 }

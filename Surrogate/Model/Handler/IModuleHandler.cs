@@ -1,5 +1,6 @@
 
 
+using Surrogate.Controller;
 using Surrogate.Model;
 using Surrogate.Modules;
 using System;
@@ -20,20 +21,6 @@ namespace Surrogat.Handler
         Control GetView(IVisualModule module);
     }
 
-	public interface IConnectionHandler
-    {
-        event EventHandler<ConnectionArgs> ConnectionEstablished;
-        event EventHandler<ConnectionArgs> ConnectionReady;
-        event EventHandler<ConnectionArgs> ConnectionClosed;
-
-        void RegisterConnection(IConnection connection);
-    }
-
-	public interface IProcessHandler
-    {
-        void AddProcess();
-        void RemoveProcess();
-    }
 
     public class ModuleArgs : EventArgs
     {
@@ -47,17 +34,6 @@ namespace Surrogat.Handler
         {
             _module = arg;
             _key = key;
-        }
-    }
-
-    public class ConnectionArgs : EventArgs
-    {
-        private readonly IConnection _connection;
-        public IConnection Module { get => _connection; }
-
-        public ConnectionArgs(IConnection arg)
-        {
-            _connection = arg;
         }
     }
 }

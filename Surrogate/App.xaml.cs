@@ -18,6 +18,9 @@ using Surrogate.Parameters;
 using Surrogate.Utils;
 using System.Windows.Controls;
 using Surrogate.Implementations;
+using Surrogate.Implementations.Controller;
+using Surrogate.Controller;
+using Surrogate.Roboter.MController;
 
 namespace Surrogate.Main
 {
@@ -34,7 +37,7 @@ namespace Surrogate.Main
         /// </summary>
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            init();
+            Init();
             if (e.Args.Length >= 1)
             {
                 log.Info("Command line arg found:");
@@ -45,17 +48,23 @@ namespace Surrogate.Main
                 
             }
             FrameworkElement.StyleProperty.OverrideMetadata(typeof(Window), new FrameworkPropertyMetadata(TryFindResource(typeof(Window))));
+            MainController _controller = new MainController();
             SurrogateFramework.AddModule(new StartModule());
+            
             SurrogateFramework.AddModule(new ControllerTestModule());
             SurrogateFramework.AddModule(new VideoChatModule());
-            IMainController controller = SurrogateFramework.GetMainController();
+
+            SurrogateFramework.AddConnection(Roboter.MMotor.Motor.Instance);
+            SurrogateFramework.AddConnection(new XBoxController());
+
+            IMainController controller = SurrogateFramework.MainController;
             controller.MainWindow.Show();
         }
 
         /// <summary>
         /// General initializations
         /// </summary>
-        private void init()
+        private void Init()
         {
             log4net.GlobalContext.Properties["LogFileName"] = String.Format(Dirs.programDir+"{0}",@"\\surrogate");
             // check if neccesary files and folder exists

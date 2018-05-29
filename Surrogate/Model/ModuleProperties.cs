@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Surrogate.Model.Module
+namespace Surrogate.Model
 {
     public class ModuleProperties
     {
@@ -44,11 +44,5 @@ namespace Surrogate.Model.Module
         public string Name { get => _name; }
         public string Description { get => _description; }
         public string ImagePath { get => _imagePath; set => _imagePath = value; }
-    }
-
-    public class ModuleInfo
-    {
-        public static readonly ModuleInfo EmptyModuleInfo = new ModuleInfo();
-        public ModuleInfo() { }
     }
 }
