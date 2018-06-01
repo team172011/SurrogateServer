@@ -5,22 +5,28 @@
 // Autor: Wimmer, Simon-Justus Wimmer
 
 using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
+using Surrogate.Implementations;
+using Surrogate.Model;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Surrogate.Roboter
+namespace Surrogate.Roboter.MInternet
 {
     /// <summary>
-    /// Class provides different functions to connect to the internet
+    /// Class provides different functions to connect to, send and receice data from the internet
     /// Following: https://stackoverflow.com/questions/27108264/c-sharp-how-to-properly-make-a-http-web-get-request
     /// </summary>
-    public class MInternet
+    public class Internet : AbstractConnection
     {
+        public override string Name => FrameworkConstants.InternetName;
+
+        public Internet()
+        {
+
+        }
+
         public static string GetString(string uri)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
@@ -102,6 +108,24 @@ namespace Surrogate.Roboter
             using (StreamReader reader = new StreamReader(stream))
             {
                 return await reader.ReadToEndAsync();
+            }
+        }
+
+        public override bool Connect()
+        {
+            try
+            {
+                using (var client = new WebClient())
+                using (client.OpenRead("http://clients3.google.com/generate_204"))
+                {
+                    Status = ConnectionStatus.Ready;
+                    return true;
+                }
+            }
+            catch
+            {
+                Status = ConnectionStatus.Disconnected;
+                return false;
             }
         }
     }

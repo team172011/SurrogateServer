@@ -22,6 +22,7 @@ namespace Surrogate.Implementations
     using Surrogate.Roboter;
     using Surrogate.Model.Module;
     using Surrogate.Model;
+    using Surrogate.Roboter.MInternet;
 
     /// <summary>
     /// Module for the video chat application using the TopBox libraries
@@ -141,7 +142,7 @@ namespace Surrogate.Implementations
 
         public VideoChatProperties() : base("Video Chat", "Modul zum kommunizieren mittels Sprach- und Videochat", false, true, false, false, true, true)
         {
-            JObject json = MInternet.GetJSON(_URI);
+            JObject json = Internet.GetJSON(_URI);
             _API_KEY = json.GetValue("apiKey").ToString();
             _SESSION_ID = json.GetValue("sessionId").ToString();
             _TOKEN = json.GetValue("token").ToString();

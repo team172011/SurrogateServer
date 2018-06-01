@@ -15,6 +15,7 @@ namespace Surrogate.Model.Handler
 
         void RegisterConnection(string name, IConnection connection);
         void Connect(string name);
+        IConnection GetConnection(string name);
 
     }
 

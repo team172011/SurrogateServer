@@ -8,6 +8,11 @@ namespace Surrogate.Model
 {
     public abstract class AbstractConnection : IConnection
     {
+        /// <summary>
+        /// Static reference to a logger. Enables logging to console, gui (TextBox) and file
+        /// </summary>
+        protected static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         public event EventHandler<ConnectionStatus> ConnectionStatusHandler;
         public abstract string Name { get; }
         protected ConnectionStatus _status;

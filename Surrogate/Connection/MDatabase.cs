@@ -6,58 +6,104 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 
 namespace Surrogate.Roboter.MDatabase
 {
     using Surrogate.Implementations;
     using Surrogate.Model;
+    using System.Data;
     using System.Data.SqlClient;
 
     /// <summary>
     /// Class to connect to a sql database and for creating, inserting and loading data and tables for
     /// different modules
     /// </summary>
-    public class Database : AbstractConnection
+    public class Database : AbstractConnection, IDatabaseConnection
     {
         private static SqlConnection _connection = null;
 
         public override string Name => FrameworkConstants.DatabaseName;
 
-        public override ConnectionStatus Status => ConnectionStatus.Disconnected;
-
+        public Database()
+        {
+            Connect();
+        }
 
         public override bool Connect()
         {
-            throw new NotImplementedException();
+            Connection();
+            var connected = IsConnected();
+            if (connected)
+            {
+                Status = ConnectionStatus.Ready;
+            } else
+            {
+                Status = ConnectionStatus.Disconnected;
+            }
+            return connected;
+        }
+
+        public bool CreateTable(string name, IDictionary<string, SqlDbType> columns)
+        {
+            var commandTable = String.Format("CREATE TABLE {0} ",name);
+            StringBuilder commandColumns = new StringBuilder("(");
+            foreach(var k in columns)
+            {
+                commandColumns.Append(String.Format("{0} {1},",k.Key.ToString(), k.Value));
+            }
+            commandColumns.Remove(commandColumns.Length - 1, 1);
+            commandColumns.Append(")");
+
+            var commandString = commandTable + commandColumns.ToString();
+            using (var con = Connection())
+            {
+                try
+                {
+                    log.Info(commandString);
+                    using (SqlCommand command = new SqlCommand(
+                        commandString, con))
+                    {
+                        command.ExecuteNonQuery();
+                        return true;
+                    }
+                }
+                catch
+                {
+                    log.Error(String.Format("Tabelle {0} konnte nicht erstellt werden",name));
+                    return false;
+                }
+            }
         }
 
         public bool IsConnected()
         {
-            throw new NotImplementedException();
+            return _connection.State != System.Data.ConnectionState.Closed && _connection.State != System.Data.ConnectionState.Broken;
         }
 
         public bool IsReady()
         {
-            throw new NotImplementedException();
+            return _connection.State == System.Data.ConnectionState.Open;
         }
 
-        private SqlConnection Connection()
+        public SqlConnection Connection()
         {
-            if (_connection != null)
+            if (_connection == null || _connection.State == ConnectionState.Broken || _connection.State == ConnectionState.Closed)
             {
-                return _connection;
+                _connection = new SqlConnection(@"server=localhost\SQLEXPRESS;database=Surrogate;Integrated Security=True;");
+                try
+                {
+                    _connection.Open();
+                    log.Debug("Connected to Database: " + _connection.Database);
+                }
+                catch (SqlException sqle)
+                {
+                    log.Error(sqle.Message + ": " + sqle.StackTrace);
+                }
             }
-            SqlConnection conn = new SqlConnection("user id=surrogate;" +
-                           "password=surrogate;server=serverurl;" +
-                           "Trusted_Connection=yes;" +
-                           "database=surrogate; " +
-                           "connection timeout=30");
-            conn.Open();
-            return conn;
+            
+            return _connection;
         }    
     }
 }

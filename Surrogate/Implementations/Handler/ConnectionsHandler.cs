@@ -81,6 +81,11 @@ namespace Surrogate.Implementations.Handler
             _connections[name].Connect();
         }
 
+        public IConnection GetConnection(string name)
+        {
+            return _connections[name];
+        }
+
         private void OnConnectionStatusChanged(object sender, ConnectionStatus e)
         {
             if(sender is IConnection connection)

@@ -116,6 +116,8 @@
     <Compile Include="Controller\IModule.cs" />
     <Compile Include="Controller\IVisualModule.cs" />
     <Compile Include="Implementations\Controller\MainController.cs" />
+    <Compile Include="Implementations\Controller\Module\BallFollowingModule.cs" />
+    <Compile Include="Implementations\Controller\Module\LineFollowingModule.cs" />
     <Compile Include="Implementations\Handler\ConnectionsHandler.cs" />
     <Compile Include="Implementations\Handler\ModuleHandler.cs" />
     <Compile Include="Implementations\Controller\Module\ControllerTestModule.cs" />
@@ -128,6 +130,7 @@
     <Compile Include="Model\Handler\IConnectionHandler.cs" />
     <Compile Include="Model\Handler\IProcessHandler.cs" />
     <Compile Include="Model\IConnection.cs" />
+    <Compile Include="Model\IDatabaseConnection.cs" />
     <Compile Include="Model\ModuleInfo.cs" />
     <Compile Include="Model\Handler\IModuleHandler.cs" />
     <Compile Include="Model\ModuleProperties.cs" />

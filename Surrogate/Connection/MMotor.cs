@@ -19,7 +19,6 @@ namespace Surrogate.Roboter.MMotor
     /// </summary>
     public class Motor : AbstractConnection
     {
-        protected static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private static volatile Motor _instance;
         private static object syncRoot = new Object();
         public static Motor Instance

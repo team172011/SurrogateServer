@@ -5,9 +5,13 @@
 // Autor: Wimmer, Simon-Justus Wimmer
 
 using System;
+using System.Collections.Generic;
+using System.Data;
 using Surrogate.Model;
 using Surrogate.Model.Module;
 using Surrogate.Modules;
+using Surrogate.Roboter.MDatabase;
+using Surrogate.Roboter.MInternet;
 using Surrogate.View;
 
 namespace Surrogate.Implementations
@@ -20,7 +24,15 @@ namespace Surrogate.Implementations
 
         public StartModule() : base(new ModuleProperties("Start","Startbildschirm",false,false,false,false))
         {
-            
+            Database db = (Database) SurrogateFramework.MainController.ConnectionHandler.GetConnection(FrameworkConstants.DatabaseName);
+            IDictionary<string, SqlDbType> columns = new Dictionary<string, SqlDbType>
+            {
+                { "ID", SqlDbType.Int },
+                { "Number", SqlDbType.Int },
+                { "Firstname", SqlDbType.Text  },
+                { "Name", SqlDbType.Text }
+            };
+            db.CreateTable("Test", columns);
         }
 
         public override ModuleView GetPage()

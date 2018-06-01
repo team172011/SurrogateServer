@@ -9,7 +9,13 @@
     <DockPanel>
         <StackPanel DockPanel.Dock="Left">
             <Label Content="Kontakte" FontWeight="Bold"/>
-            <ListView >
+            <ListView x:Name="lvContacts">
+                <ListViewItem>
+                    Dr. Müller
+                </ListViewItem>
+                <ListViewItem>
+                    Simon Wimmer
+                </ListViewItem>
             </ListView>
             <Button x:Name="btnStartCall" Content="Anruf Starten"/>
         </StackPanel>

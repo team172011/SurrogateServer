@@ -43,6 +43,9 @@ namespace Surrogate.Utils.Logging
             {
                 if (_notification != value)
                 {
+                    if(_notification?.Length > 1000){
+                        _notification = string.Empty;
+                    }
                     _notification = value;
                     OnChange();
                 }

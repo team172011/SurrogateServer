@@ -21,6 +21,7 @@ using Surrogate.Implementations;
 using Surrogate.Implementations.Controller;
 using Surrogate.Controller;
 using Surrogate.Roboter.MController;
+using Surrogate.Roboter.MInternet;
 
 namespace Surrogate.Main
 {
@@ -49,13 +50,16 @@ namespace Surrogate.Main
             }
             FrameworkElement.StyleProperty.OverrideMetadata(typeof(Window), new FrameworkPropertyMetadata(TryFindResource(typeof(Window))));
             MainController _controller = new MainController();
+            SurrogateFramework.AddConnection(Roboter.MMotor.Motor.Instance);
+            SurrogateFramework.AddConnection(new XBoxController());
+            SurrogateFramework.AddConnection(new Roboter.MDatabase.Database());
+            SurrogateFramework.AddConnection(new Internet());
+
             SurrogateFramework.AddModule(new StartModule());
-            
             SurrogateFramework.AddModule(new ControllerTestModule());
             SurrogateFramework.AddModule(new VideoChatModule());
 
-            SurrogateFramework.AddConnection(Roboter.MMotor.Motor.Instance);
-            SurrogateFramework.AddConnection(new XBoxController());
+
 
             IMainController controller = SurrogateFramework.MainController;
             controller.MainWindow.Show();

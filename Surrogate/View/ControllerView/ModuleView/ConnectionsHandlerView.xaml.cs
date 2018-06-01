@@ -33,7 +33,7 @@ namespace Surrogate.View.Handler
             lvConnections.ItemsSource = items;
             foreach (var connection in controller.Connections)
             {
-                items.Add(new ConnectionItem(connection.Key));
+                items.Add(new ConnectionItem(connection.Key, connection.Value.Status));
             }
             controller.ConnectionAdded += OnConnectionAdded;
             controller.ConnectionChangedStatus += OnConnectionStatusChanged;
@@ -56,7 +56,7 @@ namespace Surrogate.View.Handler
 
         private void OnConnectionAdded(object sender, ConnectionArgs e)
         {
-            items.Add(new ConnectionItem(e.Module.Name));
+            items.Add(new ConnectionItem(e.Module.Name, e.Status));
 
         }
 
@@ -74,40 +74,27 @@ namespace Surrogate.View.Handler
         }
     }
 
-    public class ConnectionItem 
+    public class ConnectionItem : INotifyPropertyChanged
     {
-        public ConnectionItem(string name)
+        public ConnectionItem(string name, ConnectionStatus currentStatus)
         {
             Name = name;
+            Status = currentStatus;
         }
 
         public string Name { get; }
-        private string _color = "Red";
-        public string Color { get => _color; }
         private ConnectionStatus _status;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public ConnectionStatus Status
         {
+            get => _status;
             set
             {
-                if (value == _status)
-                {
-                    return;
-                }
-                else
-                {
-                    switch (value)
-                    {
-                        case ConnectionStatus.Connected:
-                            _color = "Yellow";
-                            break;
-                        case ConnectionStatus.Ready:
-                            _color = "Green";
-                            break;
-                        default:
-                            _color = "Red";
-                            break;
-                    }
-                }
+                if (value == _status) return;
+                _status = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Status"));
             }
         }
     }
