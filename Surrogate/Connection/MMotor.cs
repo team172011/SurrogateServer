@@ -160,7 +160,8 @@ namespace Surrogate.Roboter.MMotor
                 port.StopBits = StopBits.One;
                 port.DataBits = 8;
                 port.Handshake = Handshake.None;
-                port.Open();
+                /*********************************************************************************************************/
+                //port.Open();
             }
             return IsReady();
         }

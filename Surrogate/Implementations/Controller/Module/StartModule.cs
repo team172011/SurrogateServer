@@ -24,15 +24,7 @@ namespace Surrogate.Implementations
 
         public StartModule() : base(new ModuleProperties("Start","Startbildschirm",false,false,false,false))
         {
-            Database db = (Database) SurrogateFramework.MainController.ConnectionHandler.GetConnection(FrameworkConstants.DatabaseName);
-            IDictionary<string, SqlDbType> columns = new Dictionary<string, SqlDbType>
-            {
-                { "ID", SqlDbType.Int },
-                { "Number", SqlDbType.Int },
-                { "Firstname", SqlDbType.Text  },
-                { "Name", SqlDbType.Text }
-            };
-            db.CreateTable("Test", columns);
+
         }
 
         public override ModuleView GetPage()

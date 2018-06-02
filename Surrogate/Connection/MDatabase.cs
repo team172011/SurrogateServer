@@ -45,7 +45,72 @@ namespace Surrogate.Roboter.MDatabase
             return connected;
         }
 
-        public bool CreateTable(string name, IDictionary<string, SqlDbType> columns)
+        /// <summary>
+        /// Executes the passed sql command that returns no query (UPDATE, INSERT, or DELETE statements)
+        /// Only for internal usages, sql injection possible
+        /// </summary>
+        /// <param name="command">the sql command as string</param>
+        /// <returns></returns>
+        public bool ExecuteNonQuery(string command)
+        {
+            SqlCommand sqlCommand = new SqlCommand(command, Connection());
+            try
+            {
+                sqlCommand.ExecuteNonQuery();
+                return true;
+            } catch(Exception e)
+            {
+                log.Error("Fehler beim ausfuehren des Sql Statements (no query):" + command + "\n" + e.Message);
+                return false;
+            }
+        }
+
+        public SqlDataReader ExecuteQuery(string command)
+        {
+            SqlCommand sqlCommand = new SqlCommand(command, Connection());
+            return sqlCommand.ExecuteReader();
+        }
+
+
+        public bool InsertIntoTable(string tableName, IList<string> tableColumns, IDictionary<string, SqlDbType> columns)
+        {
+            StringBuilder para = new StringBuilder();
+            StringBuilder ats = new StringBuilder();
+            IList<string> values = new List<string>();
+            int i = 1;
+            foreach (var col in columns)
+            {
+                para.Append(col.Key + ",");
+                ats.Append("@param" + i++);
+            }
+            var command = String.Format("INSERT INTO {0}({1}) VALUES({2})", tableName, para.ToString(), ats.ToString());
+            SqlCommand sqlCommand = new SqlCommand(command, Connection());
+            int j = 1;
+            foreach (var val in values)
+            {
+                sqlCommand.Parameters.Add("@param" + j++, columns[val]).Value = val;
+            }
+            try
+            {
+
+                sqlCommand.CommandType = CommandType.Text;
+                sqlCommand.ExecuteNonQuery();
+                return true;
+            } catch (Exception e)
+            {
+                log.Error("Fehler beim Einfuegen eines Datensatzes in " + tableName + ": Query: " + sqlCommand.ToString() + "\n"+ e.Message);
+                return false;
+            }
+
+        }
+
+        /// <summary>
+        /// Create a new table with specified table columns and corresponding types
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="columns"></param>
+        /// <returns></returns>
+        public bool CreateTableIfNotExists(string name, IDictionary<string, SqlDbType> columns)
         {
             var commandTable = String.Format("CREATE TABLE {0} ",name);
             StringBuilder commandColumns = new StringBuilder("(");
@@ -71,7 +136,7 @@ namespace Surrogate.Roboter.MDatabase
                 }
                 catch
                 {
-                    log.Error(String.Format("Tabelle {0} konnte nicht erstellt werden",name));
+                    log.Debug(String.Format("Tabelle {0} konnte nicht erstellt werden. Existiert bereits eine Tabelle: ",name));
                     return false;
                 }
             }
@@ -87,7 +152,7 @@ namespace Surrogate.Roboter.MDatabase
             return _connection.State == System.Data.ConnectionState.Open;
         }
 
-        public SqlConnection Connection()
+        private SqlConnection Connection()
         {
             if (_connection == null || _connection.State == ConnectionState.Broken || _connection.State == ConnectionState.Closed)
             {

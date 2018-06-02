@@ -10,12 +10,39 @@
         <StackPanel DockPanel.Dock="Left">
             <Label Content="Kontakte" FontWeight="Bold"/>
             <ListView x:Name="lvContacts">
-                <ListViewItem>
-                    Dr. Müller
-                </ListViewItem>
-                <ListViewItem>
-                    Simon Wimmer
-                </ListViewItem>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListViewItem}">
+                        <EventSetter Event="MouseDoubleClick" Handler="ListViewItem_MouseDoubleClick" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <StackPanel  Width="150" MaxHeight="50" Grid.Column="0" Grid.Row="0" Orientation="Horizontal" >
+                                <StackPanel.Resources>
+                                    <Style TargetType="StackPanel">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsOnline}" Value="True">
+                                                <Setter Property="Background" Value="Green"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsOnline}" Value="False">
+                                                <Setter Property="Background" Value="Red"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </StackPanel.Resources>
+                                <TextBlock VerticalAlignment="Center" Text="{Binding FirstName}" FontWeight="ExtraBlack" TextWrapping="Wrap" Padding="10"/>
+                            </StackPanel>
+                        </Grid>
+
+                    </DataTemplate>
+                </ListView.ItemTemplate>
             </ListView>
             <Button x:Name="btnStartCall" Content="Anruf Starten"/>
         </StackPanel>
@@ -28,7 +55,6 @@
             <OpenTok:VideoRenderer x:Name="SubscriberVideo" HorizontalAlignment="Center" Height="480" VerticalAlignment="Bottom" Width="640">
             </OpenTok:VideoRenderer>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Content="Anrufen"></Button>
                 <Button Content="Auflegen"></Button>
             </StackPanel>
         </StackPanel>

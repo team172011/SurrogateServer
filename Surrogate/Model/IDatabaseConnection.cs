@@ -10,6 +10,6 @@ namespace Surrogate.Model
     public interface IDatabaseConnection
     {
 
-        bool CreateTable(string name, IDictionary<string, SqlDbType> columns);
+        bool CreateTableIfNotExists(string name, IDictionary<string, SqlDbType> columns);
     }
 }

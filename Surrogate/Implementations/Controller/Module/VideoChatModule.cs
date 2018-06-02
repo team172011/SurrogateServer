@@ -23,6 +23,8 @@ namespace Surrogate.Implementations
     using Surrogate.Model.Module;
     using Surrogate.Model;
     using Surrogate.Roboter.MInternet;
+    using Surrogate.Roboter.MDatabase;
+    using System.Data;
 
     /// <summary>
     /// Module for the video chat application using the TopBox libraries
@@ -33,13 +35,11 @@ namespace Surrogate.Implementations
         private Publisher _publisher;
         private VideoChatView _view;
 
-        private volatile bool _isRunning = false;
-
         private ObservableCollection<VCKontakt> _contacts;
 
         public ObservableCollection<VCKontakt> KontaktsList { get => _contacts; }
-        public bool IsRunning { get => _isRunning;
-        }
+
+
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -47,6 +47,20 @@ namespace Surrogate.Implementations
         public VideoChatModule(VideoChatProperties modulProperties) : base(modulProperties)
         {
             _view = new VideoChatView(this);
+            Database db = (Database)SurrogateFramework.MainController.ConnectionHandler.GetConnection(FrameworkConstants.DatabaseName);
+            IDictionary<string, SqlDbType> columns = new Dictionary<string, SqlDbType>
+            {
+                { "ID", SqlDbType.Int },
+                { "username", SqlDbType.Text},
+                { "Firstname", SqlDbType.Text},
+                { "Name", SqlDbType.Text }
+            };
+            if(db.CreateTableIfNotExists(VideoChatProperties.TableName, columns))
+            {
+                // Add example Data
+                db.ExecuteNonQuery(String.Format("INSERT INTO {0} (ID, username, Firstname, Name) VALUES(1,'simonjw','Simon','Wimmer')", VideoChatProperties.TableName));
+                db.ExecuteNonQuery(String.Format("INSERT INTO {0} (ID, username, Firstname, Name) VALUES(2,'drmueller','Dr. Hans','Mueller')", VideoChatProperties.TableName));
+            }
         }
 
         /// <summary>
@@ -65,9 +79,9 @@ namespace Surrogate.Implementations
 
         public override void Start(VideoChatInfo info)
         {
-            _isRunning = true;
             ///init the Session field with informations from VideoChatProperties
             _session = new Session(Context.Instance, Properties.ApiKey, Properties.SessionID);
+            _publisher = new Publisher(Context.Instance, renderer: _view.PublisherVideo);
 
             _session.Connected += Session_Connected;
             _session.Disconnected += Session_Disconnected;
@@ -75,29 +89,18 @@ namespace Surrogate.Implementations
             _session.StreamReceived += Session_StreamReceived;
 
             _session.Connect(Properties.Token);
-            _publisher = new Publisher(Context.Instance, renderer: _view.PublisherVideo);
-
-
+            
         }
 
         public override void Stop()
         {
-            if(_session != null)
-            {
-                _session.Disconnect();
-            }
-
-            if (_publisher != null)
-            {
-                _publisher.Dispose();
-            }
-            
-            _isRunning = false;
+            _session?.Disconnect();
+            _publisher?.Dispose();
         }
 
         private void Session_Connected(object sender, EventArgs e)
         {
-            log.Debug("Connected to session.");
+            log.Debug(String.Format("Connected to session with {0} {1} {0}",Properties.ApiKey, Properties.SessionID, Properties.Token));
             _session.Publish(_publisher);
         }
 
@@ -113,7 +116,8 @@ namespace Surrogate.Implementations
 
         private void Session_StreamReceived(object sender, Session.StreamEventArgs e)
         {
-            log.Debug("Stream received in session.");
+            
+            log.Debug("Stream received in session. "+e.Stream.Name);
             Subscriber subscriber = new Subscriber(Context.Instance, e.Stream, _view.SubscriberVideo);
             _session.Subscribe(subscriber);
         }
@@ -129,6 +133,8 @@ namespace Surrogate.Implementations
         }
     }
 
+
+
     public class VideoChatProperties : ModuleProperties
     {
         private readonly string _API_KEY;
@@ -139,6 +145,9 @@ namespace Surrogate.Implementations
         public string ApiKey { get => _API_KEY; }
         public string SessionID { get => _SESSION_ID; }
         public string Token { get => _TOKEN; }
+
+        public static readonly string _tableName = "VideoChatContacts";
+        public static string TableName { get => _tableName; }
 
         public VideoChatProperties() : base("Video Chat", "Modul zum kommunizieren mittels Sprach- und Videochat", false, true, false, false, true, true)
         {

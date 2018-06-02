@@ -5,38 +5,29 @@
 // Autor: Wimmer, Simon-Justus Wimmer
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Surrogate.View
 {
     using Surrogate.Implementations;
     using Surrogate.Modules;
+    using System.Collections.ObjectModel;
+    using System.ComponentModel;
+
     /// <summary>
     /// Interaktionslogik für VideoChatView.xaml
     /// </summary>
     public partial class VideoChatView : ModuleView
     {
         private readonly VideoChatModule _parentModule;
-        
+        private ObservableCollection<VideoChatItem> contacts = new ObservableCollection<VideoChatItem>();
 
         public VideoChatView(VideoChatModule parentModule)
         {
             _parentModule = parentModule;
             InitializeComponent();
             btnStartCall.Click += _handleCall;
-
-
+            lvContacts.ItemsSource = contacts;
         }
 
         private void _handleCall(Object sender, RoutedEventArgs e)
@@ -44,5 +35,35 @@ namespace Surrogate.View
             _parentModule.Start(new VideoChatInfo()); // TODO add contact details in VideoChatInfo
         }
 
+        private void ListViewItem_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+
+        }
+    }
+
+    class VideoChatItem : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private readonly string _firstName;
+        private readonly string _lastname;
+        private readonly string _userName;
+        private bool _isOnline;
+
+        public bool IsOnline { get => _isOnline;
+            set {
+                if(value=_isOnline) return;
+                _isOnline = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsOnline"));
+            } }
+
+        public string UserName => _userName;
+        public string Lastname => _lastname;
+        public string FirstName => _firstName;
+
+        public VideoChatItem(string firstname, string lastname, string userName, bool isOnline)
+        {
+            _firstName = firstname; _lastname = lastname; _userName = userName; _isOnline = isOnline;
+        }
     }
 }
