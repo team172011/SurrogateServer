@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Windows.Controls;
 using Surrogate.Model;
 using Surrogate.Model.Module;
 using Surrogate.Modules;
@@ -18,7 +19,7 @@ namespace Surrogate.Implementations
 {
 
 
-    class StartModule : VisualModule<ModuleProperties, ModuleInfo>
+    public class StartModule : VisualModule<ModuleProperties, ModuleInfo>
     {
         private readonly StartModuleView _view = new StartModuleView();
 
@@ -27,7 +28,7 @@ namespace Surrogate.Implementations
 
         }
 
-        public override ModuleView GetPage()
+        public override UserControl GetPage()
         {
             return _view;
         }

@@ -9,6 +9,7 @@ using Surrogate.Model;
 using Surrogate.Model.Module;
 using Surrogate.View;
 using System;
+using System.Windows.Controls;
 
 namespace Surrogate.Modules
 {
@@ -59,7 +60,7 @@ namespace Surrogate.Modules
         public abstract void Start(I info);
 
 
-        public abstract ModuleView GetPage();
+        public abstract UserControl GetPage();
 
         public string GetDescription()
         {

@@ -13,21 +13,78 @@ namespace Surrogate.Implementations.FaceDetection
     using Surrogate.Modules;
     using Surrogate.View;
 
+    using Emgu.CV.Structure;
+    using Emgu.CV;
+    using System.Windows.Threading;
+    using System;
+    using System.Drawing;
+
+    using Surrogate.Utils.UI;
+
     public class FaceDetectionModule : VisualModule<FaceDetectionProperties, FaceDetectionInfo>
     {
+        private readonly FaceDetectionView _view;
+        
+        private readonly CascadeClassifier _eyeCascade;
+        private readonly CascadeClassifier _faceCascade;
+
+        private DispatcherTimer _timer;
+
+        private System.Windows.Controls.Image _currentImage;
+        private VideoCapture _currentVideoCapture;
+
+
         public FaceDetectionModule() : base(new FaceDetectionProperties())
         {
-                
+            _view = new FaceDetectionView(this);
+            _eyeCascade = new CascadeClassifier(@"C:\Users\ITM1\source\repos\Surrogate\Surrogate\resources\haarcascade_eye.xml");
+            _faceCascade = new CascadeClassifier(@"C:\Users\ITM1\source\repos\Surrogate\Surrogate\resources\haarcascade_frontalface_default.xml");
+
+
         }
 
-        public override ModuleView GetPage()
+        private void StartSearchAndMark(object sender, EventArgs e)
         {
-            throw new System.NotImplementedException();
+            SearchAndMark(_currentVideoCapture, _currentImage);
+        }
+
+        /// <summary>
+        /// This function search for a face (and eyes) in frames from the Emgu.Cv.VideoCapture video stream and
+        /// marks them with red and yellow lines
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SearchAndMark(VideoCapture capture, System.Windows.Controls.Image imView)
+        {
+            using (var imageFrame = capture.QueryFrame().ToImage<Bgr, Byte>())
+            {
+                if (imageFrame != null)
+                {
+                    var grayframe = imageFrame.Convert<Gray, byte>();
+                    var faces = _faceCascade.DetectMultiScale(grayframe, 1.1, 10, System.Drawing.Size.Empty); 
+                    foreach (var face in faces)
+                    {
+
+                        var eyes = _eyeCascade.DetectMultiScale(grayframe, 1.1, 10, System.Drawing.Size.Empty); // for every face, search for eyes
+                        imageFrame.Draw(face, new Bgr(Color.BurlyWood), 3);
+                        foreach (var eye in eyes) // draw eyes
+                        {
+                            imageFrame.Draw(eye, new Bgr(Color.Red), 3);
+                        }
+                    }
+                }
+                imView.Source = BitmapSourceConvert.ToBitmapSource(imageFrame);
+            }
+        }
+
+        public override UserControl GetPage()
+        {
+            return _view;
         }
 
         public override void OnDisselected()
         {
-            
+            Stop();
         }
 
         public override void OnSelected()
@@ -37,12 +94,20 @@ namespace Surrogate.Implementations.FaceDetection
 
         public override void Start(FaceDetectionInfo info)
         {
-            throw new System.NotImplementedException();
+            _currentImage = info.Image;
+            _currentVideoCapture = new VideoCapture();
+            _timer = new DispatcherTimer();
+            _timer.Tick +=  StartSearchAndMark;
+            _timer.Interval = new TimeSpan(0, 0, 0, 0, 10);
+            _timer.Start();
+            
         }
 
         public override void Stop()
         {
-            throw new System.NotImplementedException();
+            _timer?.Stop();
+            if(_currentImage != null) _currentImage.Source = null;
+            _currentVideoCapture?.Dispose();
         }
 
         public override string ToString()
@@ -61,5 +126,12 @@ namespace Surrogate.Implementations.FaceDetection
     public class FaceDetectionInfo: ModuleInfo
     {
 
+        private readonly System.Windows.Controls.Image _image;
+        public System.Windows.Controls.Image Image => _image;
+
+        public FaceDetectionInfo(System.Windows.Controls.Image image)
+        {
+            _image = image;
+        }
     }
 }

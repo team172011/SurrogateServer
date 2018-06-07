@@ -22,7 +22,7 @@ namespace Surrogate.View.Handler
     /// Interaktionslogik für Window1.xaml
     /// <see cref="Handler"/>
     /// </summary>
-    public partial class ConnectionsHandlerView : ModuleView
+    public partial class ConnectionsHandlerView : ModuleViewBase
     {
         private readonly ObservableCollection<ConnectionItem> items = new ObservableCollection<ConnectionItem>();
         public ObservableCollection<ConnectionItem> Items { get => items; }

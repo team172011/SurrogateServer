@@ -298,6 +298,20 @@ namespace Surrogate.Roboter.MMotor
         {
             return Connect(0);
         }
+
+        public override bool Disconnect()
+        {
+            try
+            {
+                port?.Close();
+                return true;
+            } catch(System.IO.IOException ioe)
+            {
+                log.Error("Verbindung zum Motor konnte nicht getrennt werden: " + ioe.Message);
+                return false;
+            }
+            
+        }
     }
 
     /// <summary>

@@ -25,7 +25,7 @@ namespace Surrogate.View
     /// <summary>
     /// Interaktionslogik für StartModuleView.xaml
     /// </summary>
-    public partial class StartModuleView : ModuleView
+    public partial class StartModuleView : ModuleViewBase
     {
         public StartModuleView():base(null)
         {

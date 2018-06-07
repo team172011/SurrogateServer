@@ -22,6 +22,8 @@ using Surrogate.Implementations.Controller;
 using Surrogate.Controller;
 using Surrogate.Roboter.MController;
 using Surrogate.Roboter.MInternet;
+using Surrogate.Implementations.Controller.Module;
+using Surrogate.Implementations.FaceDetection;
 
 namespace Surrogate.Main
 {
@@ -58,6 +60,8 @@ namespace Surrogate.Main
             SurrogateFramework.AddModule(new StartModule());
             SurrogateFramework.AddModule(new ControllerTestModule());
             SurrogateFramework.AddModule(new VideoChatModule());
+            SurrogateFramework.AddModule(new BallFollowingModule());
+            SurrogateFramework.AddModule(new FaceDetectionModule());
 
 
 

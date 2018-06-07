@@ -44,7 +44,7 @@ namespace Surrogate.Implementations.Handler
             _view = new ConnectionsHandlerView(this);
         }
 
-        public override ModuleView GetPage()
+        public override UserControl GetPage()
         {
             return _view;
         }

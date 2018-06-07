@@ -128,5 +128,10 @@ namespace Surrogate.Roboter.MInternet
                 return false;
             }
         }
+
+        public override bool Disconnect()
+        {
+            return false; // uneccesary to disconect from internet
+        }
     }
 }

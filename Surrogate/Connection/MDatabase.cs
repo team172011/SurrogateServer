@@ -45,6 +45,20 @@ namespace Surrogate.Roboter.MDatabase
             return connected;
         }
 
+        public override bool Disconnect()
+        {
+            try
+            {
+                Connection().Close();
+                return true;
+            } catch(SqlException sqle)
+            {
+                log.Error("Verbindung zur Datenbank konnte nicht geschlossen werden: " + sqle.Message);
+                return false;
+            }
+            
+        }
+
         /// <summary>
         /// Executes the passed sql command that returns no query (UPDATE, INSERT, or DELETE statements)
         /// Only for internal usages, sql injection possible

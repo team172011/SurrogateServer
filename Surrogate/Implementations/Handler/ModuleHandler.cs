@@ -25,9 +25,11 @@ namespace Surrogate.Implementations.Handler
             return key;
         }
 
-        public ModuleView GetView(int i)
+        public UserControl SelectView<C>(int i) 
         {
-            return ((IVisualModule)modules[i]).GetPage();
+            IVisualModule module = ((IVisualModule)modules[i]);
+            module.OnSelected();
+            return module.GetPage();
         }
 
         public void RemoveModule(IModule module)
@@ -36,8 +38,9 @@ namespace Surrogate.Implementations.Handler
             ModuleRemoved?.Invoke(this, new ModuleArgs(module, module.GetHashCode()));
         }
 
-        public Control GetView(IVisualModule module)
+        public Control SelectView(IVisualModule module)
         {
+            module.OnSelected();
             return module.GetPage(); // TODO the hash value approach is too simple...
         }
 

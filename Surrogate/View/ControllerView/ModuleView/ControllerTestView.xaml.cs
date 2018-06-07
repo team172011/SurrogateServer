@@ -12,6 +12,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using Surrogate.Implementations;
+using Surrogate.Implementations.Controller.Module;
+
 using Surrogate.Modules;
 using Surrogate.Roboter.MController;
 using Surrogate.Utils.Event;
@@ -21,7 +23,7 @@ namespace Surrogate.View
     /// <summary>
     /// View Component of the ControllerTestModule
     /// </summary>
-    public partial class ControllerTestView : ModuleView
+    public partial class ControllerTestView: ModuleViewBase
     {
 
         private ControllerTestModule parentModule;

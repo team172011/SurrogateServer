@@ -13,31 +13,55 @@ namespace Surrogate.View
     using Surrogate.Modules;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
+    using System.Windows.Controls;
 
     /// <summary>
     /// Interaktionslogik für VideoChatView.xaml
     /// </summary>
-    public partial class VideoChatView : ModuleView
+    public partial class VideoChatModuleView : ModuleViewBase
     {
         private readonly VideoChatModule _parentModule;
         private ObservableCollection<VideoChatItem> contacts = new ObservableCollection<VideoChatItem>();
 
-        public VideoChatView(VideoChatModule parentModule)
+        public VideoChatModuleView(VideoChatModule parentModule)
         {
             _parentModule = parentModule;
             InitializeComponent();
-            btnStartCall.Click += _handleCall;
+            btnStartCall.Click += HandleCall;
             lvContacts.ItemsSource = contacts;
+
+            _parentModule.ContactAddedHandler += FillList;
+            _parentModule.ContactStatusChangedHandler += UpdateList;
+            _parentModule.InvokeContactData();
         }
 
-        private void _handleCall(Object sender, RoutedEventArgs e)
+        private void UpdateList(object sender, VideoChatContact e)
         {
+            foreach(var con in contacts)
+            {
+                if (con.UserName.Equals(e.Username))
+                {
+                    con.IsOnline = e.IsOnline;
+                }
+            }
+        }
+
+        private void FillList(object sender, VideoChatContact e)
+        {
+            contacts.Add(new VideoChatItem(e));
+        }
+
+        private void HandleCall(Object sender, RoutedEventArgs e)
+        {
+            var item = lvContacts.SelectedItem;
             _parentModule.Start(new VideoChatInfo()); // TODO add contact details in VideoChatInfo
         }
 
         private void ListViewItem_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-
+            var item = sender as ListViewItem;
+            var vcItem = item.Content as VideoChatItem;
+            _parentModule.ShowStream(vcItem.UserName);
         }
     }
 
@@ -52,7 +76,7 @@ namespace Surrogate.View
 
         public bool IsOnline { get => _isOnline;
             set {
-                if(value=_isOnline) return;
+                if(value == _isOnline) return;
                 _isOnline = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsOnline"));
             } }
@@ -61,9 +85,14 @@ namespace Surrogate.View
         public string Lastname => _lastname;
         public string FirstName => _firstName;
 
+        public VideoChatItem(VideoChatContact contact, bool isOnline = false) : this(contact.Firstname, contact.Name, contact.Username, isOnline) { 
+        
+        }
+
         public VideoChatItem(string firstname, string lastname, string userName, bool isOnline)
         {
             _firstName = firstname; _lastname = lastname; _userName = userName; _isOnline = isOnline;
+                
         }
     }
 }

@@ -7,7 +7,8 @@
         Title="MainWindow" ResizeMode="NoResize" WindowState="Maximized" Topmost="False"
         xmlns:vwl="clr-namespace:Surrogate.View.Logging"
         xmlns:ccs="clr-namespace:Surrogate.View.Handler"
-        xmlns:base="clr-namespace:Surrogate.View">
+        xmlns:base="clr-namespace:Surrogate.View"
+               Closing="MainView_Closing">
     <DockPanel>
         <!---Sidebar on the left with header, modules list and processes list-->
         <StackPanel DockPanel.Dock="Left" Orientation="Vertical">

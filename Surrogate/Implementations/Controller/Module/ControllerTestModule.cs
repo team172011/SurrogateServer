@@ -6,7 +6,7 @@
 
 
 
-namespace Surrogate.Implementations
+namespace Surrogate.Implementations.Controller.Module
 {
     using System;
     using System.Threading;
@@ -95,7 +95,7 @@ namespace Surrogate.Implementations
             IsRunningChanged?.Invoke(this, new BooleanEventArgs(isRunning));
         }
 
-        public override ModuleView GetPage()
+        public override UserControl GetPage()
         {
             ControllerTestView view = new ControllerTestView(this);
             FireChangeEvents();

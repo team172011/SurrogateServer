@@ -18,7 +18,7 @@ namespace Surrogat.Handler
         void RemoveModule(IModule module);
         IList<IModule> GetModules();
 
-        Control GetView(IVisualModule module);
+        Control SelectView(IVisualModule module);
     }
 
 

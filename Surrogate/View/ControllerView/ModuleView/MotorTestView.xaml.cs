@@ -20,58 +20,61 @@ namespace Surrogate.View
     /// <summary>
     /// View Component of the ControllerTestModule
     /// </summary>
-    public partial class MotorTestView : ModuleView
+    public partial class MotorTestView : ModuleViewBase
     {
 
-        // referenc to the module
-        private MotorTestModule parentModule;
-
-        public MotorTestView(MotorTestModule parentModule)
+        public MotorTestView(MotorTestModule controller):base(controller)
         {
-            this.parentModule = parentModule;
             InitializeComponent();
         }
 
         public void Forwards(object sender, RoutedEventArgs e)
         {
             MotorTestInfo info = new MotorTestInfo(MotorTestInfo.Direction.Forwards);
-            parentModule.Start(info);
+            var controller = Controller as MotorTestModule;
+            controller.Start(info);
         }
 
         public void Backwards(object sender, RoutedEventArgs e)
         {
             MotorTestInfo info = new MotorTestInfo(MotorTestInfo.Direction.Backwards);
-            parentModule.Start(info);
+            var controller = Controller as MotorTestModule;
+            controller.Start(info);
         }
 
         public void Left(object sender, RoutedEventArgs e)
         {
             MotorTestInfo info = new MotorTestInfo(MotorTestInfo.Direction.Left);
-            parentModule.Start(info);
+            var controller = Controller as MotorTestModule;
+            controller.Start(info);
         }
 
         public void Right(object sender, RoutedEventArgs e)
         {
             MotorTestInfo info = new MotorTestInfo(MotorTestInfo.Direction.Right);
-            parentModule.Start(info);
+            var controller = Controller as MotorTestModule;
+            controller.Start(info);
         }
 
         public void OnlyLeft(object sender, RoutedEventArgs e)
         {
             MotorTestInfo info = new MotorTestInfo(MotorTestInfo.Direction.OnlyLeft);
-            parentModule.Start(info);
+            var controller = Controller as MotorTestModule;
+            controller.Start(info);
         }
 
         public void OnlyRight(object sender, RoutedEventArgs e)
         {
             MotorTestInfo info = new MotorTestInfo(MotorTestInfo.Direction.OnlyRight);
-            parentModule.Start(info);
+            var controller = Controller as MotorTestModule;
+            controller.Start(info);
         }
 
         public void StopTest(object sender, RoutedEventArgs e)
         {
             MotorTestInfo info = new MotorTestInfo(MotorTestInfo.Direction.Stop);
-            parentModule.Start(info);
+            var controller = Controller as MotorTestModule;
+            controller.Start(info);
         }
     }
 }

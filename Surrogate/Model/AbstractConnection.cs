@@ -13,12 +13,25 @@ namespace Surrogate.Model
         /// </summary>
         protected static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
+        /// <summary>
+        /// EventHandler to manage events regarding changed connections
+        /// Each time the Status <see cref="ConnectionStatus"/> of the connection changes, this handler will be invoked
+        /// </summary>
         public event EventHandler<ConnectionStatus> ConnectionStatusHandler;
         public abstract string Name { get; }
         protected ConnectionStatus _status;
-        public virtual ConnectionStatus Status { get => _status; set { _status = value; ConnectionStatusHandler?.Invoke(this, value); } }
+        public virtual ConnectionStatus Status { get => _status;
+            set {
+                if (value == _status) return;
+                _status = value;
+                ConnectionStatusHandler?.Invoke(this, value);
+            }
+        }
 
         public abstract bool Connect();
+
+        public abstract bool Disconnect();
+
         public AbstractConnection()
         {
             _status = ConnectionStatus.Disconnected;

@@ -5,11 +5,8 @@
 // Autor: Wimmer, Simon-Justus Wimmer
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 using SharpDX.XInput;
 using Surrogate.Implementations;
 using Surrogate.Model;
@@ -21,8 +18,8 @@ namespace Surrogate.Roboter.MController
     /// </summary>
     class XBoxController : AbstractConnection
     {
-        SharpDX.XInput.Controller controller = new SharpDX.XInput.Controller(UserIndex.One);
-        Gamepad gamepad;
+        private readonly SharpDX.XInput.Controller controller = new SharpDX.XInput.Controller(UserIndex.One);
+        private Gamepad gamepad;
         public bool Connected { get => controller.IsConnected; }
 
         public override string Name => FrameworkConstants.ControllerName;
@@ -31,6 +28,24 @@ namespace Surrogate.Roboter.MController
         public Point leftThumb, rightThumb = new Point(0, 0);
         public float leftTrigger, rightTrigger;
         public GamepadButtonFlags buttons;
+        public volatile bool search = true;
+
+        /// <summary>
+        /// Creates a Surrogate wrapper instance to connect to an xbox 
+        /// </summary>
+        public XBoxController()
+        {
+            DispatcherTimer searcher = new DispatcherTimer();
+            searcher.Tick += Connect;
+            searcher.Interval = new TimeSpan(0, 0, 0, 1);
+            searcher.Start();
+        }
+        
+
+        /// <summary>
+        /// Function search for a Controller. This function is not really "searching" but checking if the SharpDX.Input
+        /// api has found a controller and set the Status property.
+        /// </summary>
 
 
         // Call this method to update all class values
@@ -57,21 +72,30 @@ namespace Surrogate.Roboter.MController
 
         public override bool Connect()
         {
-            bool connected = false;
-            if(controller != null)
+            if (controller.IsConnected)
             {
-                connected = controller.IsConnected;
-                if (connected)
-                {
-                    Status = ConnectionStatus.Ready;
-                }
+                Status = ConnectionStatus.Ready;
+                return true;
             }
 
-            else
-            {
-                Status = ConnectionStatus.Disconnected;
-            }
-            return connected;
+            Status = ConnectionStatus.Disconnected;
+            return false;
+        }
+
+        /// <summary>
+        /// Connect function for a event handler
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <returns></returns>
+        public void Connect(object sender, EventArgs e)
+        {
+            Connect();
+        }
+
+        public override bool Disconnect()
+        {
+            return false;
         }
     }
 }

@@ -16,6 +16,7 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -28,7 +29,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -60,6 +60,9 @@
     <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Emgu.CV.World">
+      <HintPath>..\..\..\..\..\..\Emgu\emgucv-windesktop 3.4.1.2976\bin\Emgu.CV.World.dll</HintPath>
+    </Reference>
     <Reference Include="JWT, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\JWT.2.3.2\lib\net45\JWT.dll</HintPath>
     </Reference>
@@ -83,6 +86,7 @@
     <Reference Include="System.Data">
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Expression.Blend.Sdk.1.0.2\lib\net45\System.Windows.Interactivity.dll</HintPath>
@@ -141,6 +145,12 @@
     <Compile Include="Utils\ConsoleManager.cs" />
     <Compile Include="Utils\Event.cs" />
     <Compile Include="Utils\UI.cs" />
+    <Compile Include="View\ControllerView\ModuleView\LineFollowingModuleView.xaml.cs">
+      <DependentUpon>LineFollowingModuleView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ControllerView\ModuleView\FaceDetectionView.xaml.cs">
+      <DependentUpon>FaceDetectionView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\View.cs" />
     <Compile Include="View\ControllerView\MainControllerView.xaml.cs">
       <DependentUpon>MainControllerView.xaml</DependentUpon>
@@ -157,8 +167,8 @@
     <Compile Include="View\ControllerView\ModuleView\StartModuleView.xaml.cs">
       <DependentUpon>StartModuleView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\ControllerView\ModuleView\VideoChatView.xaml.cs">
-      <DependentUpon>VideoChatView.xaml</DependentUpon>
+    <Compile Include="View\ControllerView\ModuleView\VideoChatModuleView.xaml.cs">
+      <DependentUpon>VideoChatModuleView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\ControllerView\ModuleView\ConnectionsHandlerView.xaml.cs">
       <DependentUpon>ConnectionsHandlerView.xaml</DependentUpon>
@@ -176,11 +186,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\ControllerView\ModuleView\LineFollowingModuleView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\ControllerView\ModuleView\MotorTestView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="View\ControllerView\ModuleView\ControllerTestView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ControllerView\ModuleView\FaceDetectionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -192,7 +210,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\ControllerView\ModuleView\VideoChatView.xaml">
+    <Page Include="View\ControllerView\ModuleView\VideoChatModuleView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -250,6 +268,14 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resources\haarcascade_eye.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="resources\haarcascade_frontalface_default.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\OpenTok.Client.2.13.0\build\OpenTok.Client.targets" Condition="Exists('..\packages\OpenTok.Client.2.13.0\build\OpenTok.Client.targets')" />

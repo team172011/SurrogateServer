@@ -10,6 +10,7 @@ using Surrogate.View;
 using Surrogate.Roboter.MMotor;
 using Surrogate.Model.Module;
 using Surrogate.Model;
+using System.Windows.Controls;
 
 namespace Surrogate.Implementations
 {
@@ -23,7 +24,7 @@ namespace Surrogate.Implementations
         {
         }
 
-        public override ModuleView GetPage()
+        public override UserControl GetPage()
         {
             return new MotorTestView(this);
         }

@@ -1,33 +1,52 @@
 ﻿using Surrogate.Controller;
 using Surrogate.Implementations;
+using Surrogate.Implementations.Controller;
 using Surrogate.Modules;
 using System.Windows;
 using System.Windows.Controls;
 
 namespace Surrogate.View
 {
-    public abstract class MainView : Window, IView
+    public abstract class MainView : Window, IView<MainController>
     {
 
-        protected readonly AbstractController _controller;
-        public AbstractController Controller { get => _controller; }
+        protected readonly MainController _controller;
+        public MainController Controller { get => _controller; }
         public virtual log4net.ILog Logger { get => _controller.Logger; }
 
-        public MainView(AbstractController controller)
+        MainController IView<MainController>.Controller => SurrogateFramework.MainController;
+
+        public MainView(MainController controller)
         {
             _controller = controller;
         }
 
-        public MainView() => _controller = SurrogateFramework.MainController;
     }
 
-    public abstract class ModuleView : UserControl, IView
+    /// <summary>
+    /// WPF/XAML Wrapper. Normally the XYView.cs should extend ModuleView<XYModule>
+    /// But partial classes do not support generic class arguments
+    /// </summary>
+    public class ModuleViewBase : ModuleView<AbstractController>
     {
-        private readonly AbstractController _controller;
-        public AbstractController Controller { get => _controller; }
+        public ModuleViewBase()
+        {
+
+        }
+
+        public ModuleViewBase(AbstractController controller=null) : base(controller)
+        {
+
+        }
+    }
+
+    public abstract class ModuleView<C> : UserControl, IView<C> where C : AbstractController 
+    {
+        private readonly C _controller;
+        public C Controller { get => _controller; }
         public virtual log4net.ILog Logger { get => _controller.Logger; }
 
-        public ModuleView(AbstractController controller =null)
+        public ModuleView(C controller =null)
         {
             _controller = controller;
         }
@@ -36,8 +55,8 @@ namespace Surrogate.View
 
     }
 
-    public interface IView
+    public interface IView<C> where C : AbstractController
     {
-        AbstractController Controller { get; }
+        C Controller { get; }
     }
 }

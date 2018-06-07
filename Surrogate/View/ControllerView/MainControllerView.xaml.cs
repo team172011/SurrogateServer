@@ -54,11 +54,17 @@ namespace Surrogate.View.ControllerView
         /// <param name="e"></param>
         private void ListViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            
+            _selectedModule?.OnDisselected();
             var item = sender as ListViewItem;
             IVisualModule module = item.Content as IVisualModule;
             spModule.Children.Clear();
-            spModule.Children.Add(((IMainController)_controller).ModulHandler.GetView(module));
+            _selectedModule = module;
+            spModule.Children.Add(((IMainController)_controller).ModulHandler.SelectView(module));
+        }
+
+        private void MainView_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            Environment.Exit(0);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿<base:ModuleView x:Class="Surrogate.View.MotorTestView"
+﻿<base:ModuleViewBase x:Class="Surrogate.View.MotorTestView"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:base="clr-namespace:Surrogate.View">
@@ -20,4 +20,4 @@
             <Button Width="72"  Click="StopTest" Content="Anhalten"/>
         </DockPanel>
     </StackPanel>
-</base:ModuleView>
+</base:ModuleViewBase>

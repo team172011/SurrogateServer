@@ -1,7 +1,8 @@
-﻿<base:ModuleView x:Class="Surrogate.View.ControllerTestView"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:base="clr-namespace:Surrogate.View">
+﻿<base:ModuleViewBase 
+    x:Class="Surrogate.View.ControllerTestView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:base="clr-namespace:Surrogate.View">
 
     <StackPanel Background="AliceBlue">
         <TextBlock FontSize="30" TextWrapping="Wrap" Text="Starten Sie den Test um den über Bluetooth angeschlossenene Controller zu testen"/>
@@ -10,4 +11,4 @@
         <Button x:Name="btnControllRobot" Height="50" Click="ControllRobot" Content="Roboter Steuern"/>
         <Button x:Name="btnStop" Height="50" Click="StopTest" Content="Test Beenden" IsEnabled="false"/>
     </StackPanel>
-</base:ModuleView>
+</base:ModuleViewBase>

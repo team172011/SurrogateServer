@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Surrogate.Model.Module
 {
-    public class ModuleInfo
+    public class ModuleInfo : EventArgs
     {
         public static readonly ModuleInfo EmptyModuleInfo = new ModuleInfo();
         public ModuleInfo() { }

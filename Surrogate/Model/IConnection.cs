@@ -12,5 +12,6 @@ namespace Surrogate.Model
         string Name { get; }
         ConnectionStatus Status { get; }
         bool Connect();
+        bool Disconnect();
     }
 }
