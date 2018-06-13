@@ -44,7 +44,7 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-            <Button x:Name="btnStartCall" Content="Anruf Starten"/>
+            <Button x:Name="btnAddContact" Content="Kontakt hinzufügen"/>
         </StackPanel>
         <StackPanel DockPanel.Dock="Top">
             <TextBlock Text="Videochatgespräch mit:" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
@@ -59,5 +59,4 @@
             </StackPanel>
         </StackPanel>
     </DockPanel>
-
 </base:ModuleViewBase>

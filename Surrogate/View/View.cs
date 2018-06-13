@@ -24,8 +24,9 @@ namespace Surrogate.View
     }
 
     /// <summary>
-    /// WPF/XAML Wrapper. Normally the XYView.cs should extend ModuleView<XYModule>
-    /// But partial classes do not support generic class arguments
+    /// WPF/XAML Wrapper. Normally the XYView.cs should extend ModuleView<XYModule> with the generic class parameter XYModule
+    /// that describes the Controller class (maybe XYModule<XYModulInfo, XYModulProperties>
+    /// But partial classes do not support generic class arguments and we have to specifie a general controller class in this base class
     /// </summary>
     public class ModuleViewBase : ModuleView<AbstractController>
     {

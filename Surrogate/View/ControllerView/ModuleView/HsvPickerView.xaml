@@ -1,0 +1,49 @@
+﻿<local:ModuleViewBase x:Class="Surrogate.View.ControllerView.ModuleView.HsvPickerView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Surrogate.View"
+        mc:Ignorable="d"
+        Height="800" Width="800">
+    <Grid>
+        <StackPanel>
+            <Image Height="600" Width="600" x:Name="imView"></Image>
+            <DockPanel>
+                <Label DockPanel.Dock="Left" Content="H lower"/>
+                <TextBox Text="{Binding ElementName=sHLower, Path=Value, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right" TextAlignment="Right" Width="40"/>
+                <Slider Value="0" x:Name="sHLower" TickFrequency="1" IsSnapToTickEnabled="True"  Minimum="0" Maximum="255" ValueChanged="SHLower_ValueChanged"></Slider>
+            </DockPanel>
+            <DockPanel>
+                <Label DockPanel.Dock="Left" Content="H upper"/>
+                <TextBox Text="{Binding ElementName=sHUpper, Path=Value, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right" TextAlignment="Right" Width="40"/>
+                <Slider Value="255" x:Name="sHUpper" TickFrequency="1" IsSnapToTickEnabled="True"  Minimum="0" Maximum="255" ValueChanged="SHUpper_ValueChanged"></Slider>
+            </DockPanel>
+
+            <DockPanel>
+                <Label DockPanel.Dock="Left" Content="S lower"/>
+                <TextBox Text="{Binding ElementName=sSLower, Path=Value, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right" TextAlignment="Right" Width="40"/>
+                <Slider Value="0" x:Name="sSLower" TickFrequency="1" IsSnapToTickEnabled="True"  Minimum="0" Maximum="255" ValueChanged="SSLower_ValueChanged"></Slider>
+            </DockPanel>
+            <DockPanel>
+                <Label DockPanel.Dock="Left" Content="S upper"/>
+                <TextBox Text="{Binding ElementName=sSUpper, Path=Value, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right" TextAlignment="Right" Width="40"/>
+                <Slider Value="255" x:Name="sSUpper" TickFrequency="1" IsSnapToTickEnabled="True"  Minimum="0" Maximum="255" ValueChanged="SSUpper_ValueChanged"></Slider>
+            </DockPanel>
+
+            <DockPanel>
+                <Label DockPanel.Dock="Left" Content="V lower"/>
+                <TextBox Text="{Binding ElementName=sVLower, Path=Value, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right" TextAlignment="Right" Width="40"/>
+                <Slider Value="0" x:Name="sVLower" TickFrequency="1" IsSnapToTickEnabled="True"  Minimum="0" Maximum="255" ValueChanged="SVLower_ValueChanged"></Slider>
+            </DockPanel>
+            <DockPanel>
+                <Label DockPanel.Dock="Left" Content="V upper"/>
+                <TextBox Text="{Binding ElementName=sVUpper, Path=Value, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right" TextAlignment="Right" Width="40"/>
+                <Slider Value="255" x:Name="sVUpper" TickFrequency="1" IsSnapToTickEnabled="True"  Minimum="0" Maximum="255" ValueChanged="SVUpper_ValueChanged"></Slider>
+            </DockPanel>
+
+            <Separator Height="20"/>
+            <Button Content="Speichern und Schließen" Click="Save_Clicked"/>
+        </StackPanel>
+    </Grid>
+</local:ModuleViewBase>

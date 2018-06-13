@@ -24,7 +24,8 @@ namespace Surrogate.Implementations.FaceDetection
     public class FaceDetectionModule : VisualModule<FaceDetectionProperties, FaceDetectionInfo>
     {
         private readonly FaceDetectionView _view;
-        
+
+        public override IModuleProperties Properties => GetProperties();
         private readonly CascadeClassifier _eyeCascade;
         private readonly CascadeClassifier _faceCascade;
 
@@ -92,6 +93,11 @@ namespace Surrogate.Implementations.FaceDetection
             
         }
 
+        public override bool IsRunning()
+        {
+            return _timer.IsEnabled;
+        }
+
         public override void Start(FaceDetectionInfo info)
         {
             _currentImage = info.Image;
@@ -116,7 +122,7 @@ namespace Surrogate.Implementations.FaceDetection
         }
     }
 
-    public class FaceDetectionProperties : ModuleProperties
+    public class FaceDetectionProperties : ModulePropertiesBase
     {
         public FaceDetectionProperties() : base("Gesichtserkennung", "Module zum visuellen Vorführen der Gesichtserkennund mithilfe der Opencv Bibliotheken", false, true, false,false, false)
         {

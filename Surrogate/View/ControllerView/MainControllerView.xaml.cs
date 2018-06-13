@@ -24,7 +24,7 @@ namespace Surrogate.View.ControllerView
             InitializeComponent();
             Logger.Debug("GUI Initiaization finished");
             lvModules.ItemsSource = VisualModules;
-            foreach (IModule module in controller.ModulHandler.GetModules())
+            foreach (IController module in controller.ModulHandler.GetModules())
             {
                 if(module is IVisualModule)
                 {
@@ -40,10 +40,16 @@ namespace Surrogate.View.ControllerView
             {
                 _visualModules.Add(visualModule);
             }
+            MenuItem item = new MenuItem();
+            item.Header = mArgs.Module.ToString();
+            item.Name = mArgs.Module.ToString().Replace(" ",String.Empty);
+            item.Click += (o, s) => { mArgs.Module.Properties.GetView().Show(); };
+            miModuleSettings.Items.Add(item);
         }
 
         private void OnModuleRemoved(object sender, ModuleArgs mArgs){
             _visualModules.Remove(mArgs as IVisualModule);
+            miModuleSettings.Items.Remove(mArgs.Module.ToString());
         }
 
 
@@ -65,6 +71,13 @@ namespace Surrogate.View.ControllerView
         private void MainView_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             Environment.Exit(0);
+        }
+
+        private void MiModuleSettings_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            var item = e.Source as MenuItem;
+            var name = item.Name;
+            System.Diagnostics.Debug.WriteLine(name);
         }
     }
 }

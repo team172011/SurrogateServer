@@ -4,11 +4,30 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Height="450" Width="800"
+        Height="800" Width="800"
         xmlns:base="clr-namespace:Surrogate.View">
     <StackPanel>
+        <Grid>
+           <!-- <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions> 
+            <Image Grid.Column="0" Grid.Row="0" x:Name="imView0" Width="200" Height="200"></Image>
+            <Image Grid.Column="1" Grid.Row="0" x:Name="imView1" Width="200" Height="200"></Image>
+            <Image Grid.Column="2" Grid.Row="0" x:Name="imView2" Width="200" Height="200"></Image>
+            <Image Grid.Column="0" Grid.Row="1" x:Name="imView3" Width="200" Height="200"></Image>
+            <Image Grid.Column="1" Grid.Row="1" x:Name="imView4" Width="200" Height="200"></Image>-->
+            <Image x:Name="imView5" Width="500" Height="500"></Image>
+            
+        </Grid>
         
-        <Image x:Name="srcImg" Width="400" Height="300"></Image>
-        <Button Height="20" Click="Start">Start</Button>
+        <Button x:Name="btnStart" Height="20" Click="OnStartPressed">Linie folgen starten</Button>
+        <Button x:Name="btnHsvView" Height="20" Click="Button_Click">Hsv Eigenschaften einstellen</Button>
     </StackPanel>
 </base:ModuleViewBase>

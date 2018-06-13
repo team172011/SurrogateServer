@@ -19,18 +19,25 @@ namespace Surrogate.Implementations
 {
 
 
-    public class StartModule : VisualModule<ModuleProperties, ModuleInfo>
+    public class StartModule : VisualModule<ModulePropertiesBase, ModuleInfo>
     {
         private readonly StartModuleView _view = new StartModuleView();
 
-        public StartModule() : base(new ModuleProperties("Start","Startbildschirm",false,false,false,false))
+        public StartModule() : base(new ModulePropertiesBase("Start","Startbildschirm",false,false,false,false))
         {
 
         }
 
+        public override IModuleProperties Properties => GetProperties();
+
         public override UserControl GetPage()
         {
             return _view;
+        }
+
+        public override bool IsRunning()
+        {
+            throw new NotImplementedException();
         }
 
         public override void OnDisselected()

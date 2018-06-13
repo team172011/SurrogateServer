@@ -8,6 +8,7 @@ using Surrogate.Implementations;
 using Surrogate.Model;
 using System;
 using System.IO.Ports;
+using System.Text;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -17,10 +18,10 @@ namespace Surrogate.Roboter.MMotor
     /// Class for connecting and controlling the motor via serial usb port
     /// Singeton pattern, get instance with <see cref="GetInstance"/> function.
     /// </summary>
-    public class Motor : AbstractConnection
+    public class Motor : AbstractConnection, IMotor
     {
         private static volatile Motor _instance;
-        private static object syncRoot = new Object();
+        private static readonly object syncRoot = new Object();
         public static Motor Instance
         {
             get
@@ -39,11 +40,13 @@ namespace Surrogate.Roboter.MMotor
                 return _instance;
             }
         }
-
+        
         private volatile bool _shouldStop = false;
         private SerialPort port;   
         private volatile int _leftSpeedValue;
         private volatile int _rightSpeedValue;
+        private bool _isSimulation = false;
+
         /// <summary>
         /// This field is used by the motor thread to create the speed commands for the left wheels
         /// </summary>        
@@ -95,7 +98,7 @@ namespace Surrogate.Roboter.MMotor
         /// <summary>
         /// This event handler will be called if one speed value changes
         /// </summary>
-        public event EventHandler SpeedChanged;
+        public event EventHandler<EventArgs> SpeedChanged;
 
         /// <summary>
         /// Private Consturctor.
@@ -144,26 +147,55 @@ namespace Surrogate.Roboter.MMotor
             }
         }
 
-        public bool Connect(int portId = 0)
+        public void Stop()
         {
+            if (_isSimulation)
+            {
+                SpeedChanged -= SimulateEngine;
+            }
+            else if (Connect())
+            {
+                SpeedChanged -= RunEngine;
+            }
+        }
+
+        public bool Connect(int portId = 1)
+        {
+            if (port != null)
+            {
+                if (port.IsOpen)
+                {
+                    return true;
+                } else
+                {
+                    port.Close();
+                }
+            }
             port = new SerialPort();
             {
                 string[] ports = SerialPort.GetPortNames();
                 if (ports.Length <= 0)
                 {
-                    return false; // no possible port found
+                    return false; // no port found
                 }
 
-                port.PortName = ports[portId];
+                port.PortName = ports[0];
                 port.BaudRate = 115200;
                 port.Parity = Parity.None;
                 port.StopBits = StopBits.One;
                 port.DataBits = 8;
                 port.Handshake = Handshake.None;
-                /*********************************************************************************************************/
-                //port.Open();
+                port.DataReceived += OnDataReceived;
+                port.Encoding = Encoding.Unicode; 
+                port.Open();
+                
             }
             return IsReady();
+        }
+
+        private void OnDataReceived(object sender, SerialDataReceivedEventArgs e)
+        {
+            log.Debug(port.ReadExisting());
         }
 
         public bool IsReady()
@@ -284,8 +316,9 @@ namespace Surrogate.Roboter.MMotor
             RightSpeed = 0;
         }
 
-        public static void Kill()
+        public void Kill()
         {
+            _shouldStop = true;
             _instance?.port?.Close();
         }
 

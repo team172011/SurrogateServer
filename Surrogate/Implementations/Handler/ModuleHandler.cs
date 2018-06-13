@@ -10,14 +10,14 @@ using Surrogate.Controller;
 
 namespace Surrogate.Implementations.Handler
 {
-    public class ModuleHandler : IModuleHandler
+    public class ModuleHandler : IControllerHandler
     {
         public event EventHandler<ModuleArgs> ModuleAdded;
         public event EventHandler<ModuleArgs> ModuleRemoved;
 
-        private readonly IDictionary<int, IModule> modules = new Dictionary<int, IModule>();
+        private readonly IDictionary<int, IController> modules = new Dictionary<int, IController>();
         
-        public int AddModule(IModule module)
+        public int AddModule(IController module)
         {
             var key = module.GetHashCode();
             modules.Add(key, module);
@@ -32,7 +32,7 @@ namespace Surrogate.Implementations.Handler
             return module.GetPage();
         }
 
-        public void RemoveModule(IModule module)
+        public void RemoveModule(IController module)
         {
             modules.Remove(module.GetHashCode());
             ModuleRemoved?.Invoke(this, new ModuleArgs(module, module.GetHashCode()));
@@ -44,7 +44,7 @@ namespace Surrogate.Implementations.Handler
             return module.GetPage(); // TODO the hash value approach is too simple...
         }
 
-        public IList<IModule> GetModules()
+        public IList<IController> GetModules()
         {
             return modules.Select(d => d.Value).ToList();
         }

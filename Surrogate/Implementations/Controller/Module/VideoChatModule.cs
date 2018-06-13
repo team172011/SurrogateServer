@@ -38,6 +38,8 @@ namespace Surrogate.Implementations
         private VideoChatModuleView _view;
         private readonly Dictionary<string, VideoChatContact> _availableContacts = new Dictionary<string, VideoChatContact>();
 
+        public override IModuleProperties Properties => GetProperties();
+
         public event EventHandler<VideoChatContact> ContactAddedHandler;
         public event EventHandler<VideoChatContact> ContactStatusChangedHandler; // true = online, false otherwise
         public event EventHandler<VideoChatContact> ContactRemovedHandler; 
@@ -52,7 +54,7 @@ namespace Surrogate.Implementations
             _view = new VideoChatModuleView(this);
 
             ///init the Session field with informations from VideoChatProperties
-            _session = new Session(Context.Instance, Properties.ApiKey, Properties.SessionID);
+            _session = new Session(Context.Instance, GetProperties().GetProperty(GetProperties().Key_API_KEY,"no api key"), GetProperties().GetProperty(GetProperties().Key_SESSION_ID, "no session id"));
             
 
             _session.Connected += Session_Connected;
@@ -60,7 +62,7 @@ namespace Surrogate.Implementations
             _session.Error += Session_Error;
             _session.StreamReceived += Session_StreamReceived;
             _session.StreamDropped += Session_StreamDropped;
-            _session.Connect(Properties.Token);
+            _session.Connect(GetProperties().GetProperty(GetProperties().Key_TOKEN,"not token"));
 
             Database db = (Database)SurrogateFramework.MainController.ConnectionHandler.GetConnection(FrameworkConstants.DatabaseName);
             IDictionary<string, SqlDbType> columns = new Dictionary<string, SqlDbType>
@@ -126,7 +128,8 @@ namespace Surrogate.Implementations
 
         private void Session_Connected(object sender, EventArgs e)
         {
-            log.Debug(String.Format("Connected to session with {0} {1} {0}",Properties.ApiKey, Properties.SessionID, Properties.Token));
+            log.Debug(String.Format("Connected to session with {0} {1} {2}", GetProperties().GetProperty(GetProperties().Key_API_KEY,"api key not available"),
+                GetProperties().GetProperty(GetProperties().Key_SESSION_ID, "session id not available"), GetProperties().GetProperty(GetProperties().Key_TOKEN, "token not available")));
             
         }
 
@@ -195,30 +198,37 @@ namespace Surrogate.Implementations
         {
             _publisher?.Dispose();
         }
+
+        public override bool IsRunning()
+        {
+            return true;
+        }
     }
 
 
 
-    public class VideoChatProperties : ModuleProperties
+    public class VideoChatProperties : ModulePropertiesBase
     {
-        private readonly string _API_KEY;
-        private readonly string _SESSION_ID;
-        private readonly string _TOKEN;
-        private static readonly string _URI = @"https://pscagebot.herokuapp.com/session";
+        public readonly string Key_API_KEY = "API_KEY";
+        public readonly string Key_SESSION_ID = "SESSION_ID";
+        public readonly string Key_TOKEN = "TOKEN";
+        public static readonly string Key_URI = "URI";
+           
 
-        public string ApiKey { get => _API_KEY; }
-        public string SessionID { get => _SESSION_ID; }
-        public string Token { get => _TOKEN; }
 
         public static readonly string _tableName = "VideoChatContacts";
         public static string TableName { get => _tableName; }
 
         public VideoChatProperties() : base("Video Chat", "Modul zum kommunizieren mittels Sprach- und Videochat", false, true, false, false, true, true)
         {
-            JObject json = Internet.GetJSON(_URI);
-            _API_KEY = json.GetValue("apiKey").ToString();
-            _SESSION_ID = json.GetValue("sessionId").ToString();
-            _TOKEN = json.GetValue("token").ToString();
+            JObject json = Roboter.MInternet.Internet.GetJSON(@"https://pscagebot.herokuapp.com/session");
+
+            SetProperty(Key_API_KEY, json.GetValue("apiKey").ToString());
+            SetProperty(Key_URI, @"https://pscagebot.herokuapp.com/session");
+            SetProperty(Key_SESSION_ID,json.GetValue("sessionId").ToString());
+            SetProperty(Key_TOKEN,json.GetValue("token").ToString());
+            Save(GetProperty(KeyName,"Video Chat") + ".txt");
+            Load(GetProperty(KeyName, "Video Chat") + ".txt");
         }
     }
 

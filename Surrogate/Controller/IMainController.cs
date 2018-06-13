@@ -13,7 +13,7 @@ namespace Surrogate.Controller
     {
 
         Window MainWindow { get; }
-        IModuleHandler ModulHandler { get; }
+        IControllerHandler ModulHandler { get; }
         IConnectionHandler ConnectionHandler { get; }
         IProcessHandler ProcessHandler { get; }
 

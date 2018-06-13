@@ -15,27 +15,34 @@ namespace Surrogate.Modules
 {
 
     /// <summary>
-    /// An Module extending class represents a single functionallity that can be executed from/for the robot
+    /// A Module extending class represents a single functionallity that can be executed from/for the robot
     /// and that has a visual componente e.g. <see cref="ContentControl"/>
     /// Extends the <see cref="AbstractController"/> class, according to this it takes over a "controller" role in the MVC pattern.
     /// </summary>
     /// <typeparam name="P">Generic class parameter extending <see cref="MofulProperties"/></typeparam>
     /// <typeparam name="I">Generic class parameter extending <see cref="MofulProperties"/></typeparam>
-    public abstract class VisualModule<P, I> : AbstractController, IVisualModule where P : ModuleProperties where I : ModuleInfo
+    public abstract class VisualModule<P, I> : AbstractController, IVisualModule where P : IModuleProperties where I : ModuleInfo
     {
 
         /// <summary>
         /// Event hanlder triggered if the module has been selected
         /// </summary>
-        protected event EventHandler ModuleSelected;
-        protected event EventHandler ModuleDisselected;
+        public event EventHandler ModuleSelected;
+        public event EventHandler ModuleDisselected;
 
         /// <summary>
         /// Field for the properties of a module
         /// </summary>
         private readonly P _properties;
 
-        public P Properties { get => _properties; }
+        /// <summary>
+        /// Returns the specific Properties implementation
+        /// </summary>
+        /// <returns></returns>
+        public P GetProperties()
+        {
+            return _properties;
+        }
 
         /// <summary>
         /// Constructor. Expects a ModulProperties instance
@@ -46,7 +53,7 @@ namespace Surrogate.Modules
             _properties = modulProperties;
         }
 
-        public void Start()
+        public override void Start()
         {
             Type infoType = typeof(I);
             var info = Activator.CreateInstance(infoType);
@@ -62,11 +69,6 @@ namespace Surrogate.Modules
 
         public abstract UserControl GetPage();
 
-        public string GetDescription()
-        {
-            return _properties.Name + ": " + _properties.Description;
-        }
-
         public virtual void OnSelected()
         {
             ModuleSelected?.Invoke(this, EventArgs.Empty);
@@ -75,6 +77,11 @@ namespace Surrogate.Modules
         public virtual void OnDisselected()
         {
             ModuleDisselected?.Invoke(this, EventArgs.Empty);
+        }
+
+        public override string ToString()
+        {
+            return GetProperties().GetProperty(Properties.KeyName,"Ohne Name");
         }
     }
 }

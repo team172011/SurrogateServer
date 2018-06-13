@@ -50,6 +50,7 @@ namespace Surrogate.Main
                 }
                 
             }
+
             FrameworkElement.StyleProperty.OverrideMetadata(typeof(Window), new FrameworkPropertyMetadata(TryFindResource(typeof(Window))));
             MainController _controller = new MainController();
             SurrogateFramework.AddConnection(Roboter.MMotor.Motor.Instance);
@@ -59,11 +60,11 @@ namespace Surrogate.Main
 
             SurrogateFramework.AddModule(new StartModule());
             SurrogateFramework.AddModule(new ControllerTestModule());
+            SurrogateFramework.AddModule(new MotorTestModule());
             SurrogateFramework.AddModule(new VideoChatModule());
             SurrogateFramework.AddModule(new BallFollowingModule());
             SurrogateFramework.AddModule(new FaceDetectionModule());
-
-
+            SurrogateFramework.AddModule(new LineFollowingModule());
 
             IMainController controller = SurrogateFramework.MainController;
             controller.MainWindow.Show();

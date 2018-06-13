@@ -16,17 +16,23 @@ namespace Surrogate.Implementations
 {
 
 
-    public class MotorTestModule : VisualModule<ModuleProperties, ModuleInfo>
+    public class MotorTestModule : VisualModule<ModulePropertiesBase, ModuleInfo>
     {
         public Motor _motor;
+        public override IModuleProperties Properties => GetProperties();
 
-        public MotorTestModule(ModuleProperties modulProperties) : base(modulProperties)
+        public MotorTestModule() : base(new ModulePropertiesBase("Motor testen", "Modul zum testen verschiedener Motorparameter", motor:true))
         {
         }
 
         public override UserControl GetPage()
         {
             return new MotorTestView(this);
+        }
+
+        public override bool IsRunning()
+        {
+            throw new NotImplementedException();
         }
 
         public override void OnDisselected()
@@ -136,7 +142,7 @@ namespace Surrogate.Implementations
 
         public override void Stop()
         {
-            Motor.Kill();
+            Motor.Instance.Stop();
         }
 
         public class MotorTestInfo : ModuleInfo

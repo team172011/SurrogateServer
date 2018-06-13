@@ -14,7 +14,7 @@ namespace Surrogate.Implementations
         public static MainController MainController { get => _controller; }
         public static double two = 2;
 
-        public static void AddModule(IModule module)
+        public static void AddModule(IController module)
         {
             _controller.ModulHandler.AddModule(module);
 
@@ -39,5 +39,7 @@ namespace Surrogate.Implementations
         public static readonly String InternetName = "Internet";
         public static readonly String ControllerName = "Controller";
         public static readonly String TouchpadName = "Touchpad";
+
+        public static readonly String DefaultImagePath = @"C:\Users\ITM1\source\repos\Surrogate\Surrogate\resources\robot.jpg";
     }
 }

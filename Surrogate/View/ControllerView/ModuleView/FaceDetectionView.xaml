@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Height="450" Width="800">
     <StackPanel>
-        <Grid Width="800" Height="400">
+        <Grid>
             <Image Name="imView" Stretch="Fill" />
         </Grid>
         <Button Name="btnStart" Click="OnStartPressed" Height="20" Content="Gesichtserkennung starten"/>

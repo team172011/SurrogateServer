@@ -17,11 +17,12 @@ namespace Surrogate.Implementations.Handler
     /// Class managing different connections
     /// <see cref="ConnectionsHandlerView"/>
     /// </summary>
-    public class ConnectionsHandler : VisualModule<ModuleProperties, ModuleInfo>, IConnectionHandler
+    public class ConnectionsHandler : VisualModule<ModulePropertiesBase, ModuleInfo>, IConnectionHandler
     {
         public event EventHandler<ConnectionArgs> ConnectionChangedStatus;
         public event EventHandler<ConnectionArgs> ConnectionAdded;
 
+        public override IModuleProperties Properties => Properties;
         private readonly ConnectionsHandlerView _view; 
         private readonly Dictionary<string, IConnection> _connections = new Dictionary<string, IConnection>();
         public Dictionary<string, IConnection> Connections { get => _connections; }
@@ -31,7 +32,7 @@ namespace Surrogate.Implementations.Handler
         /// Constructor.
         /// </summary>
         /// <param name="modulProperties"></param>
-        public ConnectionsHandler(ModuleProperties modulProperties) : base(modulProperties)
+        public ConnectionsHandler(ModulePropertiesBase modulProperties) : base(modulProperties)
         {
             _view = new ConnectionsHandlerView(this);
         }
@@ -39,7 +40,7 @@ namespace Surrogate.Implementations.Handler
         /// <summary>
         /// Empty Constructor.
         /// </summary>
-        public ConnectionsHandler():this(new ModuleProperties("Verbindungsmanager", "API zum managen verschiedener Verbindungen"))
+        public ConnectionsHandler():this(new ModulePropertiesBase("Verbindungsmanager", "API zum managen verschiedener Verbindungen"))
         {
             _view = new ConnectionsHandlerView(this);
         }
@@ -92,6 +93,11 @@ namespace Surrogate.Implementations.Handler
             {
                 ConnectionChangedStatus?.Invoke(this, new ConnectionArgs(connection));
             }
+        }
+
+        public override bool IsRunning()
+        {
+            throw new NotImplementedException();
         }
     }
 }

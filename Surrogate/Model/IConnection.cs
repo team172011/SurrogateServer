@@ -9,8 +9,10 @@ namespace Surrogate.Model
     public interface IConnection
     {
         event EventHandler<ConnectionStatus> ConnectionStatusHandler;
+
         string Name { get; }
         ConnectionStatus Status { get; }
+
         bool Connect();
         bool Disconnect();
     }

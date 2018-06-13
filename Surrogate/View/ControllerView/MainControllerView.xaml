@@ -10,6 +10,15 @@
         xmlns:base="clr-namespace:Surrogate.View"
                Closing="MainView_Closing">
     <DockPanel>
+        <!-- Menu bar-->
+        <Menu DockPanel.Dock="Top" >
+            <MenuItem Header="Programm">
+                <MenuItem Header="Close" />
+            </MenuItem>
+            <MenuItem x:Name="miModuleSettings" Header="Settings" MenuItem.Click="MiModuleSettings_Click">
+            </MenuItem>
+        </Menu>
+        
         <!---Sidebar on the left with header, modules list and processes list-->
         <StackPanel DockPanel.Dock="Left" Orientation="Vertical">
             <Label FontSize="20" FontWeight="Bold">Surrogate</Label>

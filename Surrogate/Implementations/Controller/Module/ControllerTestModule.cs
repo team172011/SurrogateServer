@@ -25,28 +25,30 @@ namespace Surrogate.Implementations.Controller.Module
     using Surrogate.Model.Module;
     using Surrogate.Model;
 
-    public class ControllerTestModule : VisualModule<ModuleProperties, ControllerTestInfo>
+    public class ControllerTestModule : VisualModule<ModulePropertiesBase, ControllerTestInfo>
     {
         public event EventHandler<BooleanEventArgs> MotorAvailable;
         public event EventHandler<BooleanEventArgs> ControllerAvailable;
         public event EventHandler<BooleanEventArgs> IsRunningChanged;
 
+        public override IModuleProperties Properties => GetProperties();
         private volatile bool _shouldStop = false;
         private volatile bool searchController = true;
         private readonly XBoxController controller = new XBoxController();
 
-        public ControllerTestModule(ModuleProperties modulProperties) : base(modulProperties)
+        public ControllerTestModule(ModulePropertiesBase modulProperties) : base(modulProperties)
         {
             ModuleSelected += Selected;
             ModuleDisselected += Disselected;
         }
 
-        public ControllerTestModule() : base(new ModuleProperties("Controller Test", "Modul zum testen des Controllers und der Steuerung", true, false, false, false, false, false))
+        public ControllerTestModule() : base(new ModulePropertiesBase("Controller Test", "Modul zum testen des Controllers und der Steuerung", true, false, false, false, false, false))
         {
             ModuleSelected += Selected;
             ModuleDisselected += Disselected;
         }
 
+        /*
         private async void SearchController()
         {
             {
@@ -71,6 +73,7 @@ namespace Surrogate.Implementations.Controller.Module
                 });
             }
         }
+        */
 
         /// <summary>
         /// Should be called if the uptime of the motor changes
@@ -241,7 +244,7 @@ namespace Surrogate.Implementations.Controller.Module
 
         private void Selected(Object sender, EventArgs e)
         {
-            SearchController();
+            //SearchController();
             FireChangeEvents();
         }
 
@@ -256,6 +259,11 @@ namespace Surrogate.Implementations.Controller.Module
         {
             OnMotorAvailableChanged(Motor.Instance.IsReady());
             OnControllerAvailableChanged(controller.Connected);
+        }
+
+        public override bool IsRunning()
+        {
+            throw new NotImplementedException();
         }
     }
 

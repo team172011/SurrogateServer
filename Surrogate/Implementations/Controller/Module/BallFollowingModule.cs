@@ -11,15 +11,22 @@ using System.Windows.Controls;
 
 namespace Surrogate.Implementations.Controller.Module
 {
-    class BallFollowingModule : VisualModule<ModuleProperties, ModuleInfo>
+    class BallFollowingModule : VisualModule<ModulePropertiesBase, ModuleInfo>
     {
-        public BallFollowingModule() : base(new ModuleProperties("Ball folgen", "Nutzt eine Kamera um einem speziellen Ball zu folgen", motor: true, floorCam: true))
+        public BallFollowingModule() : base(new ModulePropertiesBase("Ball folgen", "Nutzt eine Kamera um einem speziellen Ball zu folgen", motor: true, floorCam: true))
         {
         }
+
+        public override IModuleProperties Properties => GetProperties();
 
         public override UserControl GetPage()
         {
             return null;
+        }
+
+        public override bool IsRunning()
+        {
+            throw new NotImplementedException();
         }
 
         public override void OnDisselected()

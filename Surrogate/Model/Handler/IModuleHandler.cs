@@ -9,14 +9,14 @@ using System.Windows.Controls;
 
 namespace Surrogat.Handler
 {
-	public interface IModuleHandler
+	public interface IControllerHandler
     {
         event EventHandler<ModuleArgs> ModuleAdded;
         event EventHandler<ModuleArgs> ModuleRemoved;
 
-        int AddModule(IModule module);
-        void RemoveModule(IModule module);
-        IList<IModule> GetModules();
+        int AddModule(IController module);
+        void RemoveModule(IController module);
+        IList<IController> GetModules();
 
         Control SelectView(IVisualModule module);
     }
@@ -24,13 +24,13 @@ namespace Surrogat.Handler
 
     public class ModuleArgs : EventArgs
     {
-        private readonly IModule _module;
-        public IModule Module { get => _module; }
+        private readonly IController _module;
+        public IController Module { get => _module; }
         private readonly int _key;
         public int Key { get => _key; }
         
 
-        public ModuleArgs(IModule arg, int key)
+        public ModuleArgs(IController arg, int key)
         {
             _module = arg;
             _key = key;

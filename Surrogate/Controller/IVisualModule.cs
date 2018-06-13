@@ -10,10 +10,10 @@ namespace Surrogate.Controller
 {
     /// <summary>
     /// Interface describing a visual Module. A visual Module is a <see cref="IModule"/> with
-    /// an <see cref="UserControl"/> as view component and can be selected or disselected from
-    /// the user
+    /// an <see cref="UserControl"/> as view component and can be selected or disselected by
+    /// user
     /// </summary>
-    public interface IVisualModule : IModule
+    public interface IVisualModule
     {
         /// <summary>
         /// This function will be called if the visual module has been selected by user
