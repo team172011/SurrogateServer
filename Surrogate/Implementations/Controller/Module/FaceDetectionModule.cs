@@ -124,8 +124,9 @@ namespace Surrogate.Implementations.FaceDetection
 
     public class FaceDetectionProperties : ModulePropertiesBase
     {
-        public FaceDetectionProperties() : base("Gesichtserkennung", "Module zum visuellen Vorführen der Gesichtserkennund mithilfe der Opencv Bibliotheken", false, true, false,false, false)
+        public FaceDetectionProperties() : base("Gesichtserkennung", "Modul zum visuellen Vorführen der Gesichtserkennung", false, true, false,false, false)
         {
+            SetProperty(base.KeyImagePath, @"C:\Users\ITM1\source\repos\Surrogate\Surrogate\resources\facedetection_controller_icon.png");
         }
     }
 

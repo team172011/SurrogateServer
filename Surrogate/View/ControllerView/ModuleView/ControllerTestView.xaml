@@ -4,11 +4,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:base="clr-namespace:Surrogate.View">
 
-    <StackPanel Background="AliceBlue">
-        <TextBlock FontSize="30" TextWrapping="Wrap" Text="Starten Sie den Test um den über Bluetooth angeschlossenene Controller zu testen"/>
+    <StackPanel>
+        <Image Source="C:\Users\ITM1\source\repos\Surrogate\Surrogate\resources\xbox_beschrieben.JPG" Height="300"></Image>
+        <TextBlock FontSize="20" TextWrapping="Wrap" Text="Verbinden Sie den Controller via Bluetooth und wählen Sie einen Test"/>
         <Button x:Name="btnController" Height="50" Click="TestControllerOutput" Content="Controller Outputs testen "/>
         <Button x:Name="btnTestMotor" Height="50" Click="TestMotorOutput" Content="Motor Outputs testen "/>
-        <Button x:Name="btnControllRobot" Height="50" Click="ControllRobot" Content="Roboter Steuern"/>
-        <Button x:Name="btnStop" Height="50" Click="StopTest" Content="Test Beenden" IsEnabled="false"/>
+        <Button x:Name="btnControllRobot" Height="50" Click="ControllRobot" Content="Roboter steuern"/>
+        <Button x:Name="btnStop" Height="50" Click="StopTest" Content="Test beenden" IsEnabled="false"/>
     </StackPanel>
 </base:ModuleViewBase>

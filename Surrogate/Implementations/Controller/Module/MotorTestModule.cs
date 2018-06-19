@@ -21,7 +21,7 @@ namespace Surrogate.Implementations
         public Motor _motor;
         public override IModuleProperties Properties => GetProperties();
 
-        public MotorTestModule() : base(new ModulePropertiesBase("Motor testen", "Modul zum testen verschiedener Motorparameter", motor:true))
+        public MotorTestModule() : base(new ModulePropertiesBase("Motor testen", "Modul zum Testen verschiedener Motorparameter", motor:true))
         {
         }
 
@@ -54,8 +54,8 @@ namespace Surrogate.Implementations
                         try
                         {
 
-                            _motor.LeftSpeed=(-100);
-                            _motor.RightSpeed=(-100);
+                            _motor.LeftSpeedValue = (-100);
+                            _motor.RightSpeedValue = (-100);
                         } catch(Exception pnve)
                         {
                             log.Error("Could not connect to motor: " + pnve.Message + "\n " + pnve.StackTrace);
@@ -66,8 +66,8 @@ namespace Surrogate.Implementations
                     {
                         try
                         {
-                            _motor.LeftSpeed = (100);
-                            _motor.RightSpeed = (100);
+                            _motor.LeftSpeedValue = (100);
+                            _motor.RightSpeedValue = (100);
                         } catch (Exception pnve)
                         {
                             log.Error("Could not connect to motor: " + pnve.Message + "\n " + pnve.StackTrace);
@@ -78,8 +78,8 @@ namespace Surrogate.Implementations
                     {
                         try
                         {
-                            _motor.LeftSpeed = (-100);
-                            _motor.RightSpeed = (100);
+                            _motor.LeftSpeedValue = (-100);
+                            _motor.RightSpeedValue = (100);
                         } catch (Exception pnve)
                         {
                         log.Error("Could not connect to motor: " + pnve.Message + "\n " + pnve.StackTrace);
@@ -90,8 +90,8 @@ namespace Surrogate.Implementations
                     {
                         try
                         {
-                            Motor.Instance.LeftSpeed = (100);
-                            Motor.Instance.RightSpeed = (-100);
+                            Motor.Instance.LeftSpeedValue = (100);
+                            Motor.Instance.RightSpeedValue = (-100);
                             } catch(Exception pnve)
                         {
                             log.Error("Could not connect to motor: " + pnve.Message + "\n " + pnve.StackTrace);
@@ -103,8 +103,8 @@ namespace Surrogate.Implementations
                         try
                         {
 
-                            Motor.Instance.LeftSpeed = (0);
-                            Motor.Instance.RightSpeed = (200);
+                            Motor.Instance.LeftSpeedValue = (0);
+                            Motor.Instance.RightSpeedValue = (200);
                         }
                         catch (Exception pnve)
                         {
@@ -116,8 +116,8 @@ namespace Surrogate.Implementations
                     {
                         try
                         {
-                            Motor.Instance.LeftSpeed =(100);
-                            Motor.Instance.RightSpeed = (0);
+                            Motor.Instance.LeftSpeedValue = (100);
+                            Motor.Instance.RightSpeedValue = (0);
                         }
                         catch (Exception pnve)
                         {

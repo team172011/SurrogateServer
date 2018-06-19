@@ -72,6 +72,12 @@ namespace Surrogate.View.Handler
                 }
             }
         }
+
+        private void OnBtnUpdateAllClicked(object sender, RoutedEventArgs e)
+        {
+            var con = Controller as IConnectionHandler;
+            con.ConnectAll();
+        }
     }
 
     public class ConnectionItem : INotifyPropertyChanged

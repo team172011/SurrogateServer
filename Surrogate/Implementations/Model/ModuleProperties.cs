@@ -30,7 +30,12 @@ namespace Surrogate.Model
             _properties[KeyMicrophone] = microphone.ToString();
             _properties[KeyInternet] = internet.ToString();
             _properties[KeyDatabase] = database.ToString();
-            _properties[KeyImagePath] = FrameworkConstants.DefaultImagePath;
+
+            if (!_properties.ContainsKey(KeyImagePath)) // if no icon set, set default icon 
+            {
+                _properties[KeyImagePath] = FrameworkConstants.DefaultImagePath;
+            }
+            
         }
 
         public override void SetProperty(string key, string value, bool replace = true)
@@ -46,17 +51,17 @@ namespace Surrogate.Model
             
         }
 
-        public override void SetIntegerProperty(string key, int value, bool replace = true)
+        public override void SetProperty(string key, int value, bool replace = true)
         {
             SetProperty(key, value.ToString(), replace);
         }
 
-        public override void SetDoubleProperty(string key, double value, bool replace = true)
+        public override void SetProperty(string key, double value, bool replace = true)
         {
             SetProperty(key, value.ToString(), replace);
         }
 
-        public override void SetBooleanProperty(string key, bool value, bool replace = true)
+        public override void SetProperty(string key, bool value, bool replace = true)
         {
             SetProperty(key, value.ToString(), replace);
         }
@@ -133,6 +138,10 @@ namespace Surrogate.Model
         public override void Load(string fileName)
         {
             var filePath = propertiesPath + fileName;
+            if (!File.Exists(filePath))
+            {
+                return;
+            }
             string[] lines = File.ReadAllLines(filePath);
             foreach (var line in lines)
             {
@@ -150,5 +159,9 @@ namespace Surrogate.Model
             }
         }
 
+        public override bool ContainsProperty(string key)
+        {
+            return _properties.ContainsKey(key);
+        }
     }
 }

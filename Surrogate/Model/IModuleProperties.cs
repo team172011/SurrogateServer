@@ -18,7 +18,34 @@ namespace Surrogate.Model
         string KeyImagePath { get; }
         string KeyInternet { get; }
 
-        PropertiesView GetView();
+        /// <summary>
+        /// Save the properties to a text file with default name.
+        /// This is the preffered way to save properties on the filesystem
+        /// </summary>
+        void Save();
+
+        void Save(string fileName);
+
+        /// <summary>
+        /// Loads the properties from a text file with default name.
+        /// This is the preffered way to load properties from the filesystem
+        /// </summary>
+        void Load();
+
+        void Load(string fileName);
+
+        /// <summary>
+        /// returns true if this property class contains a property with the
+        /// key parameter. False otherwise
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        bool ContainsProperty(string key);
+
+        void SetProperty(string key, bool value, bool replace = true);
+        void SetProperty(string key, double value, bool replace = true);
+        void SetProperty(string key, int value, bool replace = true);
+        void SetProperty(string key, string value, bool replace = true);
 
         IDictionary<string, string> GetAllProperties();
         bool GetBooleanProperty(string name, bool standard);
@@ -26,27 +53,5 @@ namespace Surrogate.Model
         int GetIntegerProperty(string name, int standard);
         string GetProperty(string name, string standard);
         bool HasPermission(string name);
-
-        /// <summary>
-        /// Save the properties to a text file with default name.
-        /// This is the preffered way to save properties on the filesystem
-        /// </summary>
-        void Save();
-
-        /// <summary>
-        /// Loads the properties from a text file with default name.
-        /// This is the preffered way to load properties from the filesystem
-        /// </summary>
-        void Load();
-        void Load(string fileName);
-        void Save(string fileName);
-
-        void SetBooleanProperty(string key, bool value, bool replace = true);
-        void SetDoubleProperty(string key, double value, bool replace = true);
-        void SetIntegerProperty(string key, int value, bool replace = true);
-
-
-
-        void SetProperty(string key, string value, bool replace = true);
     }
 }

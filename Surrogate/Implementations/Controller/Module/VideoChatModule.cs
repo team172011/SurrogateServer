@@ -26,6 +26,8 @@ namespace Surrogate.Implementations
     using Surrogate.Roboter.MDatabase;
     using System.Data;
     using System.Data.SqlClient;
+    using static OpenTok.VideoCapturer;
+    using Surrogate.Roboter.MCamera;
 
     /// <summary>
     /// Module for the video chat application using the TopBox libraries
@@ -42,8 +44,10 @@ namespace Surrogate.Implementations
 
         public event EventHandler<VideoChatContact> ContactAddedHandler;
         public event EventHandler<VideoChatContact> ContactStatusChangedHandler; // true = online, false otherwise
-        public event EventHandler<VideoChatContact> ContactRemovedHandler; 
+        public event EventHandler<VideoChatContact> ContactRemovedHandler;
 
+
+        private int CamNum = 0;
 
         /// <summary>
         /// Constructor.
@@ -76,7 +80,7 @@ namespace Surrogate.Implementations
             {
                 // Add example Data
                 db.ExecuteNonQuery(String.Format("INSERT INTO {0} (ID, username, Firstname, Name) VALUES(1,'simonjw','Simon','Wimmer')", VideoChatProperties.TableName));
-                db.ExecuteNonQuery(String.Format("INSERT INTO {0} (ID, username, Firstname, Name) VALUES(2,'drmueller','Dr. Hans','Mueller')", VideoChatProperties.TableName));
+                db.ExecuteNonQuery(String.Format("INSERT INTO {0} (ID, username, Firstname, Name) VALUES(2,'drmueller','Dr. Mueller','Hans')", VideoChatProperties.TableName));
             }
 
             SqlDataReader resultsReader = db.ExecuteQuery(String.Format("SELECT * FROM {0}", VideoChatProperties.TableName));
@@ -88,6 +92,34 @@ namespace Surrogate.Implementations
                     _availableContacts.Add(contact.Username,contact);
                 }
             }
+        }
+
+        internal void ChangeCamera()
+        {
+            var NextCam = ++CamNum % FrameworkConstants.Numbercams; // increase cam index by one
+            var connection = SurrogateFramework.MainController.ConnectionHandler.GetConnection(FrameworkConstants.InternalCameraName) as ICameraConnection<IVideoCapturer>;
+            log.Debug("Switching to Camera " + NextCam);
+            switch (NextCam)
+            {
+                case 1:
+                    {
+                        connection = SurrogateFramework.MainController.ConnectionHandler.GetConnection(FrameworkConstants.Camera2Name) as ICameraConnection<IVideoCapturer>;
+                        break;
+                    }
+                case 2:
+                    {
+                        connection = SurrogateFramework.MainController.ConnectionHandler.GetConnection(FrameworkConstants.Camera1Name) as ICameraConnection<IVideoCapturer>;
+                        break;
+                    }
+                default:
+                    {
+                        break;
+                    }
+            }
+            _session.Unpublish(_publisher);
+            _publisher.Dispose();
+            _publisher = new Publisher(Context.Instance, renderer: _view.PublisherVideo, capturer: connection.GetCamera());
+            _session.Publish(_publisher);
         }
 
         /// <summary>
@@ -185,12 +217,23 @@ namespace Surrogate.Implementations
                 return;
             }
             Subscriber subscriber = new Subscriber(Context.Instance, stream, _view.SubscriberVideo);
-            _session.Subscribe(subscriber);
+            
+            try
+            {
+                _session.Subscribe(subscriber);
+            }
+            catch (OpenTokException e)
+            {
+                System.Diagnostics.Debug.WriteLine(e.InnerException);
+                log.Error(e.Message);
+            }
+            
         }
+
 
         public override void OnSelected()
         {
-            _publisher = new Publisher(Context.Instance, renderer: _view.PublisherVideo);
+            _publisher = new Publisher(Context.Instance, renderer: _view.PublisherVideo,name:"Surrogate");
             _session.Publish(_publisher);
         }
 
@@ -219,10 +262,11 @@ namespace Surrogate.Implementations
         public static readonly string _tableName = "VideoChatContacts";
         public static string TableName { get => _tableName; }
 
-        public VideoChatProperties() : base("Video Chat", "Modul zum kommunizieren mittels Sprach- und Videochat", false, true, false, false, true, true)
+        public VideoChatProperties() : base("Video Chat", "Modul zum Kommunizieren mittels Sprach- und Videochat", false, true, false, false, true, true)
         {
             JObject json = Roboter.MInternet.Internet.GetJSON(@"https://pscagebot.herokuapp.com/session");
 
+            SetProperty(base.KeyImagePath, @"C:\Users\ITM1\source\repos\Surrogate\Surrogate\resources\videochat_controller_icon.jpg");
             SetProperty(Key_API_KEY, json.GetValue("apiKey").ToString());
             SetProperty(Key_URI, @"https://pscagebot.herokuapp.com/session");
             SetProperty(Key_SESSION_ID,json.GetValue("sessionId").ToString());

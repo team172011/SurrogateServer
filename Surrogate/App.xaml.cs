@@ -24,6 +24,7 @@ using Surrogate.Roboter.MController;
 using Surrogate.Roboter.MInternet;
 using Surrogate.Implementations.Controller.Module;
 using Surrogate.Implementations.FaceDetection;
+using Surrogate.Roboter.MCamera;
 
 namespace Surrogate.Main
 {
@@ -57,6 +58,9 @@ namespace Surrogate.Main
             SurrogateFramework.AddConnection(new XBoxController());
             SurrogateFramework.AddConnection(new Roboter.MDatabase.Database());
             SurrogateFramework.AddConnection(new Internet());
+            SurrogateFramework.AddConnection(new Camera0());
+            SurrogateFramework.AddConnection(new Camera1());
+            SurrogateFramework.AddConnection(new Camera2());
 
             SurrogateFramework.AddModule(new StartModule());
             SurrogateFramework.AddModule(new ControllerTestModule());

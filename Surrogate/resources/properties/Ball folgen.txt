@@ -1,0 +1,16 @@
+Name=Ball folgen
+Description=Nutzt eine Kamera, um einem speziellen Ball zu folgen
+Motor=True
+FaceCam=False
+Internet=False
+Microphone=False
+Database=False
+ImagePath=C:\Users\ITM1\source\repos\Surrogate\Surrogate\resources\ballFollowing_controller_icon.png
+H_Lower=0
+S_Lower=0
+V_Lower=0
+H_Upper=255
+S_Upper=255
+V_Upper=255
+Inverted=False
+Camera=0

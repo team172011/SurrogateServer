@@ -34,12 +34,18 @@ namespace Surrogate.Implementations
 
     public static class FrameworkConstants
     {
-        public static readonly String MotorName = "Motor";
-        public static readonly String DatabaseName = "Datenbank";
-        public static readonly String InternetName = "Internet";
-        public static readonly String ControllerName = "Controller";
-        public static readonly String TouchpadName = "Touchpad";
+        public static readonly string MotorName = "Motor";
+        public static readonly string DatabaseName = "Datenbank";
+        public static readonly string InternetName = "Internet";
+        public static readonly string ControllerName = "Controller";
+        public static readonly string TouchpadName = "Touchpad";
+        public static readonly string Camera1Name = "Kamera 1";
+        public static readonly string Camera2Name = "Kamera 2";
 
-        public static readonly String DefaultImagePath = @"C:\Users\ITM1\source\repos\Surrogate\Surrogate\resources\robot.jpg";
+        public static readonly string DefaultImagePath = @"C:\Users\ITM1\source\repos\Surrogate\Surrogate\resources\robot.jpg";
+
+        public static readonly string InternalCameraName = "Interne Kamera";
+
+        public static readonly int Numbercams = 3;
     }
 }

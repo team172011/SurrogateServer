@@ -4,9 +4,13 @@
       xmlns:base="clr-namespace:Surrogate.View">
 
     <StackPanel Background="AliceBlue">
-        <Label Content="Wählen Sie die gewünschte Aktion"/>
+        <Label Content="Motor testen" FontSize="20" HorizontalAlignment="Center"/>
+        <Image Source="C:\Users\ITM1\source\repos\Surrogate\Surrogate\resources\Skizze_Fahrwerk.png" Width="400"/>
+        <Label Content="Wählen Sie die gewünschte Aktion" HorizontalAlignment="Center"/>
         <DockPanel>
-            <Button Width="auto" DockPanel.Dock="Top" Click="Forwards" Content="Vorwärts"/>
+            <Button Width="auto" DockPanel.Dock="Top" Click="Forwards" Content="Vorwärts">
+                
+            </Button>
             <Button Width="auto" DockPanel.Dock="Bottom" Click="Backwards" Content="Rückwärts"/>
             <StackPanel  DockPanel.Dock="Left">
                 <Button Width="auto" Click="Left" Content="Links"/>

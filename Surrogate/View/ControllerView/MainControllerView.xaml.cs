@@ -1,9 +1,12 @@
 ﻿using Surrogat.Handler;
 using Surrogate.Controller;
+using Surrogate.Implementations;
 using Surrogate.Implementations.Controller;
 using Surrogate.Modules;
+using Surrogate.View.PropertieView;
 using System;
 using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -43,7 +46,7 @@ namespace Surrogate.View.ControllerView
             MenuItem item = new MenuItem();
             item.Header = mArgs.Module.ToString();
             item.Name = mArgs.Module.ToString().Replace(" ",String.Empty);
-            item.Click += (o, s) => { mArgs.Module.Properties.GetView().Show(); };
+            item.Click += (o, s) => { new PropertiesView(mArgs.Module.Properties).Show(); };
             miModuleSettings.Items.Add(item);
         }
 
@@ -68,16 +71,41 @@ namespace Surrogate.View.ControllerView
             spModule.Children.Add(((IMainController)_controller).ModulHandler.SelectView(module));
         }
 
-        private void MainView_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            Environment.Exit(0);
-        }
-
         private void MiModuleSettings_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             var item = e.Source as MenuItem;
             var name = item.Name;
             System.Diagnostics.Debug.WriteLine(name);
+        }
+
+        private void BtnHideLog_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            if(spLog.Visibility == System.Windows.Visibility.Visible)
+            {
+                spLog.Visibility = System.Windows.Visibility.Collapsed;
+                btnHideLog.Content = 5;
+            }
+            else
+            {
+                spLog.Visibility = System.Windows.Visibility.Visible;
+                btnHideLog.Content = 6;
+            }
+            
+        }
+
+        private void MenuItem_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            foreach( IController modul in SurrogateFramework.MainController.ModulHandler.GetModules())
+            {
+                modul.Stop();
+            }
+
+            Application.Current.Shutdown();
+        }
+
+        private void Onshutdown(object sender, ExitEventArgs e)
+        {
+            
         }
     }
 }

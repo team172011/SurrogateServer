@@ -25,7 +25,7 @@ namespace Surrogate.Implementations.Controller.Module
     using Surrogate.Model.Module;
     using Surrogate.Model;
 
-    public class ControllerTestModule : VisualModule<ModulePropertiesBase, ControllerTestInfo>
+    public class ControllerTestModule : VisualModule<ControllerTestProperties, ControllerTestInfo>
     {
         public event EventHandler<BooleanEventArgs> MotorAvailable;
         public event EventHandler<BooleanEventArgs> ControllerAvailable;
@@ -33,47 +33,19 @@ namespace Surrogate.Implementations.Controller.Module
 
         public override IModuleProperties Properties => GetProperties();
         private volatile bool _shouldStop = false;
-        private volatile bool searchController = true;
         private readonly XBoxController controller = new XBoxController();
 
-        public ControllerTestModule(ModulePropertiesBase modulProperties) : base(modulProperties)
+        public ControllerTestModule(ControllerTestProperties modulProperties) : base(modulProperties)
         {
             ModuleSelected += Selected;
             ModuleDisselected += Disselected;
         }
 
-        public ControllerTestModule() : base(new ModulePropertiesBase("Controller Test", "Modul zum testen des Controllers und der Steuerung", true, false, false, false, false, false))
+        public ControllerTestModule() : base(new ControllerTestProperties())
         {
             ModuleSelected += Selected;
             ModuleDisselected += Disselected;
         }
-
-        /*
-        private async void SearchController()
-        {
-            {
-                OnControllerAvailableChanged(controller.Connected);
-                await Task.Run(() =>
-                {
-                    bool lastState = controller.Connected;
-                    while (searchController)
-                    {
-                        
-                        if (controller.Connected && lastState != true)
-                        { 
-                            OnControllerAvailableChanged(controller.Connected);
-                        }
-                        else if (!controller.Connected && lastState == true)
-                        {
-                            OnControllerAvailableChanged(controller.Connected);
-                        }
-                        lastState = controller.Connected;
-                        Thread.Sleep(1000);
-                    }
-                });
-            }
-        }
-        */
 
         /// <summary>
         /// Should be called if the uptime of the motor changes
@@ -124,7 +96,7 @@ namespace Surrogate.Implementations.Controller.Module
 
             controller.Update();
 
-            switch(info.Case)
+            switch (info.Case)
             {
                 case ControllerTestInfo.TestCase.MotorOutput:
                     await Task.Run(() => TestMotorControl(controller, true));
@@ -148,25 +120,22 @@ namespace Surrogate.Implementations.Controller.Module
                     Motor.Instance.Start();
                 }
                 Tuple<int, int> speedValues = Tuple.Create(0, 0);
-                while (!_shouldStop)
+                while (!_shouldStop && !controller.buttons.Equals(GamepadButtonFlags.A))
                 {
-                    if (controller.buttons.Equals(GamepadButtonFlags.A))
-                    {
-                        Motor.Instance.PullUp();
-                        Stop();
-                    }
                     Tuple<int, int> nextSpeedValues = CalculateSpeedValues(controller);
                     // only update if values changed
                     {
                         speedValues = nextSpeedValues;
-                        Motor.Instance.LeftSpeed = (speedValues.Item1);
-                        Motor.Instance.RightSpeed = (speedValues.Item2);
-                            if (simulate)
-                            {
-                                System.Diagnostics.Debug.WriteLine(String.Format("Leftspeed: {0}, Rightspeed: {1}", speedValues.Item1, speedValues.Item2));
-                            }
+                        Motor.Instance.LeftSpeedValue = (speedValues.Item1);
+                        Motor.Instance.RightSpeedValue = (speedValues.Item2);
+                        if (simulate)
+                        {
+                            System.Diagnostics.Debug.WriteLine(String.Format("Leftspeed: {0}, Rightspeed: {1}", speedValues.Item1, speedValues.Item2));
+                        }
                     }
                 }
+                Motor.Instance.PullUp();
+                Stop();
             }
             catch (Exception pnve)
             {
@@ -184,7 +153,7 @@ namespace Surrogate.Implementations.Controller.Module
         /// </summary>
         /// <param name="controller"></param>
         /// <returns>A Tuple(int, int) with left and right speed values</int></returns>
-        private Tuple<int,int> CalculateSpeedValues(XBoxController controller)
+        private Tuple<int, int> CalculateSpeedValues(XBoxController controller)
         {
             controller.Update();
             float rightTrigger = controller.rightTrigger;
@@ -197,16 +166,16 @@ namespace Surrogate.Implementations.Controller.Module
             // calculate speed based on left and right triggers (right trigger forward, left trigger backward)
             int tempSpeed = (int)((rightTrigger - leftTrigger) / 255 * 100);
 
-            if(rightThumbX > 0)
+            if (rightThumbX > 0)
             {
                 double multiplier = rightThumbX / 100;
                 leftspeed = (int)(tempSpeed + multiplier * 100);
                 rightspeed = (int)(tempSpeed - multiplier * 100);
-            } else if(rightThumbX < 0)
+            } else if (rightThumbX < 0)
             {
                 double multiplier = rightThumbX / -100;
-                leftspeed = (int)(tempSpeed + multiplier * 100);
-                rightspeed = (int)(tempSpeed - multiplier * 100);
+                leftspeed = (int)(tempSpeed - multiplier * 100);
+                rightspeed = (int)(tempSpeed + multiplier * 100);
             }
             else
             {
@@ -229,12 +198,12 @@ namespace Surrogate.Implementations.Controller.Module
                 Thread.Sleep(200); // give console some time after each iteration
                 controller.Update();
                 Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() => {
-                    log.Info("\nLeft Thumb X: "+controller.leftThumb.X + " " + "\nLeft Thumb Y: " + controller.leftThumb.Y+ "\n"+
-                        "A?: "+ controller.buttons.Equals(GamepadButtonFlags.A)+ "\n" +
+                    log.Info("\nLeft Thumb X: " + controller.leftThumb.X + " " + "\nLeft Thumb Y: " + controller.leftThumb.Y + "\n" +
+                        "A?: " + controller.buttons.Equals(GamepadButtonFlags.A) + "\n" +
                         "Rigth Thumb X: " + controller.rightThumb.X + "\n" +
-                        "Rigth Thumb Y: " + controller.rightThumb.Y + "\n" + 
-                        "Left Trigger: " + controller.leftTrigger + "\n" + 
-                        "Right Trigger: " + controller.rightTrigger);}));
+                        "Rigth Thumb Y: " + controller.rightThumb.Y + "\n" +
+                        "Left Trigger: " + controller.leftTrigger + "\n" +
+                        "Right Trigger: " + controller.rightTrigger); }));
                 //Console.WriteLine(controller.leftThumb + " " + controller.rightThumb + " " + controller.leftTrigger + " " + controller.rightTrigger);
             }
             log.Info("Controller test ended");
@@ -250,7 +219,6 @@ namespace Surrogate.Implementations.Controller.Module
 
         public void Disselected(Object sender, EventArgs e)
         {
-            searchController = false;
             OnControllerAvailableChanged(false);
             OnMotorAvailableChanged(false);
         }
@@ -264,6 +232,14 @@ namespace Surrogate.Implementations.Controller.Module
         public override bool IsRunning()
         {
             throw new NotImplementedException();
+        }
+    }
+
+    public class ControllerTestProperties : ModulePropertiesBase
+    {
+        public ControllerTestProperties() : base("Controller Test", "Modul zum Testen des Controllers und der Steuerung", true, false, false, false, false, false)
+        {
+            SetProperty(base.KeyImagePath, @"C:\Users\ITM1\source\repos\Surrogate\Surrogate\resources\xbox_controller_icon.jpg");
         }
     }
 

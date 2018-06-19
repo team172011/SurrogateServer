@@ -4,10 +4,8 @@ namespace Surrogate.Roboter.MMotor
 {
     public interface IMotor
     {
-        int LeftSpeed { get; set; }
-        int RightSpeed { get; set; }
-
-        event EventHandler<EventArgs> SpeedChanged;
+        int LeftSpeedValue { get; set; }
+        int RightSpeedValue { get; set; }
 
         void Start(bool simulation);
         void Stop();

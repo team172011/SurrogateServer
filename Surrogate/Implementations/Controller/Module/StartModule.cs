@@ -23,7 +23,7 @@ namespace Surrogate.Implementations
     {
         private readonly StartModuleView _view = new StartModuleView();
 
-        public StartModule() : base(new ModulePropertiesBase("Start","Startbildschirm",false,false,false,false))
+        public StartModule() : base(new StartProperties())
         {
 
         }
@@ -55,7 +55,15 @@ namespace Surrogate.Implementations
 
         public override void Stop()
         {
-            
+
+        }
+    }
+
+    public class StartProperties : ModulePropertiesBase
+    {
+        public StartProperties() : base("Start", "Startbildschirm")
+        {
+            SetProperty(base.KeyImagePath, @"C:\Users\ITM1\source\repos\Surrogate\Surrogate\resources\start_controller_icon.png");
         }
     }
 }

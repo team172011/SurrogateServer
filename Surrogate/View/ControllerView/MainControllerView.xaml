@@ -4,26 +4,33 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="MainWindow" ResizeMode="NoResize" WindowState="Maximized" Topmost="False"
+        Title="MainWindow" 
         xmlns:vwl="clr-namespace:Surrogate.View.Logging"
         xmlns:ccs="clr-namespace:Surrogate.View.Handler"
         xmlns:base="clr-namespace:Surrogate.View"
-               Closing="MainView_Closing">
+               WindowStyle="None"
+               Background="{StaticResource FadeOutRight}"
+               WindowState="Maximized">
+    <!--
+               ResizeMode="NoResize" 
+                
+               Topmost="False"
+                -->
     <DockPanel>
         <!-- Menu bar-->
-        <Menu DockPanel.Dock="Top" >
+        <Menu DockPanel.Dock="Top"  Background="Transparent">
             <MenuItem Header="Programm">
-                <MenuItem Header="Close" />
+                <MenuItem Header="Close" Click="MenuItem_Click" />
             </MenuItem>
             <MenuItem x:Name="miModuleSettings" Header="Settings" MenuItem.Click="MiModuleSettings_Click">
             </MenuItem>
         </Menu>
         
         <!---Sidebar on the left with header, modules list and processes list-->
-        <StackPanel DockPanel.Dock="Left" Orientation="Vertical">
-            <Label FontSize="20" FontWeight="Bold">Surrogate</Label>
-            <Label FontWeight="Bold" Content="Module"/>
+        <StackPanel Margin="10,0,0,0"  DockPanel.Dock="Left" Orientation="Vertical">
+            <Label Margin="0,10,0,0" FontWeight="Bold" Content="Module"/>
             <ListView x:Name="lvModules"
+                      Background="Transparent"
                       Margin="0, 0, 0, 0"
                       ScrollViewer.VerticalScrollBarVisibility="Visible">
                 <ListView.ItemContainerStyle>
@@ -38,16 +45,19 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition/>
                                 <ColumnDefinition/>
+                                <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition></RowDefinition>
                             </Grid.RowDefinitions>
-                            <StackPanel  Width="150" MaxHeight="50" Grid.Column="0" Grid.Row="0" Orientation="Horizontal" >
-                                <Image Source="{Binding Properties.ImagePath}"></Image>
-                                <TextBlock VerticalAlignment="Center" Text="{Binding Properties.Name}" FontWeight="ExtraBlack" TextWrapping="Wrap" Padding="10"/>
+                            <StackPanel  Width="200" MaxHeight="50" Grid.Column="0" Grid.Row="0" Orientation="Horizontal" >
+                                <Image Source="{Binding Properties.ImagePath}" Height="50" Width="50"></Image>
+                                <TextBlock VerticalAlignment="Center" Text="{Binding Properties.Name}" TextWrapping="Wrap" Padding="10"/>
                             </StackPanel>
-                            <StackPanel MaxWidth="200" Grid.Column="1" Grid.Row="0" Orientation="Vertical">
-                                <Label Content="Beschreibung:" FontSize="10"/>
+                            <StackPanel Margin="5" Grid.Column="1" Grid.Row="0" Orientation="Vertical">
+                                <Rectangle VerticalAlignment="Stretch" Width="1" Height="50" Margin="2" Stroke="Black" />
+                            </StackPanel>
+                            <StackPanel MaxWidth="200" Grid.Column="2" Grid.Row="0" VerticalAlignment="Center">
                                 <TextBlock TextWrapping="Wrap" Text="{Binding Properties.Description}"  ></TextBlock>
                             </StackPanel>
                         </Grid>
@@ -59,17 +69,25 @@
                       ItemsSource="{Binding Path=processes}">
             </ListView>
         </StackPanel>
-        <StackPanel x:Name="connectionsPanel" DockPanel.Dock="Right">
+        <StackPanel Margin="0,0,10,0" DockPanel.Dock="Right">
+            <!-- Connections View StackPanel-->
+            <Label Margin="0,10,0,0" Content="Verbindungsstatus" FontWeight="Bold"/>
+            <StackPanel x:Name="connectionsPanel" >
             
+            </StackPanel>
         </StackPanel>
         <StackPanel DockPanel.Dock="Top"></StackPanel>
         <StackPanel DockPanel.Dock="Bottom">
-            <Label FontWeight="Bold">Log</Label>
-            <vwl:LoggingView/>
+            <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
+                <Button x:Name="btnHideLog" Content="6"  FontFamily="Marlett" FontSize="20" Background="Transparent" Click="BtnHideLog_Click" BorderThickness="0"/>
+                <Label FontWeight="Bold" >Log</Label>
+            </StackPanel>
+
+            <vwl:LoggingView x:Name="spLog"/>
         </StackPanel>
-        <Grid>
-            <StackPanel x:Name="spModule" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                <Label>Content of current module</Label>
+        <Grid Margin="10,36.4,10,0">
+            <StackPanel x:Name="spModule" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,36">
+                <Label >Content of current module</Label>
             </StackPanel>
         </Grid>
     </DockPanel>

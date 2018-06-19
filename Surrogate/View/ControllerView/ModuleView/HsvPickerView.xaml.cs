@@ -1,19 +1,11 @@
 ﻿using Emgu.CV;
 using Emgu.CV.Structure;
+using Surrogate.Implementations.Controller.Module;
+using Surrogate.Implementations.Model;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 
 namespace Surrogate.View.ControllerView.ModuleView
@@ -30,13 +22,15 @@ namespace Surrogate.View.ControllerView.ModuleView
         private int v_Upper = 255;
         private int v_Lower = 0;
 
+        private volatile bool inverted = false;
+
         private readonly VideoCapture _capturer;
         private readonly DispatcherTimer _timer;
         private readonly Window _parent;
 
         public event EventHandler<HsvBounds> SaveClicked;
 
-        public HsvPickerView(Window parent, int camId = 0)
+        public HsvPickerView(Window parent, int camId = 0, LineFollowingProperties props = null)
         {
             _parent = parent;
             _capturer = new VideoCapture(camId);
@@ -45,8 +39,30 @@ namespace Surrogate.View.ControllerView.ModuleView
             _timer.Tick += UpdateImage;
             _timer.Interval = new TimeSpan(0, 0, 0, 0, 10);
             InitializeComponent();
+            InitBounds(props);
             _timer.Start();
             _parent.Closing += new CancelEventHandler(OnClosing);
+
+            
+        }
+
+        private void InitBounds(LineFollowingProperties props)
+        {
+            if (props == null) return;
+
+            Hsv lower = props.Lower;
+            Hsv upper = props.Upper;
+
+            sHLower.Value = lower.Hue;
+            sHUpper.Value = upper.Hue;
+
+            sVLower.Value = lower.Value;
+            sVUpper.Value = upper.Value;
+
+            sSLower.Value = lower.Value;
+            sSUpper.Value = upper.Value;
+
+            cbInverted.IsChecked = props.Inverted;
         }
 
         private void UpdateImage(object sender, EventArgs e)
@@ -55,9 +71,14 @@ namespace Surrogate.View.ControllerView.ModuleView
             {
                 Image<Gray, Byte> mask = imageFrame.InRange(new Hsv(h_Lower, s_Lower, v_Lower), new Hsv(h_Upper, s_Upper, v_Upper));
                 Mat filtered = new Mat();
+                if (inverted)
+                {
+                    mask = mask.Not();
+                }
                 CvInvoke.BitwiseAnd(imageFrame, imageFrame, filtered, mask: mask);
 
                 var pimage = filtered.Clone(); // clone image because we are going to run async on gui thread
+
                 Application
                     .Current
                     .Dispatcher
@@ -83,7 +104,7 @@ namespace Surrogate.View.ControllerView.ModuleView
         /// <param name="e"></param>
         private void Save_Clicked(object sender, RoutedEventArgs e)
         {
-            SaveClicked?.Invoke(this, new HsvBounds(new Hsv(h_Lower, s_Lower, v_Lower), new Hsv(h_Upper, s_Upper, v_Upper)));
+            SaveClicked?.Invoke(this, new HsvBounds(new Hsv(h_Lower, s_Lower, v_Lower), new Hsv(h_Upper, s_Upper, v_Upper), inverted));
             _parent.Close();
         }
 
@@ -109,28 +130,19 @@ namespace Surrogate.View.ControllerView.ModuleView
 
         private void SVLower_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            s_Lower = (int)e.NewValue;
+            v_Lower = (int)e.NewValue;
         }
 
         private void SSLower_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             s_Lower = (int)e.NewValue;
         }
-    }
 
-    public class HsvBounds : EventArgs
-    {
-
-        private readonly Hsv _lower;
-        private readonly Hsv _upper;
-
-        public Hsv Lower { get => _lower; }
-        public Hsv Upper { get => _upper; }
-
-        public HsvBounds(Hsv lower, Hsv upper)
+        private void InvertUpdated(object sender, RoutedEventArgs e)
         {
-            _lower = lower;
-            _upper = upper;
+            var box = sender as CheckBox;
+            inverted = (bool) box.IsChecked;
+            System.Diagnostics.Debug.WriteLine(inverted);
         }
     }
 }

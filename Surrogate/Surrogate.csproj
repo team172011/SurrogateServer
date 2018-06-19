@@ -114,6 +114,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Connection\MCamera.cs" />
+    <Compile Include="Implementations\Model\HsvBounds.cs" />
     <Compile Include="Model\IMotor.cs" />
     <Compile Include="Controller\AbstractConroller.cs" />
     <Compile Include="Controller\IController.cs" />
@@ -296,6 +298,11 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="resources\properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resources\xbox_controller.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\OpenTok.Client.2.13.0\build\OpenTok.Client.targets" Condition="Exists('..\packages\OpenTok.Client.2.13.0\build\OpenTok.Client.targets')" />

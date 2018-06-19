@@ -8,6 +8,30 @@
              Exit="Application_Exit">
     <!--Ressources in App.xaml are globaly available-->
     <Application.Resources>
-         
+        <SolidColorBrush x:Key="LightColor" Color="#76c7ef"/>
+        <SolidColorBrush x:Key="DarkColor" Color="White"/>
+
+        <LinearGradientBrush x:Key="FadeOutRight" EndPoint="1,1" StartPoint="0,0">
+            <GradientStop Color="{Binding Source={StaticResource DarkColor}, Path=Color}" Offset="0" />
+            <GradientStop Color="{Binding Source={StaticResource LightColor}, Path=Color}" Offset="1"/>
+        </LinearGradientBrush>
+        
+        <Style x:Key="LinkButton" TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate
+                TargetType="Button">
+                        <TextBlock TextDecorations="Underline">
+                            <ContentPresenter /></TextBlock>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Foreground" Value="Blue" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter Property="Foreground" Value="Red" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </Application.Resources>
 </Application>

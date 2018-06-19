@@ -32,6 +32,10 @@ namespace Surrogate.Model
 
         public abstract bool Disconnect();
 
+        /// <summary>
+        /// Constructor with no parameters. Initializes the status with <see cref="ConnectionStatus.Disconnected"/> and calls
+        /// the <see cref="Connect"/> prozedure.
+        /// </summary>
         public AbstractConnection()
         {
             _status = ConnectionStatus.Disconnected;

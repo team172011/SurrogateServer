@@ -15,7 +15,7 @@ using System.Windows.Threading;
 namespace Surrogate.Roboter.MMotor
 {
     /// <summary>
-    /// Class for connecting and controlling the motor via serial usb port
+    /// Class for connecting and controlling the motor via connection to a serial usb port
     /// Singeton pattern, get instance with <see cref="GetInstance"/> function.
     /// </summary>
     public class Motor : AbstractConnection, IMotor
@@ -48,35 +48,11 @@ namespace Surrogate.Roboter.MMotor
         private bool _isSimulation = false;
 
         /// <summary>
-        /// This field is used by the motor thread to create the speed commands for the left wheels
-        /// </summary>        
-        public int LeftSpeed
-        {
-            set
-            {
-                _leftSpeedValue = value;
-                OnSpeedChanged();
-            }
-            get
-            {
-                return _leftSpeedValue;
-            }
-        }
-        /// <summary>
-        /// This fields are used by the motor thread to create the speed commands for the right wheels
+        /// A timer thread is used to send current left speed and right speed values to
+        /// the motor every 100 milliseconds (<seealso cref="RunEngine(object)"/>. This guarantees
+        /// that there will be no queue for motor commands.
         /// </summary>
-        public int RightSpeed
-        {
-            set
-            {
-                _rightSpeedValue = value;
-                OnSpeedChanged();
-            }
-            get
-            {
-                return _rightSpeedValue;
-            }
-        }
+        private System.Threading.Timer Timer;
 
         public override string Name => FrameworkConstants.MotorName;
 
@@ -95,22 +71,14 @@ namespace Surrogate.Roboter.MMotor
             }
         }
 
-        /// <summary>
-        /// This event handler will be called if one speed value changes
-        /// </summary>
-        public event EventHandler<EventArgs> SpeedChanged;
+        public int RightSpeedValue { get => _rightSpeedValue; set => _rightSpeedValue = value; }
+        public int LeftSpeedValue { get => _leftSpeedValue; set => _leftSpeedValue = value; }
 
         /// <summary>
         /// Private Consturctor.
         /// </summary>
         private Motor()
         {
-            Connect();
-        }
-
-        public virtual void OnSpeedChanged()
-        {
-            SpeedChanged?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -128,7 +96,6 @@ namespace Surrogate.Roboter.MMotor
             M4F = 41
         }
 
-
         /// <summary>
         /// Search for the serial port and connect to the motor controller (if not simulation)
         /// Starting the motor thread (see <see cref="Start"/> and <see cref="RunEngine(SerialPort)"/>)
@@ -136,11 +103,12 @@ namespace Surrogate.Roboter.MMotor
         /// <param name="simulation"></param>
         public void Start(bool simulation = false)
         {
+            
             if (simulation)
             {
-                SpeedChanged += SimulateEngine;
-            } else if (Connect()){
-                SpeedChanged += RunEngine;
+                Timer = new System.Threading.Timer(SimulateEngine,null, 0, 100);
+            } else if (Connect() ){
+                Timer = new System.Threading.Timer(RunEngine, null, 0, 100);
             } else
             {
                 throw new Exception("Could not start motor");
@@ -149,14 +117,7 @@ namespace Surrogate.Roboter.MMotor
 
         public void Stop()
         {
-            if (_isSimulation)
-            {
-                SpeedChanged -= SimulateEngine;
-            }
-            else if (Connect())
-            {
-                SpeedChanged -= RunEngine;
-            }
+            Timer?.Dispose();
         }
 
         public bool Connect(int portId = 1)
@@ -203,7 +164,7 @@ namespace Surrogate.Roboter.MMotor
             return port.IsOpen;
         }
 
-        private void SimulateEngine(object sender, EventArgs e)
+        private void SimulateEngine(object state)
         {
             while (!_shouldStop)
             {
@@ -228,7 +189,7 @@ namespace Surrogate.Roboter.MMotor
         /// function can be used to write commands to the cagebot controller 
         /// </summary>
         /// <param name="port"> The SerialPort class representing the usb port</param>
-        private void RunEngine(object sender, EventArgs e)
+        private void RunEngine(object state)
         {
             //while (!_shouldStop)
             {
@@ -277,7 +238,7 @@ namespace Surrogate.Roboter.MMotor
 
         private byte[] GetM2Command()
         {
-            int speed = _rightSpeedValue;
+            int speed = RightSpeedValue;
             if (speed > 0)
             {
                 return BuildCommand(Motors.M2F, speed);
@@ -291,7 +252,7 @@ namespace Surrogate.Roboter.MMotor
 
         private byte[] GetM1Command()
         {
-            int speed = _rightSpeedValue;
+            int speed = RightSpeedValue;
             if(speed > 0)
             {
                 return BuildCommand(Motors.M1F, speed);
@@ -312,8 +273,8 @@ namespace Surrogate.Roboter.MMotor
 
         public void PullUp()
         {
-            LeftSpeed = 0;
-            RightSpeed = 0;
+            LeftSpeedValue = 0;
+            RightSpeedValue = 0;
         }
 
         public void Kill()

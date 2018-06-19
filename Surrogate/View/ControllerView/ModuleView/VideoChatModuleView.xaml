@@ -8,8 +8,9 @@
         mc:Ignorable="d">
     <DockPanel>
         <StackPanel DockPanel.Dock="Left">
+            <!-- Label, ListView and Button for Contacts-->
             <Label Content="Kontakte" FontWeight="Bold"/>
-            <ListView x:Name="lvContacts">
+            <ListView x:Name="lvContacts" Background="Transparent">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="{x:Type ListViewItem}">
                         <EventSetter Event="MouseDoubleClick" Handler="ListViewItem_MouseDoubleClick" />
@@ -24,15 +25,15 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition/>
                             </Grid.RowDefinitions>
-                            <StackPanel  Width="150" MaxHeight="50" Grid.Column="0" Grid.Row="0" Orientation="Horizontal" >
+                            <StackPanel Width="150" MaxHeight="50" Grid.Column="0" Grid.Row="0" Orientation="Horizontal" >
                                 <StackPanel.Resources>
                                     <Style TargetType="StackPanel">
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding IsOnline}" Value="True">
-                                                <Setter Property="Background" Value="Green"/>
+                                                <Setter Property="Background" Value="#009900"/>
                                             </DataTrigger>
                                             <DataTrigger Binding="{Binding IsOnline}" Value="False">
-                                                <Setter Property="Background" Value="Red"/>
+                                                <Setter Property="Background" Value="#8c8c8c"/>
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
@@ -40,23 +41,42 @@
                                 <TextBlock VerticalAlignment="Center" Text="{Binding FirstName}" FontWeight="ExtraBlack" TextWrapping="Wrap" Padding="10"/>
                             </StackPanel>
                         </Grid>
-
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-            <Button x:Name="btnAddContact" Content="Kontakt hinzufügen"/>
+            <Button HorizontalAlignment="Center" x:Name="btnAddContact" Click="BtnAddContact_Click" Content="Kontakt hinzufügen" Style="{StaticResource LinkButton}"/>
+            <Button HorizontalAlignment="Center" x:Name="btnChangeCamera" Click="BtnChangeCamera_Click"  Content="Kamera wechseln" Style="{StaticResource LinkButton}"/>
         </StackPanel>
+        <!-- Title -->
         <StackPanel DockPanel.Dock="Top">
-            <TextBlock Text="Videochatgespräch mit:" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+            <TextBlock Text="Video Chat Modul" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
         </StackPanel>
-        <StackPanel>
-            <OpenTok:VideoRenderer x:Name="PublisherVideo" HorizontalAlignment="Right" Height="240" VerticalAlignment="Top" Width="320">
-            </OpenTok:VideoRenderer>
-            <OpenTok:VideoRenderer x:Name="SubscriberVideo" HorizontalAlignment="Center" Height="480" VerticalAlignment="Bottom" Width="640">
-            </OpenTok:VideoRenderer>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Content="Auflegen"></Button>
-            </StackPanel>
-        </StackPanel>
+        
+        <!-- Publisher and Renderer Frames -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+            <Border Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" CornerRadius="3" BorderBrush="Black" BorderThickness="2">
+                <OpenTok:VideoRenderer x:Name="SubscriberVideo" HorizontalAlignment="Center"  VerticalAlignment="Bottom"  Height="500" Width="500">
+                </OpenTok:VideoRenderer>
+            </Border>
+
+            <Border Grid.Column="1" Grid.Row="0" CornerRadius="3" BorderBrush="Black" BorderThickness="4" Height="200" Width="200" VerticalAlignment="Top" HorizontalAlignment="Right">
+                <OpenTok:VideoRenderer Grid.Column="1" Grid.Row="0" x:Name="PublisherVideo" Height="200" Width="200" >
+                    </OpenTok:VideoRenderer>
+            </Border>
+
+            <!-- Button hang up -->
+                <DockPanel Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2">
+                    <Button Background="OrangeRed" Content="Auflegen"></Button>
+                </DockPanel>
+            </Grid>
+
     </DockPanel>
 </base:ModuleViewBase>

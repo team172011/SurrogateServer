@@ -82,6 +82,14 @@ namespace Surrogate.Implementations.Handler
             _connections[name].Connect();
         }
 
+        public void ConnectAll()
+        {
+            foreach(var con in _connections)
+            {
+                con.Value.Connect();
+            }
+        }
+
         public IConnection GetConnection(string name)
         {
             return _connections[name];

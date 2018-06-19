@@ -1,0 +1,16 @@
+Name=Linie folgen
+Description=Modul zum Folgen einer farbigen Linie
+Motor=True
+FaceCam=False
+Internet=False
+Microphone=False
+Database=False
+ImagePath=C:\Users\ITM1\source\repos\Surrogate\Surrogate\resources\linefollowing_controller_icon.png
+H_Lower=0
+S_Lower=132
+V_Lower=132
+H_Upper=56
+S_Upper=255
+V_Upper=255
+Inverted=False
+Camera=0

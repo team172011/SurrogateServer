@@ -9,6 +9,7 @@ using System.Windows;
 
 namespace Surrogate.View
 {
+    using OpenTok;
     using Surrogate.Implementations;
     using Surrogate.Modules;
     using System.Collections.ObjectModel;
@@ -27,9 +28,7 @@ namespace Surrogate.View
         {
             _parentModule = parentModule;
             InitializeComponent();
-            btnStartCall.Click += HandleCall;
             lvContacts.ItemsSource = contacts;
-
             _parentModule.ContactAddedHandler += FillList;
             _parentModule.ContactStatusChangedHandler += UpdateList;
             _parentModule.InvokeContactData();
@@ -51,17 +50,21 @@ namespace Surrogate.View
             contacts.Add(new VideoChatItem(e));
         }
 
-        private void HandleCall(Object sender, RoutedEventArgs e)
-        {
-            var item = lvContacts.SelectedItem;
-            _parentModule.Start(new VideoChatInfo()); // TODO add contact details in VideoChatInfo
-        }
-
         private void ListViewItem_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             var item = sender as ListViewItem;
             var vcItem = item.Content as VideoChatItem;
             _parentModule.ShowStream(vcItem.UserName);
+        }
+
+        private void BtnAddContact_Click(object sender, RoutedEventArgs e)
+        {
+            // open contacts input mask
+        }
+
+        private void BtnChangeCamera_Click(object sender, RoutedEventArgs e)
+        {
+            _parentModule.ChangeCamera();
         }
     }
 

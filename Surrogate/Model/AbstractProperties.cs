@@ -38,7 +38,7 @@ namespace Surrogate.Model
             {
                 throw new ResourceNotFoundException("No file name found");
             }
-            Save(filename);
+            Save(filename + ".txt");
         }
 
         public void Load()
@@ -48,20 +48,17 @@ namespace Surrogate.Model
             {
                 throw new ResourceNotFoundException("No file name found");
             }
-            Load(filename);
+            Load(filename + ".txt");
         }
 
         public abstract void Save(string name);
         public abstract void Load(string name);
 
-        public abstract void SetBooleanProperty(string key, bool value, bool replace = true);
-        public abstract void SetDoubleProperty(string key, double value, bool replace = true);
-        public abstract void SetIntegerProperty(string key, int value, bool replace = true);
+        public abstract void SetProperty(string key, bool value, bool replace = true);
+        public abstract void SetProperty(string key, double value, bool replace = true);
+        public abstract void SetProperty(string key, int value, bool replace = true);
         public abstract void SetProperty(string key, string value, bool replace = true);
 
-        public PropertiesView GetView()
-        {
-            return new PropertiesView(this);
-        }
+        public abstract bool ContainsProperty(string key);
     }
 }
