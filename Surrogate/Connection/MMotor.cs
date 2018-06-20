@@ -22,6 +22,8 @@ namespace Surrogate.Roboter.MMotor
     {
         private static volatile Motor _instance;
         private static readonly object syncRoot = new Object();
+
+        #region singleton property
         public static Motor Instance
         {
             get
@@ -40,11 +42,12 @@ namespace Surrogate.Roboter.MMotor
                 return _instance;
             }
         }
-        
+        #endregion singleton property
+
         private volatile bool _shouldStop = false;
         private SerialPort port;   
-        private volatile int _leftSpeedValue;
-        private volatile int _rightSpeedValue;
+        private volatile byte _leftSpeedValue;
+        private volatile byte _rightSpeedValue;
         private bool _isSimulation = false;
 
         /// <summary>
@@ -71,8 +74,8 @@ namespace Surrogate.Roboter.MMotor
             }
         }
 
-        public int RightSpeedValue { get => _rightSpeedValue; set => _rightSpeedValue = value; }
-        public int LeftSpeedValue { get => _leftSpeedValue; set => _leftSpeedValue = value; }
+        public byte RightSpeedValue { get => _rightSpeedValue; set => _rightSpeedValue = value; }
+        public byte LeftSpeedValue { get => _leftSpeedValue; set => _leftSpeedValue = value; }
 
         /// <summary>
         /// Private Consturctor.
@@ -103,7 +106,7 @@ namespace Surrogate.Roboter.MMotor
         /// <param name="simulation"></param>
         public void Start(bool simulation = false)
         {
-            
+            Stop();
             if (simulation)
             {
                 Timer = new System.Threading.Timer(SimulateEngine,null, 0, 100);
@@ -126,7 +129,7 @@ namespace Surrogate.Roboter.MMotor
             {
                 if (port.IsOpen)
                 {
-                    return true;
+                    return true; // already connected to port
                 } else
                 {
                     port.Close();

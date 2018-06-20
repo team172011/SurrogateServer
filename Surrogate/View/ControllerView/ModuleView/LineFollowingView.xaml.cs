@@ -47,8 +47,6 @@ namespace Surrogate.View
 
         private void OnStartPressed(object sender, RoutedEventArgs e)
         {
-
-
             ((LineFollowingModule)Controller).Start(new LineFollowingInfo(CreateViewInfo()));
             btnStart.Content = "Line folgen beenden";
             btnStart.Click -= OnStartPressed;
@@ -68,7 +66,7 @@ namespace Surrogate.View
             Controller.Stop();
             Window window = new Window();
             var props = Controller.Properties as LineFollowingProperties;
-            HsvPickerView picker = new HsvPickerView(window, props:props);
+            HsvPickerView picker = new HsvPickerView(window,camId:props.CamNum, props:props);
             LineFollowingModule controller = Controller as LineFollowingModule;
             picker.SaveClicked += controller.UpdateHsvSpace;
             window.Content = picker;
@@ -77,13 +75,8 @@ namespace Surrogate.View
 
         private void BtnChangeCam_Click(object sender, RoutedEventArgs e)
         {
-            Controller.Stop();
-            var props = Controller.Properties as LineFollowingProperties;
-            props.CamNum = ++props.CamNum % FrameworkConstants.Numbercams;
-            ((LineFollowingModule)Controller).Start(new LineFollowingInfo(CreateViewInfo()));
-            btnStart.Content = "Line folgen beenden";
-            btnStart.Click -= OnStartPressed;
-            btnStart.Click += OnStopPressed;
+            var controller = Controller as LineFollowingModule;
+            controller.ChangeCamera();
         }
     }
 

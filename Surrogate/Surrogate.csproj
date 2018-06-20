@@ -87,6 +87,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Expression.Blend.Sdk.1.0.2\lib\net45\System.Windows.Interactivity.dll</HintPath>
@@ -115,6 +116,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Connection\MCamera.cs" />
+    <Compile Include="Implementations\Model\HsvModulProperties.cs" />
+    <Compile Include="Implementations\Model\IHsvProperties.cs" />
     <Compile Include="Implementations\Model\HsvBounds.cs" />
     <Compile Include="Model\IMotor.cs" />
     <Compile Include="Controller\AbstractConroller.cs" />
@@ -141,7 +144,7 @@
     <Compile Include="Model\IModuleProperties.cs" />
     <Compile Include="Model\ModuleInfo.cs" />
     <Compile Include="Model\Handler\IModuleHandler.cs" />
-    <Compile Include="Implementations\Model\ModuleProperties.cs" />
+    <Compile Include="Implementations\Model\ModulPropertiesBase.cs" />
     <Compile Include="Connection\MController.cs" />
     <Compile Include="Connection\MDatabase.cs" />
     <Compile Include="Connection\MInternet.cs" />
@@ -153,11 +156,14 @@
     <Compile Include="View\ControllerView\ModuleView\HsvPickerView.xaml.cs">
       <DependentUpon>HsvPickerView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\ControllerView\ModuleView\LineFollowingModuleView.xaml.cs">
-      <DependentUpon>LineFollowingModuleView.xaml</DependentUpon>
+    <Compile Include="View\ControllerView\ModuleView\LineFollowingView.xaml.cs">
+      <DependentUpon>LineFollowingView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\ControllerView\ModuleView\FaceDetectionView.xaml.cs">
       <DependentUpon>FaceDetectionView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ControllerView\ModuleView\BallFollowingView.xaml.cs">
+      <DependentUpon>BallFollowingView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\PropertieView\PropertiesView.xaml.cs">
       <DependentUpon>PropertiesView.xaml</DependentUpon>
@@ -201,7 +207,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\ControllerView\ModuleView\LineFollowingModuleView.xaml">
+    <Page Include="View\ControllerView\ModuleView\LineFollowingView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -214,6 +220,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\ControllerView\ModuleView\FaceDetectionView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ControllerView\ModuleView\BallFollowingView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

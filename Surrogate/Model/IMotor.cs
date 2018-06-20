@@ -4,8 +4,8 @@ namespace Surrogate.Roboter.MMotor
 {
     public interface IMotor
     {
-        int LeftSpeedValue { get; set; }
-        int RightSpeedValue { get; set; }
+        byte LeftSpeedValue { get; set; }
+        byte RightSpeedValue { get; set; }
 
         void Start(bool simulation);
         void Stop();

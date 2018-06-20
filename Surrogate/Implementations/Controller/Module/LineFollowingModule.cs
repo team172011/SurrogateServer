@@ -3,10 +3,12 @@ using Emgu.CV.CvEnum;
 using Emgu.CV.LineDescriptor;
 using Emgu.CV.Structure;
 using Emgu.CV.Util;
+using OpenTok;
 using Surrogate.Implementations.Model;
 using Surrogate.Model;
 using Surrogate.Model.Module;
 using Surrogate.Modules;
+using Surrogate.Roboter.MCamera;
 using Surrogate.Roboter.MMotor;
 using Surrogate.View;
 using System;
@@ -27,12 +29,14 @@ namespace Surrogate.Implementations.Controller.Module
 
         private IDictionary<int, System.Windows.Controls.Image> _currentImages;
         private VideoCapture _currentVideoCapture;
+        private int CamNum;
 
         public override IModuleProperties Properties => GetProperties();
 
         public LineFollowingModule() : base(new LineFollowingProperties())
         {
             _view = new LineFollowingModuleView(this);
+            ModuleDisselected += new EventHandler((o, e) => Stop());
         }
 
         /// <summary>
@@ -45,20 +49,21 @@ namespace Surrogate.Implementations.Controller.Module
             log.Debug(String.Format("Using lower: {0} and upper: {1} as hsv space", GetProperties().Lower, GetProperties().Upper));
             while (!ShouldStop)
             {
-                using (Image<Bgr, byte> imageFrame = _currentVideoCapture.QueryFrame().ToImage<Bgr, Byte>())
+                using (Image<Hsv, byte> imageFrame = _currentVideoCapture.QueryFrame().ToImage<Hsv, Byte>())
+                using (Image<Bgr, byte> original = _currentVideoCapture.QueryFrame().ToImage<Bgr, Byte>())
                 {
-                    
+
                     if (imageFrame != null)
                     {
-                        Image<Bgr, Byte> original = imageFrame.Clone();
-                        Image<Gray,Byte> mask = imageFrame.Convert<Hsv,Byte>().InRange(GetProperties().Lower, GetProperties().Upper);
+                        Image<Gray, Byte> mask = imageFrame.Convert<Hsv, Byte>().InRange(GetProperties().Lower, GetProperties().Upper);
+                        System.Diagnostics.Debug.WriteLine(GetProperties().Lower+" "+GetProperties().Upper+ GetProperties().Inverted);
                         if (GetProperties().Inverted)
                         {
                             mask = mask.Not();
                         }
                         Mat filtered = new Mat();
-                        CvInvoke.BitwiseAnd(imageFrame, imageFrame, filtered, mask: mask); // filter image by specific upper and lower hsv space values
-                        
+                        CvInvoke.BitwiseAnd(imageFrame, imageFrame, filtered, mask: mask); // filter image by upper and lower hsv space values
+
                         var smoothed = filtered.ToImage<Gray, Byte>().SmoothGaussian(5);
                         var eroded = smoothed.Erode(8);
                         var dilated = eroded.Dilate(8);
@@ -66,11 +71,11 @@ namespace Surrogate.Implementations.Controller.Module
                         VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint();
 
                         CvInvoke.FindContours(dilated, contours, null, RetrType.List, ChainApproxMethod.ChainApproxSimple);
-                        if(contours.Size > 0)
+                        if (contours.Size > 0)
                         {
                             var biggestContour = contours[0];
                             var biggestContourSize = CvInvoke.ContourArea(biggestContour);
-                            for (int i = 1; i < contours.Size; i++)
+                            for (int i = 1; i < contours.Size; i++) // find the biggest contour
                             {
                                 var sizeCurrent = CvInvoke.ContourArea(contours[i]);
                                 if (sizeCurrent > biggestContourSize)
@@ -78,29 +83,36 @@ namespace Surrogate.Implementations.Controller.Module
                                     biggestContour = contours[i];
                                     biggestContourSize = sizeCurrent;
                                 }
-
                             }
 
-                            Rectangle rec = CvInvoke.BoundingRectangle(biggestContour);
+                            //Rectangle rec = CvInvoke.BoundingRectangle(biggestContour);
                             RotatedRect rrec = CvInvoke.MinAreaRect(biggestContour);
-                            original.Draw(rec, new Bgr(0, 0, 255), 2);
+                            //original.Draw(rec, new Bgr(0, 0, 255), 2);
                             original.Draw(rrec, new Bgr(0, 255, 0), 2);
+                            original.Draw(new CircleF(rrec.Center, 2), new Bgr(0, 255, 255), 2);
                             original.Draw(biggestContour.ToArray(), new Bgr(255, 0, 0), 2);
 
-                            var difference = rec.Height*rec.Width - rrec.Size.Height*rrec.Size.Width;
+                            double x = rrec.Center.X;
+                            double width = imageFrame.Width;
+                            double leftMin = width * 0.33;
+                            double rightMax = width * 0.66;
 
-                            var tresdiff = 5000; // allowed difference between bounding rec and detected rec
-                            var maxdiff=0;
-
-                            if(difference < tresdiff) // the bounding rec and the detected rec are equal, drive straight on
+                            if (x < leftMin)
                             {
-                                Motor.Instance.LeftSpeedValue = (50);
-                                Motor.Instance.RightSpeedValue = (50);
-                                log.Debug("gerade aus");
+                                log.Debug("nach rechts");
                             }
-                            else {
-                                log.Debug(difference);
+                            else if (x > rightMax)
+                            {
+                                log.Debug("nach links");
                             }
+                            else
+                            {
+                                log.Debug("Gerade aus");
+                            }
+                        }
+                        else
+                        {
+                            log.Debug("Anhalten/Suchen");
                         }
 
                         PublishFrame(1, imageFrame, "Original Input");
@@ -109,17 +121,24 @@ namespace Surrogate.Implementations.Controller.Module
                         PublishFrame(4, dilated.Convert<Bgr, Byte>(), "Eroded & Delitated");
                         PublishFrame(5, original, "Result");
                     }
-                    
                 }
             }
         }
 
-        /// <summary>
-        /// Updates the upper and lower bounds of the used hsv space
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        internal void UpdateHsvSpace(object sender, HsvBounds e)
+        public void ChangeCamera()
+        {
+            Stop();
+            int NextCam = ++CamNum % FrameworkConstants.Numbercams; // increase cam index by 
+            log.Debug("Switching to Camera " + NextCam);
+            GetProperties().CamNum = NextCam;
+        }
+
+            /// <summary>
+            /// Updates the upper and lower bounds of the used hsv space
+            /// </summary>
+            /// <param name="sender"></param>
+            /// <param name="e"></param>
+            internal void UpdateHsvSpace(object sender, HsvBounds e)
         {
             log.Debug("Hsv Farbraum eingegrenzt:" + e.Lower.ToString() + e.Upper.ToString());
             GetProperties().SetBounds(e);
@@ -184,7 +203,19 @@ namespace Surrogate.Implementations.Controller.Module
             ShouldStop = false;
             if (IsRunning()) return;
             _currentImages = info.Images;
+            if(_currentVideoCapture != null)
+            {
+                _currentVideoCapture.Dispose();
+            }
             _currentVideoCapture = new VideoCapture(GetProperties().CamNum);
+            try {
+                var test = _currentVideoCapture.QueryFrame().ToImage<Bgr, Byte>();
+            } catch (Exception e)
+            {
+                log.Error("Could not use camera. Switching to default "+e.Message);
+                GetProperties().CamNum = 0;
+                Start(info);
+            }
             _worker = new BackgroundWorker();
             _worker.DoWork += LineFollowing;
             _worker.RunWorkerAsync();
@@ -198,7 +229,6 @@ namespace Surrogate.Implementations.Controller.Module
         public override void Stop()
         {
             base.Stop();
-            _currentVideoCapture?.Dispose();
         }
     }
 
@@ -215,25 +245,9 @@ namespace Surrogate.Implementations.Controller.Module
         }
     }
 
-    public class LineFollowingProperties : ModulePropertiesBase
+    public class LineFollowingProperties : HsvModulProperties
     {
-        public readonly string Key_H_Lower = "H_Lower";
-        public readonly string Key_S_Lower = "S_Lower";
-        public readonly string Key_V_Lower = "V_Lower";
 
-        public readonly string Key_H_Upper = "H_Upper";
-        public readonly string Key_S_Upper = "S_Upper";
-        public readonly string Key_V_Upper = "V_Upper";
-
-        public readonly string Key_Inverted = "Inverted";
-        public readonly string Key_CamNum = "Camera";
-
-        public Hsv Lower { get => new Hsv(GetIntegerProperty(Key_H_Lower,0), GetIntegerProperty(Key_S_Lower, 0), GetIntegerProperty(Key_V_Lower, 0)); } 
-        public Hsv Upper { get => new Hsv(GetIntegerProperty(Key_H_Upper, 255), GetIntegerProperty(Key_S_Upper, 255), GetIntegerProperty(Key_V_Upper, 255)); }
-        public bool Inverted { get => GetBooleanProperty(Key_Inverted, false); }
-
-        private int _camNum = 0;
-        public int CamNum { get => _camNum; set => value = _camNum; }
 
         public LineFollowingProperties() : base("Linie folgen","Modul zum Folgen einer farbigen Linie", motor:true, floorCam:true)
         {
@@ -251,20 +265,6 @@ namespace Surrogate.Implementations.Controller.Module
 
             SetProperty(Key_Inverted, false, false);
             SetProperty(Key_CamNum, CamNum, false);
-            Save();
-        }
-
-        public void SetBounds(HsvBounds e)
-        {
-            SetProperty(Key_H_Lower, e.Lower.Hue);
-            SetProperty(Key_S_Lower, e.Lower.Satuation);
-            SetProperty(Key_V_Lower, e.Lower.Value);
-
-            SetProperty(Key_H_Upper, e.Upper.Hue);
-            SetProperty(Key_S_Upper, e.Upper.Satuation);
-            SetProperty(Key_V_Upper, e.Upper.Value);
-
-            SetProperty(Key_Inverted, e.Inverted);
             Save();
         }
     }

@@ -45,6 +45,7 @@ namespace Surrogate.Implementations
         public static readonly string DefaultImagePath = @"C:\Users\ITM1\source\repos\Surrogate\Surrogate\resources\robot.jpg";
 
         public static readonly string InternalCameraName = "Interne Kamera";
+        public static readonly int InternalCameraId = 0;
 
         public static readonly int Numbercams = 3;
     }

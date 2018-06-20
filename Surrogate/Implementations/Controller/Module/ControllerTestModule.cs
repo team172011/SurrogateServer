@@ -119,10 +119,10 @@ namespace Surrogate.Implementations.Controller.Module
                 {
                     Motor.Instance.Start();
                 }
-                Tuple<int, int> speedValues = Tuple.Create(0, 0);
+                Tuple<byte, byte> speedValues = new Tuple<byte, byte>(0,0);
                 while (!_shouldStop && !controller.buttons.Equals(GamepadButtonFlags.A))
                 {
-                    Tuple<int, int> nextSpeedValues = CalculateSpeedValues(controller);
+                    Tuple<byte, byte> nextSpeedValues = CalculateSpeedValues(controller);
                     // only update if values changed
                     {
                         speedValues = nextSpeedValues;
@@ -153,7 +153,7 @@ namespace Surrogate.Implementations.Controller.Module
         /// </summary>
         /// <param name="controller"></param>
         /// <returns>A Tuple(int, int) with left and right speed values</int></returns>
-        private Tuple<int, int> CalculateSpeedValues(XBoxController controller)
+        private Tuple<byte, byte> CalculateSpeedValues(XBoxController controller)
         {
             controller.Update();
             float rightTrigger = controller.rightTrigger;

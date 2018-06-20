@@ -94,7 +94,7 @@ namespace Surrogate.Implementations
             }
         }
 
-        internal void ChangeCamera()
+        public void ChangeCamera()
         {
             var NextCam = ++CamNum % FrameworkConstants.Numbercams; // increase cam index by one
             var connection = SurrogateFramework.MainController.ConnectionHandler.GetConnection(FrameworkConstants.InternalCameraName) as ICameraConnection<IVideoCapturer>;

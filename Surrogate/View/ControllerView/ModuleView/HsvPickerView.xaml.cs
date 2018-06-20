@@ -30,7 +30,7 @@ namespace Surrogate.View.ControllerView.ModuleView
 
         public event EventHandler<HsvBounds> SaveClicked;
 
-        public HsvPickerView(Window parent, int camId = 0, LineFollowingProperties props = null)
+        public HsvPickerView(Window parent, int camId = 0, IHsvProperties props = null)
         {
             _parent = parent;
             _capturer = new VideoCapture(camId);
@@ -42,11 +42,9 @@ namespace Surrogate.View.ControllerView.ModuleView
             InitBounds(props);
             _timer.Start();
             _parent.Closing += new CancelEventHandler(OnClosing);
-
-            
         }
 
-        private void InitBounds(LineFollowingProperties props)
+        private void InitBounds(IHsvProperties props)
         {
             if (props == null) return;
 
@@ -59,8 +57,8 @@ namespace Surrogate.View.ControllerView.ModuleView
             sVLower.Value = lower.Value;
             sVUpper.Value = upper.Value;
 
-            sSLower.Value = lower.Value;
-            sSUpper.Value = upper.Value;
+            sSLower.Value = lower.Satuation;
+            sSUpper.Value = upper.Satuation;
 
             cbInverted.IsChecked = props.Inverted;
         }
@@ -71,6 +69,7 @@ namespace Surrogate.View.ControllerView.ModuleView
             {
                 Image<Gray, Byte> mask = imageFrame.InRange(new Hsv(h_Lower, s_Lower, v_Lower), new Hsv(h_Upper, s_Upper, v_Upper));
                 Mat filtered = new Mat();
+                System.Diagnostics.Debug.WriteLine(new Hsv(h_Lower, s_Lower, v_Lower) + " " + new Hsv(h_Upper, s_Upper, v_Upper) + inverted);
                 if (inverted)
                 {
                     mask = mask.Not();
