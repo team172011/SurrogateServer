@@ -47,14 +47,16 @@ namespace Surrogate.Implementations.Controller.Module
         private void LineFollowing(object sender, EventArgs e)
         {
             log.Debug(String.Format("Using lower: {0} and upper: {1} as hsv space", GetProperties().Lower, GetProperties().Upper));
+            Motor.Instance.Start();
             while (!ShouldStop)
             {
                 using (Image<Hsv, byte> imageFrame = _currentVideoCapture.QueryFrame().ToImage<Hsv, Byte>())
-                using (Image<Bgr, byte> original = _currentVideoCapture.QueryFrame().ToImage<Bgr, Byte>())
+                //using (Image<Bgr, byte> original = _currentVideoCapture.QueryFrame().ToImage<Bgr, Byte>())
                 {
 
                     if (imageFrame != null)
                     {
+                        //var input = original.Clone();
                         Image<Gray, Byte> mask = imageFrame.Convert<Hsv, Byte>().InRange(GetProperties().Lower, GetProperties().Upper);
                         System.Diagnostics.Debug.WriteLine(GetProperties().Lower+" "+GetProperties().Upper+ GetProperties().Inverted);
                         if (GetProperties().Inverted)
@@ -85,41 +87,47 @@ namespace Surrogate.Implementations.Controller.Module
                                 }
                             }
 
-                            //Rectangle rec = CvInvoke.BoundingRectangle(biggestContour);
+                            Rectangle rec = CvInvoke.BoundingRectangle(biggestContour);
                             RotatedRect rrec = CvInvoke.MinAreaRect(biggestContour);
-                            //original.Draw(rec, new Bgr(0, 0, 255), 2);
-                            original.Draw(rrec, new Bgr(0, 255, 0), 2);
-                            original.Draw(new CircleF(rrec.Center, 2), new Bgr(0, 255, 255), 2);
-                            original.Draw(biggestContour.ToArray(), new Bgr(255, 0, 0), 2);
+                            imageFrame.Draw(rec, new Hsv(0, 0, 255), 2);
+                            imageFrame.Draw(rrec, new Hsv(0, 255, 0), 2);
+                            imageFrame.Draw(new CircleF(rrec.Center, 2), new Hsv(0, 255, 255), 2);
+                            imageFrame.Draw(biggestContour.ToArray(), new Hsv(255, 0, 0), 2);
 
                             double x = rrec.Center.X;
                             double width = imageFrame.Width;
-                            double leftMin = width * 0.33;
-                            double rightMax = width * 0.66;
+                            double leftMin = width * 0.4;
+                            double rightMax = width * 0.8;
 
                             if (x < leftMin)
                             {
-                                log.Debug("nach rechts");
+                                log.Debug("nach links");
+                                Motor.Instance.LeftSpeedValue = -60;
+                                Motor.Instance.RightSpeedValue = 60;
                             }
                             else if (x > rightMax)
                             {
-                                log.Debug("nach links");
+                                log.Debug("nach rechts");
+                                Motor.Instance.LeftSpeedValue = 60;
+                                Motor.Instance.RightSpeedValue = -60;
                             }
                             else
                             {
-                                log.Debug("Gerade aus");
+                                Motor.Instance.LeftSpeedValue = 25;
+                                Motor.Instance.RightSpeedValue = 25;
                             }
                         }
                         else
                         {
-                            log.Debug("Anhalten/Suchen");
+                            Motor.Instance.LeftSpeedValue = 0;
+                            Motor.Instance.RightSpeedValue = 0;
                         }
 
                         PublishFrame(1, imageFrame, "Original Input");
                         PublishFrame(2, filtered.ToImage<Bgr, Byte>(), "Filtered");
                         PublishFrame(3, smoothed.Convert<Bgr, Byte>(), "Smoothed");
                         PublishFrame(4, dilated.Convert<Bgr, Byte>(), "Eroded & Delitated");
-                        PublishFrame(5, original, "Result");
+                        PublishFrame(5, imageFrame, "Result");
                     }
                 }
             }

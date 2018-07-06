@@ -100,11 +100,8 @@ namespace Surrogate.View.ControllerView
                 modul.Stop();
             }
 
-            Application.Current.Shutdown();
-        }
-
-        private void Onshutdown(object sender, ExitEventArgs e)
-        {
+            Application.Current.Dispatcher.ShutdownFinished += new EventHandler((o, ea) => Application.Current.Shutdown());
+            Application.Current.Dispatcher.BeginInvokeShutdown(System.Windows.Threading.DispatcherPriority.Send);
             
         }
     }

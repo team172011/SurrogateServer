@@ -20,13 +20,13 @@
         <!-- Menu bar-->
         <Menu DockPanel.Dock="Top"  Background="Transparent">
             <MenuItem Header="Programm">
-                <MenuItem Header="Close" Click="MenuItem_Click" />
+                <MenuItem Header="Programm beenden" Click="MenuItem_Click" />
             </MenuItem>
             <MenuItem x:Name="miModuleSettings" Header="Settings" MenuItem.Click="MiModuleSettings_Click">
             </MenuItem>
         </Menu>
         
-        <!---Sidebar on the left with header, modules list and processes list-->
+        <!---Sidebar on the left with header, module list and processes list-->
         <StackPanel Margin="10,0,0,0"  DockPanel.Dock="Left" Orientation="Vertical">
             <Label Margin="0,10,0,0" FontWeight="Bold" Content="Module"/>
             <ListView x:Name="lvModules"

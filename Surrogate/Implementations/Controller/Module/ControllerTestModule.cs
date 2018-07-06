@@ -119,10 +119,10 @@ namespace Surrogate.Implementations.Controller.Module
                 {
                     Motor.Instance.Start();
                 }
-                Tuple<byte, byte> speedValues = new Tuple<byte, byte>(0,0);
+                Tuple<int, int> speedValues = new Tuple<int, int>(0,0);
                 while (!_shouldStop && !controller.buttons.Equals(GamepadButtonFlags.A))
                 {
-                    Tuple<byte, byte> nextSpeedValues = CalculateSpeedValues(controller);
+                    Tuple<int, int> nextSpeedValues = CalculateSpeedValues(controller);
                     // only update if values changed
                     {
                         speedValues = nextSpeedValues;
@@ -153,7 +153,7 @@ namespace Surrogate.Implementations.Controller.Module
         /// </summary>
         /// <param name="controller"></param>
         /// <returns>A Tuple(int, int) with left and right speed values</int></returns>
-        private Tuple<byte, byte> CalculateSpeedValues(XBoxController controller)
+        private Tuple<int, int> CalculateSpeedValues(XBoxController controller)
         {
             controller.Update();
             float rightTrigger = controller.rightTrigger;
@@ -164,18 +164,18 @@ namespace Surrogate.Implementations.Controller.Module
 
 
             // calculate speed based on left and right triggers (right trigger forward, left trigger backward)
-            int tempSpeed = (int)((rightTrigger - leftTrigger) / 255 * 100);
+            int tempSpeed = (int)((rightTrigger - leftTrigger));// / 255 * 100);
 
             if (rightThumbX > 0)
             {
                 double multiplier = rightThumbX / 100;
-                leftspeed = (int)(tempSpeed + multiplier * 100);
-                rightspeed = (int)(tempSpeed - multiplier * 100);
+                leftspeed = (int)(tempSpeed + multiplier * 255);
+                rightspeed = (int)(tempSpeed - multiplier * 255);
             } else if (rightThumbX < 0)
             {
                 double multiplier = rightThumbX / -100;
-                leftspeed = (int)(tempSpeed - multiplier * 100);
-                rightspeed = (int)(tempSpeed + multiplier * 100);
+                leftspeed = (int)(tempSpeed - multiplier * 255);
+                rightspeed = (int)(tempSpeed + multiplier * 255);
             }
             else
             {

@@ -6,9 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Surrogate.Implementations
 {
@@ -17,16 +14,12 @@ namespace Surrogate.Implementations
 
     using OpenTok;
     using Surrogate.View;
-    using System.Collections.ObjectModel;
     using Newtonsoft.Json.Linq;
-    using Surrogate.Roboter;
     using Surrogate.Model.Module;
     using Surrogate.Model;
-    using Surrogate.Roboter.MInternet;
     using Surrogate.Roboter.MDatabase;
     using System.Data;
     using System.Data.SqlClient;
-    using static OpenTok.VideoCapturer;
     using Surrogate.Roboter.MCamera;
 
     /// <summary>

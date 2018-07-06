@@ -46,8 +46,8 @@ namespace Surrogate.Roboter.MMotor
 
         private volatile bool _shouldStop = false;
         private SerialPort port;   
-        private volatile byte _leftSpeedValue;
-        private volatile byte _rightSpeedValue;
+        private volatile int _leftSpeedValue;
+        private volatile int _rightSpeedValue;
         private bool _isSimulation = false;
 
         /// <summary>
@@ -74,8 +74,8 @@ namespace Surrogate.Roboter.MMotor
             }
         }
 
-        public byte RightSpeedValue { get => _rightSpeedValue; set => _rightSpeedValue = value; }
-        public byte LeftSpeedValue { get => _leftSpeedValue; set => _leftSpeedValue = value; }
+        public int RightSpeedValue { get => _rightSpeedValue; set => _rightSpeedValue = value; }
+        public int LeftSpeedValue { get => _leftSpeedValue; set => _leftSpeedValue = value; }
 
         /// <summary>
         /// Private Consturctor.
@@ -109,12 +109,12 @@ namespace Surrogate.Roboter.MMotor
             Stop();
             if (simulation)
             {
-                Timer = new System.Threading.Timer(SimulateEngine,null, 0, 100);
+                Timer = new System.Threading.Timer(SimulateEngine,null, 0, 1);
             } else if (Connect() ){
-                Timer = new System.Threading.Timer(RunEngine, null, 0, 100);
+                Timer = new System.Threading.Timer(RunEngine, null, 0, 1);
             } else
             {
-                throw new Exception("Could not start motor");
+                //throw new Exception("Could not start motor");
             }
         }
 
