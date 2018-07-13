@@ -13,4 +13,4 @@ H_Upper=173
 S_Upper=235
 V_Upper=255
 Inverted=False
-Camera=1
+Camera=0

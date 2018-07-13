@@ -60,7 +60,7 @@ namespace Surrogate.View
         private void BtnChangeCam_Click(object sender, RoutedEventArgs e)
         {
             Controller.Stop();
-            var props = Controller.Properties as LineFollowingProperties;
+            var props = Controller.Properties as BallFollowingProperties;
             props.CamNum = ++props.CamNum % FrameworkConstants.Numbercams;
             ((BallFollowingModule)Controller).Start(new BallFollowingInfo(imView));
             btnStart.Content = "Line folgen beenden";

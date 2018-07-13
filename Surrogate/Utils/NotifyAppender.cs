@@ -85,6 +85,10 @@ namespace Surrogate.Utils.Logging
             StringWriter writer = new StringWriter(CultureInfo.InvariantCulture);
             Layout.Format(writer, loggingEvent);
             Notification += writer.ToString();
+            if(Notification.Length > 10000) // clear console to avoid freezing/stack overflow 
+            {
+                Notification = "";
+            }
         }
     }
 }

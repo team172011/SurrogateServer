@@ -58,7 +58,6 @@ namespace Surrogate.Implementations.Controller.Module
                     {
                         //var input = original.Clone();
                         Image<Gray, Byte> mask = imageFrame.Convert<Hsv, Byte>().InRange(GetProperties().Lower, GetProperties().Upper);
-                        System.Diagnostics.Debug.WriteLine(GetProperties().Lower+" "+GetProperties().Upper+ GetProperties().Inverted);
                         if (GetProperties().Inverted)
                         {
                             mask = mask.Not();

@@ -16,8 +16,20 @@ namespace Surrogate.Roboter.MController
     /// <summary>
     /// Class to connect and receive controller inputs
     /// </summary>
-    class XBoxController : AbstractConnection
+    public class XBoxController : AbstractConnection
     {
+        private static XBoxController _instance;
+        public static XBoxController Instance {
+            get
+            {
+                if(_instance == null)
+                {
+                    _instance = new XBoxController();
+                }
+                return _instance;
+            }
+        }
+
         private readonly SharpDX.XInput.Controller controller = new SharpDX.XInput.Controller(UserIndex.One);
         private Gamepad gamepad;
         public bool Connected { get => controller.IsConnected; }
@@ -33,7 +45,7 @@ namespace Surrogate.Roboter.MController
         /// <summary>
         /// Creates a Surrogate wrapper instance to connect to an xbox 
         /// </summary>
-        public XBoxController()
+        private XBoxController()
         {
             DispatcherTimer searcher = new DispatcherTimer();
             searcher.Tick += Connect;

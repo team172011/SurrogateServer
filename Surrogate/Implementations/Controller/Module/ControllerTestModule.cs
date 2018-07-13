@@ -33,7 +33,7 @@ namespace Surrogate.Implementations.Controller.Module
 
         public override IModuleProperties Properties => GetProperties();
         private volatile bool _shouldStop = false;
-        private readonly XBoxController controller = new XBoxController();
+        private readonly XBoxController controller = XBoxController.Instance;
 
         public ControllerTestModule(ControllerTestProperties modulProperties) : base(modulProperties)
         {
