@@ -14,9 +14,9 @@ namespace Surrogat.Handler
         event EventHandler<ModuleArgs> ModuleAdded;
         event EventHandler<ModuleArgs> ModuleRemoved;
 
-        int AddModule(IController module);
-        void RemoveModule(IController module);
-        IList<IController> GetModules();
+        int AddModule(Surrogate.Controller.IController module);
+        void RemoveModule(Surrogate.Controller.IController module);
+        IList<Surrogate.Controller.IController> GetModules();
 
         Control SelectView(IVisualModule module);
     }
@@ -24,13 +24,13 @@ namespace Surrogat.Handler
 
     public class ModuleArgs : EventArgs
     {
-        private readonly IController _module;
+        private readonly Surrogate.Controller.IController _module;
         public IController Module { get => _module; }
         private readonly int _key;
         public int Key { get => _key; }
         
 
-        public ModuleArgs(IController arg, int key)
+        public ModuleArgs(Surrogate.Controller.IController arg, int key)
         {
             _module = arg;
             _key = key;

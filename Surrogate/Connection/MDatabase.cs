@@ -20,13 +20,13 @@ namespace Surrogate.Roboter.MDatabase
     /// Class to connect to a sql database and for creating, inserting and loading data and tables for
     /// different modules
     /// </summary>
-    public class Database : AbstractConnection, IDatabaseConnection
+    public class SystemDatabase : AbstractConnection, IDatabaseConnection
     {
         private static SqlConnection _connection = null;
 
         public override string Name => FrameworkConstants.DatabaseName;
 
-        public Database()
+        public SystemDatabase()
         {
             Connect();
         }

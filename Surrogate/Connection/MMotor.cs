@@ -106,20 +106,25 @@ namespace Surrogate.Roboter.MMotor
         /// <param name="simulation"></param>
         public void Start(bool simulation = false)
         {
+            _shouldStop = false;
+            Timer?.Dispose();
             Stop();
             if (simulation)
             {
                 Timer = new System.Threading.Timer(SimulateEngine,null, 0, 1);
             } else if (Connect() ){
                 Timer = new System.Threading.Timer(RunEngine, null, 0, 1);
+                
             } else
             {
-                //throw new Exception("Could not start motor");
+                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() => MessageBox.Show("Der Motor ist nicht mehr erreichbar", "Motorfehler", MessageBoxButton.OK)));
             }
+            log.Debug("Motor started. Simulation: "+simulation);
         }
 
         public void Stop()
         {
+            _shouldStop = true;
             Timer?.Dispose();
         }
 
@@ -159,7 +164,7 @@ namespace Surrogate.Roboter.MMotor
 
         private void OnDataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            log.Debug(port.ReadExisting());
+            //log.Debug(port.ReadExisting());
         }
 
         public bool IsReady()
@@ -201,11 +206,20 @@ namespace Surrogate.Roboter.MMotor
                 byte[] m2 = GetM2Command();
                 byte[] m3 = GetM3Command();
                 byte[] m4 = GetM4Command();
+                try
+                {
+                    port.Write(m1, 0, 6);
+                    port.Write(m2, 0, 6);
+                    port.Write(m3, 0, 6);
+                    port.Write(m4, 0, 6);
+                }
+                // If Motor is not available, show a message
+                catch (System.InvalidOperationException ioe)
+                {
+                    Stop();
+                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() => MessageBox.Show("Der Motor ist nicht mehr erreichbar","Motorfehler", MessageBoxButton.OK)));
+                }
 
-                port.Write(m1, 0, 6);
-                port.Write(m2, 0, 6);
-                port.Write(m3, 0, 6);
-                port.Write(m4, 0, 6);
             }
         }
 

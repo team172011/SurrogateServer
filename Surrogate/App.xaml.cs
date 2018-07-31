@@ -4,19 +4,10 @@
 // Lehrstuhl Wirtschaftsinformatik und Operation Research
 // Autor: Wimmer, Simon-Justus Wimmer
 
-using Surrogate.Modules;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
 
+using System;
+using System.Windows;
 using Surrogate.Parameters;
-using Surrogate.Utils;
-using System.Windows.Controls;
 using Surrogate.Implementations;
 using Surrogate.Implementations.Controller;
 using Surrogate.Controller;
@@ -25,6 +16,10 @@ using Surrogate.Roboter.MInternet;
 using Surrogate.Implementations.Controller.Module;
 using Surrogate.Implementations.FaceDetection;
 using Surrogate.Roboter.MCamera;
+using Surrogate.Implementations.Processes;
+using Surrogate.Roboter.MMotor;
+using Surrogate.Roboter.MDatabase;
+using Surrogate.Model;
 
 namespace Surrogate.Main
 {
@@ -53,10 +48,10 @@ namespace Surrogate.Main
             }
 
             FrameworkElement.StyleProperty.OverrideMetadata(typeof(Window), new FrameworkPropertyMetadata(TryFindResource(typeof(Window))));
-            MainController _controller = new MainController();
-            SurrogateFramework.AddConnection(Roboter.MMotor.Motor.Instance);
-            SurrogateFramework.AddConnection(new XBoxController());
-            SurrogateFramework.AddConnection(new Roboter.MDatabase.Database());
+            SystemDatabase database = new SystemDatabase();
+            SurrogateFramework.AddConnection(Motor.Instance);
+            SurrogateFramework.AddConnection(XBoxController.Instance);
+            SurrogateFramework.AddConnection(database);
             SurrogateFramework.AddConnection(new Internet());
             SurrogateFramework.AddConnection(new Camera0());
             SurrogateFramework.AddConnection(new Camera1());
@@ -69,9 +64,11 @@ namespace Surrogate.Main
             SurrogateFramework.AddModule(new BallFollowingModule());
             SurrogateFramework.AddModule(new FaceDetectionModule());
             SurrogateFramework.AddModule(new LineFollowingModule());
+            SurrogateFramework.AddModule(new InformationsModule(database));
 
-            IMainController controller = SurrogateFramework.MainController;
-            controller.MainWindow.Show();
+            SurrogateFramework.AddProcess(new ControllerProcess(Motor.Instance, XBoxController.Instance), FrameworkConstants.ControllerProcessName);
+
+            SurrogateFramework.Start();
         }
 
         /// <summary>

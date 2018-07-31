@@ -116,10 +116,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Connection\IRemoteController.cs" />
     <Compile Include="Connection\MCamera.cs" />
+    <Compile Include="Implementations\Controller\Module\InformationsModule.cs" />
+    <Compile Include="Implementations\Handler\ProcessHandler.cs" />
     <Compile Include="Implementations\Model\HsvModulProperties.cs" />
     <Compile Include="Implementations\Model\IHsvProperties.cs" />
     <Compile Include="Implementations\Model\HsvBounds.cs" />
+    <Compile Include="Implementations\Processes\ControllerProcess.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Model\IMotor.cs" />
     <Compile Include="Controller\AbstractConroller.cs" />
     <Compile Include="Controller\IController.cs" />
@@ -157,6 +163,9 @@
     <Compile Include="View\ControllerView\ModuleView\HsvPickerView.xaml.cs">
       <DependentUpon>HsvPickerView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\ControllerView\ModuleView\InformationsModuleView.xaml.cs">
+      <DependentUpon>InformationsModuleView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\ControllerView\ModuleView\LineFollowingView.xaml.cs">
       <DependentUpon>LineFollowingView.xaml</DependentUpon>
     </Compile>
@@ -165,6 +174,9 @@
     </Compile>
     <Compile Include="View\ControllerView\ModuleView\BallFollowingView.xaml.cs">
       <DependentUpon>BallFollowingView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ControllerView\ModuleView\AddPatientView.xaml.cs">
+      <DependentUpon>AddPatientView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\PropertieView\PropertiesView.xaml.cs">
       <DependentUpon>PropertiesView.xaml</DependentUpon>
@@ -208,6 +220,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\ControllerView\ModuleView\InformationsModuleView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\ControllerView\ModuleView\LineFollowingView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -225,6 +241,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\ControllerView\ModuleView\BallFollowingView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ControllerView\ModuleView\AddPatientView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

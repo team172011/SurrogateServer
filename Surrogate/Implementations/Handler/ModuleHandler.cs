@@ -15,9 +15,9 @@ namespace Surrogate.Implementations.Handler
         public event EventHandler<ModuleArgs> ModuleAdded;
         public event EventHandler<ModuleArgs> ModuleRemoved;
 
-        private readonly IDictionary<int, IController> modules = new Dictionary<int, IController>();
+        private readonly IDictionary<int, Surrogate.Controller.IController> modules = new Dictionary<int, Surrogate.Controller.IController>();
         
-        public int AddModule(IController module)
+        public int AddModule(Surrogate.Controller.IController module)
         {
             var key = module.GetHashCode();
             modules.Add(key, module);
@@ -32,7 +32,7 @@ namespace Surrogate.Implementations.Handler
             return module.GetPage();
         }
 
-        public void RemoveModule(IController module)
+        public void RemoveModule(Surrogate.Controller.IController module)
         {
             modules.Remove(module.GetHashCode());
             ModuleRemoved?.Invoke(this, new ModuleArgs(module, module.GetHashCode()));
@@ -44,7 +44,7 @@ namespace Surrogate.Implementations.Handler
             return module.GetPage(); // TODO the hash value approach is too simple...
         }
 
-        public IList<IController> GetModules()
+        public IList<Surrogate.Controller.IController> GetModules()
         {
             return modules.Select(d => d.Value).ToList();
         }

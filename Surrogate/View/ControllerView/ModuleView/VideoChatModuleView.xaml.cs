@@ -59,12 +59,17 @@ namespace Surrogate.View
 
         private void BtnAddContact_Click(object sender, RoutedEventArgs e)
         {
-            // open contacts input mask
+            MessageBox.Show("Bitte fuegen Sie Kontakte über das DBMS hinzu und richten Sie den Klienten mit entsprechendem Nutzernamen ein");
         }
 
         private void BtnChangeCamera_Click(object sender, RoutedEventArgs e)
         {
             _parentModule.ChangeCamera();
+        }
+
+        private void BtnHangUp_Click(object sender, RoutedEventArgs e)
+        {
+            _parentModule.HangUp();
         }
     }
 

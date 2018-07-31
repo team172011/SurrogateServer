@@ -74,8 +74,8 @@
 
             <!-- Button hang up -->
                 <DockPanel Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2">
-                    <Button Background="OrangeRed" Content="Auflegen"></Button>
-                </DockPanel>
+                <Button Background="OrangeRed" Content="Auflegen" Click="BtnHangUp_Click"/>
+            </DockPanel>
             </Grid>
 
     </DockPanel>

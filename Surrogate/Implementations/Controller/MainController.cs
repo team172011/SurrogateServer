@@ -19,9 +19,9 @@ namespace Surrogate.Implementations.Controller
 
     public class MainController : AbstractController, IMainController
     {
-        private readonly IControllerHandler _modulHandler= new ModuleHandler();
+        private readonly IControllerHandler _modulHandler = new ModuleHandler();
         private readonly IConnectionHandler _connectionHandler = new ConnectionsHandler();
-        private readonly IProcessHandler _processHandler;
+        private readonly IProcessHandler _processHandler = new ProcessHandler();
         private readonly IModuleProperties _mainProperties;
 
         private readonly MainControllerView _view;
@@ -44,7 +44,7 @@ namespace Surrogate.Implementations.Controller
 
         public override void Start()
         {
-            throw new NotImplementedException();
+            _processHandler.StartAllProcesses();
         }
 
         public override string ToString()

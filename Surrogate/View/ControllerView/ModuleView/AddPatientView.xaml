@@ -1,0 +1,30 @@
+﻿<Window x:Class="Surrogate.View.ControllerView.ModuleView.AddPatientView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Surrogate.View.ControllerView.ModuleView"
+        mc:Ignorable="d"
+        Title="Window1" Height="300" Width="205.042">
+    <WrapPanel>
+        <StackPanel Orientation="Horizontal">
+            <StackPanel>
+                <Label>Name:</Label>
+                <Label>Vorname:</Label>
+                <Label>Geburtstag:</Label>
+                <Label>Adresse:</Label>
+                <Label>Eingewiesen:</Label>
+                <Label>Historie:</Label>
+            </StackPanel>
+            <StackPanel>
+                <TextBox x:Name="tbName" Margin="5"></TextBox>
+                <TextBox x:Name="tbfirstName" Margin="5"></TextBox>
+                <DatePicker x:Name="dpBirthday"></DatePicker>
+                <TextBox x:Name="tbAdress" Margin="5"></TextBox>
+                <DatePicker x:Name="dpEntry"></DatePicker>
+                <TextBox x:Name="tbHistory" Margin="5"></TextBox>
+            </StackPanel>
+        </StackPanel>
+        <Button Click="Added">Hinzufügen</Button>
+    </WrapPanel>
+</Window>

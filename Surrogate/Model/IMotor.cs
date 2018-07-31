@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Surrogate.Model;
+using System;
 
 namespace Surrogate.Roboter.MMotor
 {
-    public interface IMotor
+    public interface IMotor : IConnection
     {
         int LeftSpeedValue { get; set; }
         int RightSpeedValue { get; set; }

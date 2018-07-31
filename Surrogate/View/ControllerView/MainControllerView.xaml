@@ -22,6 +22,9 @@
             <MenuItem Header="Programm">
                 <MenuItem Header="Programm beenden" Click="MenuItem_Click" />
             </MenuItem>
+            <MenuItem Header="Prozesse" x:Name="processItem">
+                <MenuItem Header="Controller Prozess"/>
+            </MenuItem>
             <MenuItem x:Name="miModuleSettings" Header="Settings" MenuItem.Click="MiModuleSettings_Click">
             </MenuItem>
         </Menu>
@@ -63,10 +66,6 @@
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
-            </ListView>
-            <Label FontWeight="Bold" Content="Prozesse"/>
-            <ListView x:Name="lvProcesses"
-                      ItemsSource="{Binding Path=processes}">
             </ListView>
         </StackPanel>
         <StackPanel Margin="0,0,10,0" DockPanel.Dock="Right">

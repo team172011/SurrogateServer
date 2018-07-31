@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
@@ -24,7 +25,8 @@ namespace Surrogate.Implementations.Controller.Module
     public class LineFollowingModule : VisualModule<LineFollowingProperties, LineFollowingInfo>
     {
         private readonly LineFollowingModuleView _view;
-        private BackgroundWorker _worker;
+        private System.Threading.Timer _worker;
+        private volatile bool _isRunning;
 
 
         private IDictionary<int, System.Windows.Controls.Image> _currentImages;
@@ -44,92 +46,96 @@ namespace Surrogate.Implementations.Controller.Module
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void LineFollowing(object sender, EventArgs e)
+        private void LineFollowing(object state)
         {
-            log.Debug(String.Format("Using lower: {0} and upper: {1} as hsv space", GetProperties().Lower, GetProperties().Upper));
-            Motor.Instance.Start();
-            while (!ShouldStop)
+            if (!ShouldStop)
             {
-                using (Image<Hsv, byte> imageFrame = _currentVideoCapture.QueryFrame().ToImage<Hsv, Byte>())
-                //using (Image<Bgr, byte> original = _currentVideoCapture.QueryFrame().ToImage<Bgr, Byte>())
+                _isRunning = true;
                 {
-
-                    if (imageFrame != null)
+                    using (Image<Hsv, byte> imageFrame = _currentVideoCapture.QueryFrame().ToImage<Hsv, Byte>())
+                    //using (Image<Bgr, byte> original = _currentVideoCapture.QueryFrame().ToImage<Bgr, Byte>())
                     {
-                        //var input = original.Clone();
-                        Image<Gray, Byte> mask = imageFrame.Convert<Hsv, Byte>().InRange(GetProperties().Lower, GetProperties().Upper);
-                        if (GetProperties().Inverted)
+
+                        if (imageFrame != null)
                         {
-                            mask = mask.Not();
-                        }
-                        Mat filtered = new Mat();
-                        CvInvoke.BitwiseAnd(imageFrame, imageFrame, filtered, mask: mask); // filter image by upper and lower hsv space values
-
-                        var smoothed = filtered.ToImage<Gray, Byte>().SmoothGaussian(5);
-                        var eroded = smoothed.Erode(8);
-                        var dilated = eroded.Dilate(8);
-
-                        VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint();
-
-                        CvInvoke.FindContours(dilated, contours, null, RetrType.List, ChainApproxMethod.ChainApproxSimple);
-                        if (contours.Size > 0)
-                        {
-                            var biggestContour = contours[0];
-                            var biggestContourSize = CvInvoke.ContourArea(biggestContour);
-                            for (int i = 1; i < contours.Size; i++) // find the biggest contour
+                            //var input = original.Clone();
+                            Image<Gray, Byte> mask = imageFrame.Convert<Hsv, Byte>().InRange(GetProperties().Lower, GetProperties().Upper);
+                            if (GetProperties().Inverted)
                             {
-                                var sizeCurrent = CvInvoke.ContourArea(contours[i]);
-                                if (sizeCurrent > biggestContourSize)
+                                mask = mask.Not();
+                            }
+                            Mat filtered = new Mat();
+                            CvInvoke.BitwiseAnd(imageFrame, imageFrame, filtered, mask: mask); // filter image by upper and lower hsv space values
+
+                            var smoothed = filtered.ToImage<Gray, Byte>().SmoothGaussian(5);
+                            var eroded = smoothed.Erode(8);
+                            var dilated = eroded.Dilate(8);
+
+                            VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint();
+
+                            CvInvoke.FindContours(dilated, contours, null, RetrType.List, ChainApproxMethod.ChainApproxSimple);
+                            if (contours.Size > 0)
+                            {
+                                var biggestContour = contours[0];
+                                var biggestContourSize = CvInvoke.ContourArea(biggestContour);
+                                for (int i = 1; i < contours.Size; i++) // find the biggest contour
                                 {
-                                    biggestContour = contours[i];
-                                    biggestContourSize = sizeCurrent;
+                                    var sizeCurrent = CvInvoke.ContourArea(contours[i]);
+                                    if (sizeCurrent > biggestContourSize)
+                                    {
+                                        biggestContour = contours[i];
+                                        biggestContourSize = sizeCurrent;
+                                    }
                                 }
-                            }
 
-                            Rectangle rec = CvInvoke.BoundingRectangle(biggestContour);
-                            RotatedRect rrec = CvInvoke.MinAreaRect(biggestContour);
-                            imageFrame.Draw(rec, new Hsv(0, 0, 255), 2);
-                            imageFrame.Draw(rrec, new Hsv(0, 255, 0), 2);
-                            imageFrame.Draw(new CircleF(rrec.Center, 2), new Hsv(0, 255, 255), 2);
-                            imageFrame.Draw(biggestContour.ToArray(), new Hsv(255, 0, 0), 2);
+                                Rectangle rec = CvInvoke.BoundingRectangle(biggestContour);
+                                RotatedRect rrec = CvInvoke.MinAreaRect(biggestContour);
+                                imageFrame.Draw(rec, new Hsv(0, 0, 255), 2);
+                                imageFrame.Draw(rrec, new Hsv(0, 255, 0), 2);
+                                imageFrame.Draw(new CircleF(rrec.Center, 2), new Hsv(0, 255, 255), 2);
+                                imageFrame.Draw(biggestContour.ToArray(), new Hsv(255, 0, 0), 2);
 
-                            double x = rrec.Center.X;
-                            double width = imageFrame.Width;
-                            double leftMin = width * 0.4;
-                            double rightMax = width * 0.8;
+                                double x = rrec.Center.X;
+                                double width = imageFrame.Width;
+                                double leftMin = width * 0.4;
+                                double rightMax = width * 0.6;
 
-                            if (x < leftMin)
-                            {
-                                log.Debug("nach links");
-                                Motor.Instance.LeftSpeedValue = -60;
-                                Motor.Instance.RightSpeedValue = 60;
-                            }
-                            else if (x > rightMax)
-                            {
-                                log.Debug("nach rechts");
-                                Motor.Instance.LeftSpeedValue = 60;
-                                Motor.Instance.RightSpeedValue = -60;
+                                if (x < leftMin)
+                                {
+                                    //log.Debug("nach links");
+                                    Motor.Instance.LeftSpeedValue = -60;
+                                    Motor.Instance.RightSpeedValue = 60;
+                                }
+                                else if (x > rightMax)
+                                {
+                                    //log.Debug("nach rechts");
+                                    Motor.Instance.LeftSpeedValue = 60;
+                                    Motor.Instance.RightSpeedValue = -60;
+                                }
+                                else
+                                {
+                                    //log.Debug("Geradeaus");
+                                    Motor.Instance.LeftSpeedValue = 25;
+                                    Motor.Instance.RightSpeedValue = 25;
+                                }
                             }
                             else
                             {
-                                Motor.Instance.LeftSpeedValue = 25;
-                                Motor.Instance.RightSpeedValue = 25;
+                                log.Debug("stop");
+                                Motor.Instance.LeftSpeedValue = 0;
+                                Motor.Instance.RightSpeedValue = 0;
                             }
-                        }
-                        else
-                        {
-                            Motor.Instance.LeftSpeedValue = 0;
-                            Motor.Instance.RightSpeedValue = 0;
-                        }
 
-                        PublishFrame(1, imageFrame, "Original Input");
-                        PublishFrame(2, filtered.ToImage<Bgr, Byte>(), "Filtered");
-                        PublishFrame(3, smoothed.Convert<Bgr, Byte>(), "Smoothed");
-                        PublishFrame(4, dilated.Convert<Bgr, Byte>(), "Eroded & Delitated");
-                        PublishFrame(5, imageFrame, "Result");
+                            PublishFrame(1, imageFrame, "Original Input");
+                            PublishFrame(2, filtered.ToImage<Bgr, Byte>(), "Filtered");
+                            PublishFrame(3, smoothed.Convert<Bgr, Byte>(), "Smoothed");
+                            PublishFrame(4, dilated.Convert<Bgr, Byte>(), "Eroded & Delitated");
+                            PublishFrame(5, imageFrame, "Result");
+                        }
                     }
                 }
             }
+
         }
 
         public void ChangeCamera()
@@ -208,7 +214,6 @@ namespace Surrogate.Implementations.Controller.Module
         public override void Start(LineFollowingInfo info)
         {
             ShouldStop = false;
-            if (IsRunning()) return;
             _currentImages = info.Images;
             if(_currentVideoCapture != null)
             {
@@ -223,19 +228,25 @@ namespace Surrogate.Implementations.Controller.Module
                 GetProperties().CamNum = 0;
                 Start(info);
             }
-            _worker = new BackgroundWorker();
-            _worker.DoWork += LineFollowing;
-            _worker.RunWorkerAsync();
+
+            // disable xbox controller
+            SurrogateFramework.MainController.ProcessHandler.EndProcess(FrameworkConstants.ControllerProcessName);
+            log.Debug(String.Format("Using lower: {0} and upper: {1} as hsv space", GetProperties().Lower, GetProperties().Upper));
+            Motor.Instance.Start();
+            _worker = new System.Threading.Timer(LineFollowing,info,1000,50);
         }
 
         public override bool IsRunning()
         {
-            return _worker != null && _worker.IsBusy;
+            return _worker != null && _isRunning;
         }
 
         public override void Stop()
         {
             base.Stop();
+            _worker.Dispose();
+            _isRunning = false;
+            SurrogateFramework.MainController.ProcessHandler.StartProcess(FrameworkConstants.ControllerProcessName);
         }
     }
 

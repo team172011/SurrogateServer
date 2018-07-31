@@ -120,7 +120,7 @@ namespace Surrogate.Implementations.Controller.Module
                     Motor.Instance.Start();
                 }
                 Tuple<int, int> speedValues = new Tuple<int, int>(0,0);
-                while (!_shouldStop && !controller.buttons.Equals(GamepadButtonFlags.A))
+                while (!_shouldStop && !controller.Buttons.Equals(GamepadButtonFlags.A))
                 {
                     Tuple<int, int> nextSpeedValues = CalculateSpeedValues(controller);
                     // only update if values changed
@@ -156,9 +156,9 @@ namespace Surrogate.Implementations.Controller.Module
         private Tuple<int, int> CalculateSpeedValues(XBoxController controller)
         {
             controller.Update();
-            float rightTrigger = controller.rightTrigger;
-            float leftTrigger = controller.leftTrigger;
-            double rightThumbX = controller.rightThumb.X;
+            float rightTrigger = controller.RightTrigger;
+            float leftTrigger = controller.LeftTrigger;
+            double rightThumbX = controller.RightThumb.X;
             int leftspeed = 0;
             int rightspeed = 0;
 
@@ -198,12 +198,12 @@ namespace Surrogate.Implementations.Controller.Module
                 Thread.Sleep(200); // give console some time after each iteration
                 controller.Update();
                 Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() => {
-                    log.Info("\nLeft Thumb X: " + controller.leftThumb.X + " " + "\nLeft Thumb Y: " + controller.leftThumb.Y + "\n" +
-                        "A?: " + controller.buttons.Equals(GamepadButtonFlags.A) + "\n" +
-                        "Rigth Thumb X: " + controller.rightThumb.X + "\n" +
-                        "Rigth Thumb Y: " + controller.rightThumb.Y + "\n" +
-                        "Left Trigger: " + controller.leftTrigger + "\n" +
-                        "Right Trigger: " + controller.rightTrigger); }));
+                    log.Info("\nLeft Thumb X: " + controller.LeftThumb.X + " " + "\nLeft Thumb Y: " + controller.LeftThumb.Y + "\n" +
+                        "A?: " + controller.Buttons.Equals(GamepadButtonFlags.A) + "\n" +
+                        "Rigth Thumb X: " + controller.RightThumb.X + "\n" +
+                        "Rigth Thumb Y: " + controller.RightThumb.Y + "\n" +
+                        "Left Trigger: " + controller.LeftTrigger + "\n" +
+                        "Right Trigger: " + controller.RightTrigger); }));
                 //Console.WriteLine(controller.leftThumb + " " + controller.rightThumb + " " + controller.leftTrigger + " " + controller.rightTrigger);
             }
             log.Info("Controller test ended");
@@ -213,6 +213,7 @@ namespace Surrogate.Implementations.Controller.Module
 
         private void Selected(Object sender, EventArgs e)
         {
+            SurrogateFramework.MainController.ProcessHandler.EndProcess(FrameworkConstants.ControllerProcessName);
             //SearchController();
             FireChangeEvents();
         }
@@ -221,6 +222,8 @@ namespace Surrogate.Implementations.Controller.Module
         {
             OnControllerAvailableChanged(false);
             OnMotorAvailableChanged(false);
+            Stop();
+            SurrogateFramework.MainController.ProcessHandler.StartProcess(FrameworkConstants.ControllerProcessName);
         }
 
         private void FireChangeEvents()

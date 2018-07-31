@@ -159,6 +159,7 @@ namespace Surrogate.Implementations.Controller.Module
                 mask = mask.Not();
             }
             Mat filtered = new Mat();
+            
             CvInvoke.BitwiseAnd(imageFrame, imageFrame, filtered, mask: mask); // filter image by specific upper and lower hsv space values
 
             var smoothed = filtered.ToImage<Gray, Byte>().SmoothGaussian(5);
@@ -250,11 +251,13 @@ namespace Surrogate.Implementations.Controller.Module
         public override void OnDisselected()
         {
             base.OnDisselected();
+            SurrogateFramework.MainController.ProcessHandler.StartProcess(FrameworkConstants.ControllerProcessName);
         }
 
         public override void OnSelected()
         {
             base.OnSelected();
+            SurrogateFramework.MainController.ProcessHandler.EndProcess(FrameworkConstants.ControllerProcessName);
         }
 
         public override void Start(BallFollowingInfo info)

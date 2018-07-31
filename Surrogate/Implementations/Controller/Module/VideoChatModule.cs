@@ -27,8 +27,10 @@ namespace Surrogate.Implementations
     /// </summary>
     public class VideoChatModule : VisualModule<VideoChatProperties, VideoChatInfo>
     {
-        private readonly Session _session;
-        private Publisher _publisher;
+
+        private readonly Session _session; // the openTok session
+        private Publisher _CurrentPublisher; // instance for publishing streams
+        private Subscriber _CurrentSubscriber; // instance for receiving streams
 
         private VideoChatModuleView _view;
         private readonly Dictionary<string, VideoChatContact> _availableContacts = new Dictionary<string, VideoChatContact>();
@@ -61,7 +63,7 @@ namespace Surrogate.Implementations
             _session.StreamDropped += Session_StreamDropped;
             _session.Connect(GetProperties().GetProperty(GetProperties().Key_TOKEN,"not token"));
 
-            Database db = (Database)SurrogateFramework.MainController.ConnectionHandler.GetConnection(FrameworkConstants.DatabaseName);
+            SystemDatabase db = (SystemDatabase)SurrogateFramework.MainController.ConnectionHandler.GetConnection(FrameworkConstants.DatabaseName);
             IDictionary<string, SqlDbType> columns = new Dictionary<string, SqlDbType>
             {
                 { "ID", SqlDbType.Int },
@@ -85,6 +87,17 @@ namespace Surrogate.Implementations
                     _availableContacts.Add(contact.Username,contact);
                 }
             }
+            resultsReader.Close();
+        }
+
+        internal void HangUp()
+        {
+            if (_CurrentSubscriber != null)
+            {
+                _session.Unsubscribe(_CurrentSubscriber);
+                _CurrentSubscriber = null;
+            }
+            
         }
 
         public void ChangeCamera()
@@ -109,10 +122,10 @@ namespace Surrogate.Implementations
                         break;
                     }
             }
-            _session.Unpublish(_publisher);
-            _publisher.Dispose();
-            _publisher = new Publisher(Context.Instance, renderer: _view.PublisherVideo, capturer: connection.GetCamera());
-            _session.Publish(_publisher);
+            _session.Unpublish(_CurrentPublisher);
+            _CurrentPublisher.Dispose();
+            _CurrentPublisher = new Publisher(Context.Instance, renderer: _view.PublisherVideo, capturer: connection.GetCamera());
+            _session.Publish(_CurrentPublisher);
         }
 
         /// <summary>
@@ -148,7 +161,7 @@ namespace Surrogate.Implementations
         public override void Stop()
         {
             _session?.Disconnect();
-            _publisher?.Dispose();
+            _CurrentPublisher?.Dispose();
         }
 
         private void Session_Connected(object sender, EventArgs e)
@@ -209,11 +222,11 @@ namespace Surrogate.Implementations
             {
                 return;
             }
-            Subscriber subscriber = new Subscriber(Context.Instance, stream, _view.SubscriberVideo);
+            _CurrentSubscriber = new Subscriber(Context.Instance, stream, _view.SubscriberVideo);
             
             try
             {
-                _session.Subscribe(subscriber);
+                _session.Subscribe(_CurrentSubscriber);
             }
             catch (OpenTokException e)
             {
@@ -226,13 +239,13 @@ namespace Surrogate.Implementations
 
         public override void OnSelected()
         {
-            _publisher = new Publisher(Context.Instance, renderer: _view.PublisherVideo,name:"Surrogate");
-            _session.Publish(_publisher);
+            _CurrentPublisher = new Publisher(Context.Instance, renderer: _view.PublisherVideo,name:"Surrogate");
+            _session.Publish(_CurrentPublisher);
         }
 
         public override void OnDisselected()
         {
-            _publisher?.Dispose();
+            _CurrentPublisher?.Dispose();
         }
 
         public override bool IsRunning()
