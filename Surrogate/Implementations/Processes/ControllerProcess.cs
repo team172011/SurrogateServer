@@ -1,4 +1,9 @@
-﻿using System;
+﻿// This file belongs to the source code of the "Surrogate Project"
+// Copyright (c) 2018 All Rights Reserved
+// Martin-Luther-Universitaet Halle-Wittenberg
+// Lehrstuhl Wirtschaftsinformatik und Operation Research
+// Autor: Wimmer, Simon-Justus Wimmer (simonjustuswimmer@googlemail.com)
+using System;
 using System.ComponentModel;
 using Surrogate.Roboter.MMotor;
 using Surrogate.Roboter.MController;
@@ -11,6 +16,7 @@ namespace Surrogate.Implementations.Processes
     /// A process running in the backgorund responsible for controlling the 
     /// prototype via XboxController
     /// </summary>
+    [System.ComponentModel.DesignerCategory("Code")]
     public class ControllerProcess : BackgroundWorker
     {
         private readonly IMotor _motor;

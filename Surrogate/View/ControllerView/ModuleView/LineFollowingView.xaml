@@ -17,18 +17,22 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
-            </Grid.ColumnDefinitions> 
-            <Image Grid.Column="0" Grid.Row="0" x:Name="imView0" Width="200" Height="100"></Image>
-            <Image Grid.Column="1" Grid.Row="0" x:Name="imView1" Width="200" Height="100"></Image>
-            <Image Grid.Column="2" Grid.Row="0" x:Name="imView2" Width="200" Height="100"></Image>
-            <Image Grid.Column="0" Grid.Row="1" x:Name="imView3" Width="200" Height="100"></Image>
-            <Image Grid.Column="1" Grid.Row="1" x:Name="imView4" Width="200" Height="100"></Image>
-            <Image Grid.Column="2" Grid.Row="2" x:Name="imView5" Width="300" Height="300"></Image>
+            </Grid.ColumnDefinitions>
+            <Image Grid.Column="0" Grid.Row="0" x:Name="imView0" Width="180" Height="180"></Image>
+            <Image Grid.Column="1" Grid.Row="0" x:Name="imView1" Width="180" Height="180"></Image>
+            <Image Grid.Column="2" Grid.Row="0" x:Name="imView2" Width="180" Height="180"></Image>
+            <Image Grid.Column="0" Grid.Row="1" x:Name="imView3" Width="180" Height="180"></Image>
+            <Image Grid.Column="1" Grid.Row="1" x:Name="imView4" Width="180" Height="180"></Image>
+            <Image Grid.Column="2" Grid.Row="1" x:Name="imView5" Width="180" Height="180"></Image>
+            <Image Grid.Column="0" Grid.Row="2" x:Name="imView6" Width="180" Height="180"></Image>
+            <Image Grid.Column="0" Grid.Row="2" x:Name="imView7" Width="0" Height="0"></Image>
+            <Image Grid.Column="1" Grid.Row="2" x:Name="imView8" Width="0" Height="0"></Image>
+            <Image Grid.Column="2" Grid.Row="2" x:Name="imView9" Width="0" Height="0"></Image>
             
         </Grid>
-        
-        <Button x:Name="btnStart" Style="{StaticResource LinkButton}" Height="20" Click="OnStartPressed">Linie folgen starten</Button>
-        <Button x:Name="btnHsvView" Style="{StaticResource LinkButton}" Height="20" Click="OnHSVViewPressed">Hsv Eigenschaften einstellen</Button>
-        <Button x:Name="btnChangeCam" Style="{StaticResource LinkButton}" Height="20" Click="BtnChangeCam_Click">Kamera wechseln</Button>
+
+        <Button x:Name="btnStart" Style="{StaticResource LinkButton}">Linie folgen starten</Button>
+        <Button x:Name="btnHsvView" Style="{StaticResource LinkButton}" Click="OnHSVViewPressed">Hsv Eigenschaften einstellen</Button>
+        <Button x:Name="btnChangeCam" Style="{StaticResource LinkButton}" Click="BtnChangeCam_Click">Kamera wechseln</Button>
     </StackPanel>
 </base:ModuleViewBase>

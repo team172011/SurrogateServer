@@ -2,9 +2,7 @@
 // Copyright (c) 2018 All Rights Reserved
 // Martin-Luther-Universitaet Halle-Wittenberg
 // Lehrstuhl Wirtschaftsinformatik und Operation Research
-// Autor: Wimmer, Simon-Justus Wimmer
-
-
+// Autor: Wimmer, Simon-Justus Wimmer (simonjustuswimmer@googlemail.com)
 using System;
 using System.Windows;
 using Surrogate.Parameters;
@@ -67,6 +65,7 @@ namespace Surrogate.Main
             SurrogateFramework.AddModule(new InformationsModule(database));
 
             SurrogateFramework.AddProcess(new ControllerProcess(Motor.Instance, XBoxController.Instance), FrameworkConstants.ControllerProcessName);
+            SurrogateFramework.AddProcess(new EmergencyStopProcess(Motor.Instance, XBoxController.Instance));
 
             SurrogateFramework.Start();
         }

@@ -1,8 +1,14 @@
-﻿using Surrogate.Controller;
+﻿// This file belongs to the source code of the "Surrogate Project"
+// Copyright (c) 2018 All Rights Reserved
+// Martin-Luther-Universitaet Halle-Wittenberg
+// Lehrstuhl Wirtschaftsinformatik und Operation Research
+// Autor: Wimmer, Simon-Justus Wimmer (simonjustuswimmer@googlemail.com)
+using Surrogate.Controller;
 using Surrogate.Implementations.Controller;
 using Surrogate.Model;
 using System;
 using System.ComponentModel;
+using System.Windows.Controls;
 
 namespace Surrogate.Implementations
 {
@@ -11,33 +17,43 @@ namespace Surrogate.Implementations
     /// </summary>
     public static class SurrogateFramework
     {
-        private static readonly MainController _controller = new MainController();
-        public static MainController MainController { get => _controller; }
+        public static MainController MainController { get; } = new MainController();
 
         public static void AddModule(IController module)
         {
-            _controller.ModulHandler.AddModule(module);
+            MainController.ModulHandler.AddModule(module);
 
             // if module is connection, register the connection
             if (module is IConnection connection)
             {
                 AddConnection(connection);
             }
-            
         }
 
         public static void AddProcess(BackgroundWorker process, string name = FrameworkConstants.Empty)
         {
             if(name == FrameworkConstants.Empty)
             {
-                _controller.ProcessHandler.AddProcess(process);
+                MainController.ProcessHandler.AddProcess(process);
             }
-            _controller.ProcessHandler.AddProcess(name, process);
+            else
+            {
+                MainController.ProcessHandler.AddProcess(name, process);
+            }
+            
         }
 
-        public static void AddConnection(IConnection connection)
+        public static void AddConnection(IConnection connection, string name = FrameworkConstants.Empty)
         {
-            _controller.ConnectionHandler.RegisterConnection(connection.Name, connection);
+            if(name == FrameworkConstants.Empty)
+            {
+                MainController.ConnectionHandler.RegisterConnection(connection.Name, connection);
+            }
+            else
+            {
+                MainController.ConnectionHandler.RegisterConnection(name, connection);
+            }
+            
         }
 
         /// <summary>
@@ -45,8 +61,9 @@ namespace Surrogate.Implementations
         /// </summary>
         public static void Start()
         {
-            _controller.ProcessHandler.StartAllProcesses();
-            _controller.MainWindow.Show();
+            MainController.ProcessHandler.StartAllProcesses();
+            MainController.MainWindow.SelectDynamically(0);
+            MainController.MainWindow.Show();
         }
     }
 

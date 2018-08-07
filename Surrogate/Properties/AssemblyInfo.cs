@@ -2,8 +2,7 @@
 // Copyright (c) 2018 All Rights Reserved
 // Martin-Luther-Universitaet Halle-Wittenberg
 // Lehrstuhl Wirtschaftsinformatik und Operation Research
-// Autor: Wimmer, Simon-Justus Wimmer
-
+// Autor: Wimmer, Simon-Justus Wimmer (simonjustuswimmer@googlemail.com)
 using System.Reflection;
 using System.Resources;
 using System.Runtime.CompilerServices;

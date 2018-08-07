@@ -1,4 +1,9 @@
-﻿using System;
+﻿// This file belongs to the source code of the "Surrogate Project"
+// Copyright (c) 2018 All Rights Reserved
+// Martin-Luther-Universitaet Halle-Wittenberg
+// Lehrstuhl Wirtschaftsinformatik und Operation Research
+// Autor: Wimmer, Simon-Justus Wimmer (simonjustuswimmer@googlemail.com)
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,13 +30,11 @@ namespace Surrogate.Controller
         /// </summary>
         protected volatile bool ShouldStop;
 
-        private AbstractController _parent;
-
-        private IList<IController> Children;
+        public AbstractController Parent { get; }
 
         public AbstractController(AbstractController parent = null)
         {
-
+            Parent = parent;
         }
 
         public abstract bool IsRunning();

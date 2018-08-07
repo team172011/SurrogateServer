@@ -1,4 +1,9 @@
-﻿using Surrogate.View;
+﻿// This file belongs to the source code of the "Surrogate Project"
+// Copyright (c) 2018 All Rights Reserved
+// Martin-Luther-Universitaet Halle-Wittenberg
+// Lehrstuhl Wirtschaftsinformatik und Operation Research
+// Autor: Wimmer, Simon-Justus Wimmer (simonjustuswimmer@googlemail.com)
+using Surrogate.View;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,9 +32,21 @@ namespace Surrogate.Controller
         void OnDisselected();
 
         /// <summary>
-        /// Possibility to get the view element of the IModule
+        /// Possibility to get the view element of this module
         /// </summary>
         /// <returns>a ContentControl object that can be added to center of the mainWindow</returns>
         UserControl GetPage();
+
+        /// <summary>
+        /// Get the title of this module
+        /// </summary>
+        /// <returns></returns>
+        String GetTitle();
+
+        /// <summary>
+        /// Get the description of this module
+        /// </summary>
+        /// <returns></returns>
+        String GetDescription();
     }
 }

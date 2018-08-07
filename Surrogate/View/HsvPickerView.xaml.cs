@@ -1,4 +1,9 @@
-﻿using Emgu.CV;
+﻿// This file belongs to the source code of the "Surrogate Project"
+// Copyright (c) 2018 All Rights Reserved
+// Martin-Luther-Universitaet Halle-Wittenberg
+// Lehrstuhl Wirtschaftsinformatik und Operation Research
+// Autor: Wimmer, Simon-Justus Wimmer (simonjustuswimmer@googlemail.com)
+using Emgu.CV;
 using Emgu.CV.Structure;
 using Surrogate.Implementations.Controller.Module;
 using Surrogate.Implementations.Model;
@@ -8,7 +13,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
 
-namespace Surrogate.View.ControllerView.ModuleView
+namespace Surrogate.View
 {
     /// <summary>
     /// Interaction logic for HsvPickerView.xaml

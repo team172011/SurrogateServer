@@ -2,8 +2,7 @@
 // Copyright (c) 2018 All Rights Reserved
 // Martin-Luther-Universitaet Halle-Wittenberg
 // Lehrstuhl Wirtschaftsinformatik und Operation Research
-// Autor: Wimmer, Simon-Justus Wimmer
-
+// Autor: Wimmer, Simon-Justus Wimmer (simonjustuswimmer@googlemail.com)
 using Surrogate.Controller;
 using Surrogate.Model;
 using Surrogate.Model.Module;
@@ -81,7 +80,17 @@ namespace Surrogate.Modules
 
         public override string ToString()
         {
-            return GetProperties().GetProperty(Properties.KeyName,"Ohne Name");
+            return GetTitle();
+        }
+
+        public string GetTitle()
+        {
+            return _properties.GetProperty(_properties.KeyName, "Kein Titel verfügbar");
+        }
+
+        public string GetDescription()
+        {
+            return _properties.GetProperty(_properties.KeyDescription, "Keine Beschreibung verfügbar");
         }
     }
 }

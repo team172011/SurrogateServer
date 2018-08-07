@@ -8,6 +8,10 @@
              Exit="Application_Exit">
     <!--Ressources in App.xaml are globaly available-->
     <Application.Resources>
+        <Style TargetType="{x:Type Window}">
+            <Setter Property="FontSize" Value="20" />
+        </Style>
+        
         <SolidColorBrush x:Key="LightColor" Color="#76c7ef"/>
         <SolidColorBrush x:Key="DarkColor" Color="White"/>
 
@@ -17,6 +21,7 @@
         </LinearGradientBrush>
         
         <Style x:Key="LinkButton" TargetType="Button">
+            <Setter Property="Margin" Value="5"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate

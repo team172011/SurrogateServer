@@ -1,4 +1,9 @@
-﻿using Surrogat.Handler;
+﻿// This file belongs to the source code of the "Surrogate Project"
+// Copyright (c) 2018 All Rights Reserved
+// Martin-Luther-Universitaet Halle-Wittenberg
+// Lehrstuhl Wirtschaftsinformatik und Operation Research
+// Autor: Wimmer, Simon-Justus Wimmer (simonjustuswimmer@googlemail.com)
+using Surrogat.Handler;
 using Surrogate.Controller;
 using Surrogate.Implementations;
 using Surrogate.Implementations.Controller;
@@ -15,8 +20,7 @@ namespace Surrogate.View.ControllerView
 {
     public partial class MainControllerView : MainView
     {
-        private readonly ObservableCollection<IVisualModule> _visualModules = new ObservableCollection<IVisualModule>();
-        public ObservableCollection<IVisualModule> VisualModules { get => _visualModules; }
+        public ObservableCollection<IVisualModule> VisualModules { get; } = new ObservableCollection<IVisualModule>();
 
         private IVisualModule _selectedModule;
 
@@ -31,17 +35,16 @@ namespace Surrogate.View.ControllerView
             {
                 if(module is IVisualModule)
                 {
-                    _visualModules.Add(module as IVisualModule);
+                    VisualModules.Add(module as IVisualModule);
                 }
             }
-            
         }
 
         private void OnModuleAdded(object sender, ModuleArgs mArgs)
         {
             if (mArgs.Module is IVisualModule visualModule)
             {
-                _visualModules.Add(visualModule);
+                VisualModules.Add(visualModule);
             }
             MenuItem item = new MenuItem();
             item.Header = mArgs.Module.ToString();
@@ -51,7 +54,7 @@ namespace Surrogate.View.ControllerView
         }
 
         private void OnModuleRemoved(object sender, ModuleArgs mArgs){
-            _visualModules.Remove(mArgs as IVisualModule);
+            VisualModules.Remove(mArgs as IVisualModule);
             miModuleSettings.Items.Remove(mArgs.Module.ToString());
         }
 
@@ -68,7 +71,18 @@ namespace Surrogate.View.ControllerView
             IVisualModule module = item.Content as IVisualModule;
             spModule.Children.Clear();
             _selectedModule = module;
-            spModule.Children.Add(((IMainController)_controller).ModulHandler.SelectView(module));
+            lblModulTitle.Content = _selectedModule.GetTitle();
+            spModule.Children.Add((_controller).ModulHandler.SelectView(module));
+        }
+
+        public void SelectDynamically(int index)
+        {
+            lvModules.SelectedIndex = index;
+            IVisualModule module = VisualModules[0];
+            spModule.Children.Clear();
+            _selectedModule = module;
+            lblModulTitle.Content = _selectedModule.GetTitle();
+            spModule.Children.Add((_controller).ModulHandler.SelectView(module));
         }
 
         private void MiModuleSettings_Click(object sender, System.Windows.RoutedEventArgs e)

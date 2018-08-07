@@ -123,9 +123,8 @@
     <Compile Include="Implementations\Model\HsvModulProperties.cs" />
     <Compile Include="Implementations\Model\IHsvProperties.cs" />
     <Compile Include="Implementations\Model\HsvBounds.cs" />
-    <Compile Include="Implementations\Processes\ControllerProcess.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Implementations\Processes\EmergencyStopProcess.cs" />
+    <Compile Include="Implementations\Processes\ControllerProcess.cs" />
     <Compile Include="Model\IMotor.cs" />
     <Compile Include="Controller\AbstractConroller.cs" />
     <Compile Include="Controller\IController.cs" />
@@ -160,11 +159,11 @@
     <Compile Include="Utils\ConsoleManager.cs" />
     <Compile Include="Utils\Event.cs" />
     <Compile Include="Utils\UI.cs" />
-    <Compile Include="View\ControllerView\ModuleView\HsvPickerView.xaml.cs">
+    <Compile Include="View\HsvPickerView.xaml.cs">
       <DependentUpon>HsvPickerView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\ControllerView\ModuleView\InformationsModuleView.xaml.cs">
-      <DependentUpon>InformationsModuleView.xaml</DependentUpon>
+    <Compile Include="View\ControllerView\ModuleView\InformationModuleView.xaml.cs">
+      <DependentUpon>InformationModuleView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\ControllerView\ModuleView\LineFollowingView.xaml.cs">
       <DependentUpon>LineFollowingView.xaml</DependentUpon>
@@ -175,7 +174,7 @@
     <Compile Include="View\ControllerView\ModuleView\BallFollowingView.xaml.cs">
       <DependentUpon>BallFollowingView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\ControllerView\ModuleView\AddPatientView.xaml.cs">
+    <Compile Include="View\AddPatientView.xaml.cs">
       <DependentUpon>AddPatientView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\PropertieView\PropertiesView.xaml.cs">
@@ -216,11 +215,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\ControllerView\ModuleView\HsvPickerView.xaml">
+    <Page Include="View\HsvPickerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\ControllerView\ModuleView\InformationsModuleView.xaml">
+    <Page Include="View\ControllerView\ModuleView\InformationModuleView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -244,7 +243,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\ControllerView\ModuleView\AddPatientView.xaml">
+    <Page Include="View\AddPatientView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -287,8 +286,12 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="Surrogate.sln.licenseheader">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="log4net.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

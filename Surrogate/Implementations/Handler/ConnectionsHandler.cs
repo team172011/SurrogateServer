@@ -1,5 +1,8 @@
-
-
+// This file belongs to the source code of the "Surrogate Project"
+// Copyright (c) 2018 All Rights Reserved
+// Martin-Luther-Universitaet Halle-Wittenberg
+// Lehrstuhl Wirtschaftsinformatik und Operation Research
+// Autor: Wimmer, Simon-Justus Wimmer (simonjustuswimmer@googlemail.com)
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
@@ -23,9 +26,8 @@ namespace Surrogate.Implementations.Handler
         public event EventHandler<ConnectionArgs> ConnectionAdded;
 
         public override IModuleProperties Properties => Properties;
-        private readonly ConnectionsHandlerView _view; 
-        private readonly Dictionary<string, IConnection> _connections = new Dictionary<string, IConnection>();
-        public Dictionary<string, IConnection> Connections { get => _connections; }
+        private readonly ConnectionsHandlerView _view;
+        public Dictionary<string, IConnection> Connections { get; } = new Dictionary<string, IConnection>();
 
 
         /// <summary>
@@ -72,19 +74,19 @@ namespace Surrogate.Implementations.Handler
 
         public void RegisterConnection(string name, IConnection connection)
         {
-            _connections.Add(name, connection);
+            Connections.Add(name, connection);
             connection.ConnectionStatusHandler += OnConnectionStatusChanged;
             ConnectionAdded?.Invoke(this, new ConnectionArgs(connection));
         }
 
         public void Connect(string name)
         {
-            _connections[name].Connect();
+            Connections[name].Connect();
         }
 
         public void ConnectAll()
         {
-            foreach(var con in _connections)
+            foreach(var con in Connections)
             {
                 con.Value.Connect();
             }
@@ -92,7 +94,7 @@ namespace Surrogate.Implementations.Handler
 
         public IConnection GetConnection(string name)
         {
-            return _connections[name];
+            return Connections[name];
         }
 
         private void OnConnectionStatusChanged(object sender, ConnectionStatus e)
@@ -106,6 +108,16 @@ namespace Surrogate.Implementations.Handler
         public override bool IsRunning()
         {
             throw new NotImplementedException();
+        }
+
+        public String GetTitle()
+        {
+            return "Verbindungsmanager";
+        }
+
+        public String GetDescription()
+        {
+            return "Handler-Klasse zum verwalten der Verbindungen";
         }
     }
 }

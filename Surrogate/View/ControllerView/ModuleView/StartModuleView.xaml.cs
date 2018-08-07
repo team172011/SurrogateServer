@@ -2,8 +2,7 @@
 // Copyright (c) 2018 All Rights Reserved
 // Martin-Luther-Universitaet Halle-Wittenberg
 // Lehrstuhl Wirtschaftsinformatik und Operation Research
-// Autor: Wimmer, Simon-Justus Wimmer
-
+// Autor: Wimmer, Simon-Justus Wimmer (simonjustuswimmer@googlemail.com)
 using Surrogate.Implementations;
 using System;
 using System.Collections.Generic;
@@ -30,6 +29,10 @@ namespace Surrogate.View
         public StartModuleView():base(null)
         {
             InitializeComponent();
+            if(SurrogateFramework.MainController.ConnectionHandler.GetConnection(FrameworkConstants.ControllerName).Status != Model.ConnectionStatus.Ready)
+            {
+                MessageBox.Show("Achtung! Es ist kein Konroller angeschlossen.", "Kein Controller angeschlossen");
+            }
         }
     }
 }

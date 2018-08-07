@@ -1,21 +1,21 @@
-﻿using Emgu.CV;
+﻿// This file belongs to the source code of the "Surrogate Project"
+// Copyright (c) 2018 All Rights Reserved
+// Martin-Luther-Universitaet Halle-Wittenberg
+// Lehrstuhl Wirtschaftsinformatik und Operation Research
+// Autor: Wimmer, Simon-Justus Wimmer (simonjustuswimmer@googlemail.com)
+using Emgu.CV;
 using Emgu.CV.CvEnum;
-using Emgu.CV.LineDescriptor;
 using Emgu.CV.Structure;
 using Emgu.CV.Util;
-using OpenTok;
 using Surrogate.Implementations.Model;
 using Surrogate.Model;
 using Surrogate.Model.Module;
 using Surrogate.Modules;
-using Surrogate.Roboter.MCamera;
 using Surrogate.Roboter.MMotor;
 using Surrogate.View;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
@@ -42,100 +42,110 @@ namespace Surrogate.Implementations.Controller.Module
         }
 
         /// <summary>
-        /// Start the line following logic
+        /// Start line following logic
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void LineFollowing(object state)
         {
             if (!ShouldStop)
             {
                 _isRunning = true;
-                {
-                    using (Image<Hsv, byte> imageFrame = _currentVideoCapture.QueryFrame().ToImage<Hsv, Byte>())
-                    //using (Image<Bgr, byte> original = _currentVideoCapture.QueryFrame().ToImage<Bgr, Byte>())
+           
+                    using (Image<Hsv, Byte> imageFrame = _currentVideoCapture.QueryFrame().ToImage<Hsv, Byte>())
+                    using (Image<Bgr, Byte> original = _currentVideoCapture.QueryFrame().ToImage<Bgr, Byte>())
                     {
-
-                        if (imageFrame != null)
-                        {
-                            //var input = original.Clone();
-                            Image<Gray, Byte> mask = imageFrame.Convert<Hsv, Byte>().InRange(GetProperties().Lower, GetProperties().Upper);
-                            if (GetProperties().Inverted)
+                            var originalC = original.Copy();
+                            if (imageFrame != null && original != null)
                             {
-                                mask = mask.Not();
-                            }
-                            Mat filtered = new Mat();
-                            CvInvoke.BitwiseAnd(imageFrame, imageFrame, filtered, mask: mask); // filter image by upper and lower hsv space values
-
-                            var smoothed = filtered.ToImage<Gray, Byte>().SmoothGaussian(5);
-                            var eroded = smoothed.Erode(8);
-                            var dilated = eroded.Dilate(8);
-
-                            VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint();
-
-                            CvInvoke.FindContours(dilated, contours, null, RetrType.List, ChainApproxMethod.ChainApproxSimple);
-                            if (contours.Size > 0)
-                            {
-                                var biggestContour = contours[0];
-                                var biggestContourSize = CvInvoke.ContourArea(biggestContour);
-                                for (int i = 1; i < contours.Size; i++) // find the biggest contour
+                                Image<Gray, Byte> mask = imageFrame.Convert<Hsv, Byte>().InRange(GetProperties().Lower, GetProperties().Upper);
+                                if (GetProperties().Inverted)
                                 {
-                                    var sizeCurrent = CvInvoke.ContourArea(contours[i]);
-                                    if (sizeCurrent > biggestContourSize)
+                                    mask = mask.Not();
+                                }
+                                Mat filtered = new Mat();
+                                CvInvoke.BitwiseAnd(imageFrame, imageFrame, filtered, mask: mask); // filter image by upper and lower hsv space values
+
+                                var smoothed = filtered.ToImage<Gray, Byte>().ThresholdBinary(new Gray(0), new Gray(255)).SmoothGaussian(1);
+                                //var eroded = smoothed.Erode(8);
+                                var dilated = smoothed.Dilate(8);
+
+                                VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint();
+
+                                CvInvoke.FindContours(dilated, contours, null, RetrType.List, ChainApproxMethod.ChainApproxSimple);
+                                var Stop = false;
+                                if (contours.Size > 0)
+                                {
+                                    var biggestContour = contours[0];
+                                    var biggestContourSize = CvInvoke.ContourArea(biggestContour);
+                                    for (int i = 1; i < contours.Size; i++) // find the biggest contour
                                     {
-                                        biggestContour = contours[i];
-                                        biggestContourSize = sizeCurrent;
+                                        var sizeCurrent = CvInvoke.ContourArea(contours[i]);
+                                        if (sizeCurrent > biggestContourSize)
+                                        {
+                                            biggestContour = contours[i];
+                                            biggestContourSize = sizeCurrent;
+                                        }
                                     }
-                                }
+                                    if (biggestContour.Size > original.Size.Height / 10)
+                                    {
+                                        Rectangle rec = CvInvoke.BoundingRectangle(biggestContour);
+                                        RotatedRect rrec = CvInvoke.MinAreaRect(biggestContour);
 
-                                Rectangle rec = CvInvoke.BoundingRectangle(biggestContour);
-                                RotatedRect rrec = CvInvoke.MinAreaRect(biggestContour);
-                                imageFrame.Draw(rec, new Hsv(0, 0, 255), 2);
-                                imageFrame.Draw(rrec, new Hsv(0, 255, 0), 2);
-                                imageFrame.Draw(new CircleF(rrec.Center, 2), new Hsv(0, 255, 255), 2);
-                                imageFrame.Draw(biggestContour.ToArray(), new Hsv(255, 0, 0), 2);
+                                        original.Draw(rec, new Bgr(0, 0, 255), 2);
+                                        original.Draw(rrec, new Bgr(0, 255, 0), 2);
+                                        original.Draw(new CircleF(rrec.Center, 5), new Bgr(0, 0, 0), 2);
+                                        original.Draw(biggestContour.ToArray(), new Bgr(255, 0, 0), 2);
 
-                                double x = rrec.Center.X;
-                                double width = imageFrame.Width;
-                                double leftMin = width * 0.4;
-                                double rightMax = width * 0.6;
+                                        double x = rrec.Center.X;
+                                        double width = imageFrame.Width;
+                                        double leftMin = width * 0.4;
+                                        double rightMax = width * 0.6;
 
-                                if (x < leftMin)
-                                {
-                                    //log.Debug("nach links");
-                                    Motor.Instance.LeftSpeedValue = -60;
-                                    Motor.Instance.RightSpeedValue = 60;
-                                }
-                                else if (x > rightMax)
-                                {
-                                    //log.Debug("nach rechts");
-                                    Motor.Instance.LeftSpeedValue = 60;
-                                    Motor.Instance.RightSpeedValue = -60;
+                                        if (x < leftMin)
+                                        {
+                                            //log.Debug("nach links");
+                                            Motor.Instance.LeftSpeedValue = -80;
+                                            Motor.Instance.RightSpeedValue = 80;
+                                        }
+                                        else if (x > rightMax)
+                                        {
+                                            //log.Debug("nach rechts");
+                                            Motor.Instance.LeftSpeedValue = 80;
+                                            Motor.Instance.RightSpeedValue = -80;
+                                        }
+                                        else
+                                        {
+                                            //log.Debug("Geradeaus");
+                                            Motor.Instance.LeftSpeedValue = 20;
+                                            Motor.Instance.RightSpeedValue = 20;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Stop = true; // size of contour not big enough
+                                    }
                                 }
                                 else
                                 {
-                                    //log.Debug("Geradeaus");
-                                    Motor.Instance.LeftSpeedValue = 25;
-                                    Motor.Instance.RightSpeedValue = 25;
+                                    Stop = true; // no contour found
                                 }
-                            }
-                            else
-                            {
-                                log.Debug("stop");
-                                Motor.Instance.LeftSpeedValue = 0;
-                                Motor.Instance.RightSpeedValue = 0;
-                            }
 
-                            PublishFrame(1, imageFrame, "Original Input");
-                            PublishFrame(2, filtered.ToImage<Bgr, Byte>(), "Filtered");
-                            PublishFrame(3, smoothed.Convert<Bgr, Byte>(), "Smoothed");
-                            PublishFrame(4, dilated.Convert<Bgr, Byte>(), "Eroded & Delitated");
-                            PublishFrame(5, imageFrame, "Result");
-                        }
+                                if (Stop)
+                                {
+                                    log.Debug("stop");
+                                    Motor.Instance.LeftSpeedValue = 0;
+                                    Motor.Instance.RightSpeedValue = 0;
+                                }
+
+                                PublishFrame(0, originalC, "Original Input");
+                                PublishFrame(1, filtered.ToImage<Bgr, Byte>(), "Mask");
+                                PublishFrame(2, mask, "Mask BITW_AND Original");
+                                PublishFrame(3, smoothed, "Smoothed");
+                                PublishFrame(4, dilated, "Dilated");
+                                PublishFrame(5, original, "Result");
+                            }
                     }
-                }
-            }
-
+            
+            } //end if(!ShouldStop) 
         }
 
         public void ChangeCamera()
@@ -168,7 +178,7 @@ namespace Surrogate.Implementations.Controller.Module
             try
             {
                 var pimage = imageFrame.Clone(); // clone image because we are going to run async on gui thread
-                pimage.Draw(fontScale: 2, message: viewNum.ToString() +" "+name, bottomLeft: new System.Drawing.Point(1, 50), fontFace: FontFace.HersheyComplex, color: new Hsv(135, 99, 100), thickness: 2);
+                pimage.Draw(fontScale: 1, message: viewNum.ToString() +" "+name, bottomLeft: new System.Drawing.Point(1, 50), fontFace: FontFace.HersheyComplex, color: new Hsv(135, 99, 100), thickness: 2);
                 Application
                     .Current
                     .Dispatcher
@@ -192,13 +202,36 @@ namespace Surrogate.Implementations.Controller.Module
             try
             {
                 var pimage = imageFrame.Clone(); // clone image because we are going to run async on gui thread
-                pimage.Draw(fontScale: 2,message: viewNum.ToString() + " " + name, bottomLeft: new System.Drawing.Point(1, 50), fontFace: FontFace.HersheyComplex,color: new Bgr(0,255,0),thickness:2);
+                pimage.Draw(fontScale: 1, message: viewNum.ToString() + " " + name, bottomLeft: new System.Drawing.Point(1, 50), fontFace: FontFace.HersheyComplex,color: new Bgr(0,255,0),thickness:2);
                 Application
                     .Current
                     .Dispatcher
                     .BeginInvoke(DispatcherPriority.Normal, new Action(() =>
                     _currentImages[viewNum].Source = Utils.UI.BitmapSourceConvert.ToBitmapSource(pimage)));
 
+            }
+            catch (CvException cve)
+            {
+                log.Error("Fehler beim veröffentlichen eines Frames: " + cve.Message);
+            }
+        }
+
+        /// <summary>
+        /// Publishs the Image on the _view
+        /// </summary>
+        /// <param name="imageFrame"></param>s
+        /// <param name="viewNum"></param>
+        private void PublishFrame(int viewNum, Image<Gray, byte> imageFrame, string name = "")
+        {
+            try
+            {
+                var pimage = imageFrame.Clone(); // clone image because we are going to run async on gui thread
+                pimage.Draw(fontScale: 1, message: viewNum.ToString() + " " + name, bottomLeft: new System.Drawing.Point(1, 50), fontFace: FontFace.HersheyComplex, color: new Gray(200), thickness: 2);
+                Application
+                    .Current
+                    .Dispatcher
+                    .BeginInvoke(DispatcherPriority.Normal, new Action(() =>
+                    _currentImages[viewNum].Source = Utils.UI.BitmapSourceConvert.ToBitmapSource(pimage)));
             }
             catch (CvException cve)
             {
@@ -244,7 +277,7 @@ namespace Surrogate.Implementations.Controller.Module
         public override void Stop()
         {
             base.Stop();
-            _worker.Dispose();
+            _worker?.Dispose();
             _isRunning = false;
             SurrogateFramework.MainController.ProcessHandler.StartProcess(FrameworkConstants.ControllerProcessName);
         }

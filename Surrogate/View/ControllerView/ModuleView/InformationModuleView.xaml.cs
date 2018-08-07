@@ -1,10 +1,16 @@
-﻿using Surrogate.Implementations.Controller.Module;
+﻿// This file belongs to the source code of the "Surrogate Project"
+// Copyright (c) 2018 All Rights Reserved
+// Martin-Luther-Universitaet Halle-Wittenberg
+// Lehrstuhl Wirtschaftsinformatik und Operation Research
+// Autor: Wimmer, Simon-Justus Wimmer (simonjustuswimmer@googlemail.com)
+using Surrogate.Implementations.Controller.Module;
 using Surrogate.Model;
 using Surrogate.View.ControllerView.ModuleView;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Drawing.Printing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,9 +29,9 @@ namespace Surrogate.View
     /// <summary>
     /// Interaction logic for InformationsModuleView.xaml
     /// </summary>
-    public partial class InformationsModuleView : ModuleViewBase
+    public partial class InformationModuleView : ModuleViewBase
     {
-        public InformationsModuleView(InformationsModule controller):base(controller)
+        public InformationModuleView(InformationsModule controller):base(controller)
         {
             InitializeComponent();
             lvMaterials.LoadingRow += new EventHandler<DataGridRowEventArgs>(DataGrid_LoadingRow);
@@ -92,23 +98,30 @@ namespace Surrogate.View
         private ObservableCollection<History> currentHistories;
         private void LvPatientes_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            long id = (lvPatientes.SelectedItem as Patient).CaseId;
+            long id = (lvPatientes.SelectedItem as Patient).Id;
             currentHistories = ((InformationsModule)Controller).GetHistoryRows(id);
             if(currentHistories.Count <= 0)
             {
                 Label noContent = new Label();
-                noContent.Content = "Keine Patienteneintraege verfügbar";
+                noContent.Content = "Keine Patienteneinträge verfügbar";
                 spCurrentContent.Children.Clear();
                 spCurrentContent.Children.Add(noContent);
             }
             else
             {
-                DataGrid grid = new DataGrid();
+                DataGrid grid = new DataGrid
+                {
+                    Margin = new Thickness(5, 5, 5, 5)
+                };
                 Label name = new Label();
                 grid.ItemsSource = currentHistories;
-                name.Content = (lvPatientes.SelectedItem as Patient).Name + ", " + (lvPatientes.SelectedItem as Patient).Firstname;
-                name.HorizontalAlignment = HorizontalAlignment.Center;
-
+                grid.Background = Brushes.Transparent;
+                grid.RowBackground = Brushes.Transparent;
+                grid.Resources = lvPatientes.Resources;
+                grid.RowHeaderWidth = 0;
+                name.Content = String.Format("Patientenhistorie von: {0}, {1}",(lvPatientes.SelectedItem as Patient).Name, (lvPatientes.SelectedItem as Patient).Firstname);
+                name.HorizontalAlignment = HorizontalAlignment.Left;
+                name.FontWeight = FontWeights.Bold;
                 spCurrentContent.Children.Clear();
                 spCurrentContent.Children.Add(name);
                 spCurrentContent.Children.Add(grid);

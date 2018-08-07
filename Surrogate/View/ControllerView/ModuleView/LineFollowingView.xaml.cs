@@ -1,19 +1,12 @@
-﻿using Surrogate.Implementations;
+﻿// This file belongs to the source code of the "Surrogate Project"
+// Copyright (c) 2018 All Rights Reserved
+// Martin-Luther-Universitaet Halle-Wittenberg
+// Lehrstuhl Wirtschaftsinformatik und Operation Research
+// Autor: Wimmer, Simon-Justus Wimmer (simonjustuswimmer@googlemail.com)
 using Surrogate.Implementations.Controller.Module;
-using Surrogate.View.ControllerView.ModuleView;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Surrogate.View
 {
@@ -42,6 +35,10 @@ namespace Surrogate.View
                 { 3, imView3 },
                 { 4, imView4 },
                 { 5, imView5 },
+                { 6, imView6 },
+                { 7, imView7 },
+                { 8, imView8 },
+                { 9, imView9 },
             };
         }
 

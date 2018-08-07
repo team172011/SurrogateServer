@@ -4,12 +4,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:base="clr-namespace:Surrogate.View">
 
-    <StackPanel>
-        <Image Source="C:\Users\ITM1\source\repos\Surrogate\Surrogate\resources\xbox_beschrieben.JPG" Height="300"></Image>
-        <TextBlock FontSize="20" TextWrapping="Wrap" Text="Verbinden Sie den Controller via Bluetooth und wählen Sie einen Test"/>
-        <Button x:Name="btnController" Height="50" Click="TestControllerOutput" Content="Controller Outputs testen "/>
-        <Button x:Name="btnTestMotor" Height="50" Click="TestMotorOutput" Content="Motor Outputs testen "/>
-        <Button x:Name="btnControllRobot" Height="50" Click="ControllRobot" Content="Roboter steuern"/>
-        <Button x:Name="btnStop" Height="50" Click="StopTest" Content="Test beenden" IsEnabled="false"/>
+    <StackPanel HorizontalAlignment="Stretch">
+        <Image Source="C:\Users\ITM1\source\repos\Surrogate\Surrogate\resources\xbox_beschriftet_transp.png" Height="300"></Image>
+        <TextBlock TextWrapping="Wrap" Text="Verbinden Sie den Controller via Bluetooth und wählen Sie einen Test" HorizontalAlignment="Center"/>
+        <Button x:Name="btnController"  Click="TestControllerOutput" Content="Controller Outputs testen" Style="{StaticResource LinkButton}"/>
+        <Button x:Name="btnTestMotor" Click="TestMotorOutput" Content="Motor Outputs testen" Style="{StaticResource LinkButton}"/>
+        <Button x:Name="btnControllRobot"  Click="ControllRobot" Content="Roboter steuern" Style="{StaticResource LinkButton}"/>
+        <Button x:Name="btnStop"  Click="StopTest" Content="Test beenden" IsEnabled="false" Style="{StaticResource LinkButton}"/>
     </StackPanel>
 </base:ModuleViewBase>

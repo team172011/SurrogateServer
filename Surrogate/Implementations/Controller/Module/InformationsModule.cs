@@ -1,4 +1,9 @@
-﻿using Surrogate.Model;
+﻿// This file belongs to the source code of the "Surrogate Project"
+// Copyright (c) 2018 All Rights Reserved
+// Martin-Luther-Universitaet Halle-Wittenberg
+// Lehrstuhl Wirtschaftsinformatik und Operation Research
+// Autor: Wimmer, Simon-Justus Wimmer (simonjustuswimmer@googlemail.com)
+using Surrogate.Model;
 using Surrogate.Model.Module;
 using Surrogate.Modules;
 using Surrogate.View;
@@ -21,7 +26,7 @@ namespace Surrogate.Implementations.Controller.Module
         public InformationsModule(IDatabaseConnection database) : base(new ModulePropertiesBase("Informationen","Patientendaten einsehen und Materialien dokumentieren"))
         {
             _database = database;
-            _view = new InformationsModuleView(this);
+            _view = new InformationModuleView(this);
             
         }
 
@@ -50,7 +55,9 @@ namespace Surrogate.Implementations.Controller.Module
             {                
                 while (reader.Read())
                 {
-                    rows.Add(new Patient(reader.GetInt64(0), reader.GetString(1).Trim(), reader.GetString(2).Trim(), reader.GetDateTime(3), reader.GetString(4).Trim(), reader.GetDateTime(5), reader.GetInt64(6)));
+                    
+                    Patient patient = new Patient(reader.GetInt64(0), reader.GetString(1).Trim(), reader.GetString(2).Trim(), reader.GetDateTime(3), reader.GetString(4).Trim(), reader.GetDateTime(5));
+                    rows.Add(patient);
                 }
             }
             reader.Close();
@@ -92,7 +99,7 @@ namespace Surrogate.Implementations.Controller.Module
         {
             foreach (var row in patients)
             {
-                _database.ExecuteNonQuery(String.Format("EXEC insertOrUpdatePatients {0}, '{1}', '{2}', '{3}', '{4}', '{5}', {6};", row.Id, row.Name, row.Firstname, row.Birthday, row.Adress, row.Entry, row.CaseId));
+                _database.ExecuteNonQuery(String.Format("EXEC insertOrUpdatePatients {0}, '{1}', '{2}', '{3}', '{4}', '{5}';", row.Id, row.Name, row.Firstname, row.Birthday, row.Adress, row.Entry));
             }
         }
 
@@ -107,7 +114,8 @@ namespace Surrogate.Implementations.Controller.Module
 
 
     /*
-     * Container classes for each table column
+     * Container classes for each table
+     *
      */
     public class Patient
     {
@@ -117,17 +125,15 @@ namespace Surrogate.Implementations.Controller.Module
         public DateTime Birthday { get; set; }
         public string Adress { get; set; }
         public DateTime Entry { get; set; }
-        public long CaseId { get; set; }
 
-        public Patient(long id, string name, string firstname, DateTime? birthday, string adress, DateTime? entry, long caseId)
+        public Patient(long id, string name, string firstname, DateTime? birthday, string adress, DateTime? entry)
         {
             Id = id;
-            this.Name = name;
-            this.Firstname = firstname;
-            this.Birthday = birthday!=null?(DateTime)birthday:DateTime.MinValue;
-            this.Adress = adress;
-            this.Entry = entry != null ? (DateTime)entry : DateTime.MinValue;
-            this.CaseId = caseId;
+            Name = name;
+            Firstname = firstname;
+            Birthday = birthday!=null?(DateTime)birthday:DateTime.MinValue;
+            Adress = adress;
+            Entry = entry != null ? (DateTime)entry : DateTime.MinValue;
         }
     }
 

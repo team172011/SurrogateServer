@@ -2,8 +2,7 @@
 // Copyright (c) 2018 All Rights Reserved
 // Martin-Luther-Universitaet Halle-Wittenberg
 // Lehrstuhl Wirtschaftsinformatik und Operation Research
-// Autor: Wimmer, Simon-Justus Wimmer
-
+// Autor: Wimmer, Simon-Justus Wimmer (simonjustuswimmer@googlemail.com)
 using System;
 using System.Collections.Generic;
 
@@ -48,8 +47,9 @@ namespace Surrogate.Implementations
         /// Constructor.
         /// </summary>
         /// <param name="modulProperties"></param>
-        public VideoChatModule(VideoChatProperties modulProperties) : base(modulProperties)
+        public VideoChatModule() : base(new VideoChatProperties())
         {
+
             _view = new VideoChatModuleView(this);
 
             ///init the Session field with informations from VideoChatProperties
@@ -61,7 +61,7 @@ namespace Surrogate.Implementations
             _session.Error += Session_Error;
             _session.StreamReceived += Session_StreamReceived;
             _session.StreamDropped += Session_StreamDropped;
-            _session.Connect(GetProperties().GetProperty(GetProperties().Key_TOKEN,"not token"));
+            _session.Connect(GetProperties().GetProperty(GetProperties().Key_TOKEN, "no token available"));
 
             SystemDatabase db = (SystemDatabase)SurrogateFramework.MainController.ConnectionHandler.GetConnection(FrameworkConstants.DatabaseName);
             IDictionary<string, SqlDbType> columns = new Dictionary<string, SqlDbType>
@@ -88,6 +88,7 @@ namespace Surrogate.Implementations
                 }
             }
             resultsReader.Close();
+            InvokeContactData();
         }
 
         internal void HangUp()
@@ -137,15 +138,6 @@ namespace Surrogate.Implementations
             {
                 ContactAddedHandler?.Invoke(this, contact.Value);
             }
-        }
-
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="modulProperties"></param>
-        public VideoChatModule() : this(new VideoChatProperties())
-        {
-            _view = new VideoChatModuleView(this);
         }
 
         public override UserControl GetPage()
@@ -268,7 +260,7 @@ namespace Surrogate.Implementations
         public static readonly string _tableName = "VideoChatContacts";
         public static string TableName { get => _tableName; }
 
-        public VideoChatProperties() : base("Video Chat", "Modul zum Kommunizieren mittels Sprach- und Videochat", false, true, false, false, true, true)
+        public VideoChatProperties() : base("Video Chat", "Modul zum Kommunizieren mittels Sprach- und Videochat", false, true, true, false, true, true)
         {
             JObject json = Roboter.MInternet.Internet.GetJSON(@"https://pscagebot.herokuapp.com/session");
 
@@ -289,32 +281,21 @@ namespace Surrogate.Implementations
 
     public class VideoChatContact
     {
-        private readonly string name;
-        private readonly string firstname;
-        private readonly string username;
-        private readonly Int32 id;
-        private bool _isOnline = false;
-        private Stream _stream;
 
-        public string Name => name;
-        public string Firstname => firstname;
-        public string Username => username;
-        public int Id => id;
-        public bool IsOnline {
-            get => _isOnline;
-            set => _isOnline = value;
-        }
+        public string Name { get; }
+        public string Firstname { get; }
+        public string Username { get; }
+        public int Id { get; }
+        public bool IsOnline { get; set; }
 
-        public Stream VidoeStream {
-            get => _stream;
-            set => _stream = value; } 
+        public Stream VidoeStream { get; set; }
 
         public VideoChatContact(Int32 id, string username, string firstname, string name)
         {
-            this.username = username;
-            this.name = name;
-            this.firstname = firstname;
-            this.id = id;
+            Username = username;
+            Name = name;
+            Firstname = firstname;
+            Id = id;
         }
     }
 }

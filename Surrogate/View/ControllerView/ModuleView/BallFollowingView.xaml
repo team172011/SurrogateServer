@@ -9,8 +9,8 @@
         mc:Ignorable="d">
     <StackPanel>
         <Image x:Name="imView" Width="300" Height="300"></Image>
-        <Button x:Name="btnStart" Style="{StaticResource LinkButton}" Height="20" Click="OnStartPressed">Ball folgen starten</Button>
-        <Button x:Name="btnHsvView" Style="{StaticResource LinkButton}" Height="20" Click="OnHSVViewPressed">Hsv Eigenschaften einstellen</Button>
-        <Button x:Name="btnChangeCam" Style="{StaticResource LinkButton}" Height="20" Click="BtnChangeCam_Click">Kamera wechseln</Button>
+        <Button x:Name="btnStart" Style="{StaticResource LinkButton}"  Click="OnStartPressed">Ball folgen starten</Button>
+        <Button x:Name="btnHsvView" Style="{StaticResource LinkButton}"  Click="OnHSVViewPressed">Hsv Eigenschaften einstellen</Button>
+        <Button x:Name="btnChangeCam" Style="{StaticResource LinkButton}" Click="BtnChangeCam_Click">Kamera wechseln</Button>
     </StackPanel>
 </base:ModuleViewBase>

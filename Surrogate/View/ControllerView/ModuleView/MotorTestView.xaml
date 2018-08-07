@@ -3,25 +3,31 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:base="clr-namespace:Surrogate.View">
 
-    <StackPanel Background="AliceBlue">
+    <StackPanel Background="Transparent">
         <Label Content="Motor testen" FontSize="20" HorizontalAlignment="Center"/>
-        <Image Source="C:\Users\ITM1\source\repos\Surrogate\Surrogate\resources\Skizze_Fahrwerk.png" Width="400"/>
+        <Image Source="C:\Users\ITM1\source\repos\Surrogate\Surrogate\resources\Skizze_Fahrwerk_transp.png" Width="400"/>
         <Label Content="Wählen Sie die gewünschte Aktion" HorizontalAlignment="Center"/>
-        <DockPanel>
-            <Button Width="auto" DockPanel.Dock="Top" Click="Forwards" Content="Vorwärts">
-                
-            </Button>
-            <Button Width="auto" DockPanel.Dock="Bottom" Click="Backwards" Content="Rückwärts"/>
-            <StackPanel  DockPanel.Dock="Left">
-                <Button Width="auto" Click="Left" Content="Links"/>
-                <Button Width="auto" Click="OnlyLeft" Content="Nur Links"/>
-            </StackPanel>
-            <StackPanel  DockPanel.Dock="Right">
-                <Button Width="auto" Click="Right" Content="Rechts"/>
-                <Button Width="auto" Click="OnlyRight" Content="Nur Rechts"/>
-            </StackPanel>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="2*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
 
-            <Button Width="72"  Click="StopTest" Content="Anhalten"/>
-        </DockPanel>
+            <Button Click="Forwards" Content="Vorwärts" Grid.Column="2" Grid.Row="0" Style="{StaticResource LinkButton}"/>
+            <Button Click="Backwards" Content="Rückwärts" Grid.Column="2" Grid.Row="2" Style="{StaticResource LinkButton}"/>
+            <Button Click="Left" Content="Links"  Grid.Column="1" Grid.Row="1" Style="{StaticResource LinkButton}"/>
+            <Button Click="OnlyLeft" Content="Nur Links"  Grid.Column="0" Grid.Row="1" Style="{StaticResource LinkButton}"/>
+            <Button Click="Right" Content="Rechts"  Grid.Column="3" Grid.Row="1" Style="{StaticResource LinkButton}"/>
+            <Button Click="OnlyRight" Content="Nur Rechts"  Grid.Column="4" Grid.Row="1" Style="{StaticResource LinkButton}"/>
+            <Button Click="StopTest" Content="Anhalten" Grid.Column="2" Grid.Row="1" Style="{StaticResource LinkButton}"/>
+        </Grid>
     </StackPanel>
 </base:ModuleViewBase>
