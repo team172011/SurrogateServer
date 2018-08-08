@@ -19,6 +19,7 @@ namespace Surrogate.Implementations.FaceDetection
     using System.Drawing;
 
     using Surrogate.Utils.UI;
+    using System.IO;
 
     public class FaceDetectionModule : VisualModule<FaceDetectionProperties, FaceDetectionInfo>
     {
@@ -37,10 +38,9 @@ namespace Surrogate.Implementations.FaceDetection
         public FaceDetectionModule() : base(new FaceDetectionProperties())
         {
             _view = new FaceDetectionView(this);
-            _eyeCascade = new CascadeClassifier(@"C:\Users\ITM1\source\repos\Surrogate\Surrogate\resources\haarcascade_eye.xml");
-            _faceCascade = new CascadeClassifier(@"C:\Users\ITM1\source\repos\Surrogate\Surrogate\resources\haarcascade_frontalface_default.xml");
-
-
+            System.Diagnostics.Debug.WriteLine(Directory.GetCurrentDirectory());
+            _eyeCascade = new CascadeClassifier(@"Resources\haarcascade_eye.xml");
+            _faceCascade = new CascadeClassifier(@"Resources\haarcascade_frontalface_default.xml");
         }
 
         private void StartSearchAndMark(object sender, EventArgs e)
@@ -99,8 +99,15 @@ namespace Surrogate.Implementations.FaceDetection
 
         public override void Start(FaceDetectionInfo info)
         {
-            _currentImage = info.Image;
-            _currentVideoCapture = new VideoCapture();
+            _currentImage = info.ImgView;
+            _currentVideoCapture = new VideoCapture(info.CamId);
+            if(_currentVideoCapture.QueryFrame() == null)
+            {
+                MessageBox.Show("Die aktuelle Kamera wurde nicht gefunden!", "Kamera nicht gefunden");
+                _currentVideoCapture.Dispose();
+                return;
+            }
+ 
             _timer = new DispatcherTimer();
             _timer.Tick +=  StartSearchAndMark;
             _timer.Interval = new TimeSpan(0, 0, 0, 0, 10);
@@ -125,19 +132,20 @@ namespace Surrogate.Implementations.FaceDetection
     {
         public FaceDetectionProperties() : base("Gesichtserkennung", "Modul zum visuellen Vorführen der Gesichtserkennung", false, true, false,false, false)
         {
-            SetProperty(base.KeyImagePath, @"C:\Users\ITM1\source\repos\Surrogate\Surrogate\resources\facedetection_controller_icon.png");
+            SetProperty(base.KeyImagePath, System.IO.Directory.GetCurrentDirectory() + "/Resources/facedetection_controller_icon.png");
         }
     }
 
     public class FaceDetectionInfo: ModuleInfo
     {
 
-        private readonly System.Windows.Controls.Image _image;
-        public System.Windows.Controls.Image Image => _image;
+        public System.Windows.Controls.Image ImgView { get; }
+        public int CamId { get; }
 
-        public FaceDetectionInfo(System.Windows.Controls.Image image)
+        public FaceDetectionInfo(System.Windows.Controls.Image image, int CamId=0)
         {
-            _image = image;
+            ImgView = image;
+            this.CamId = CamId;
         }
     }
 }

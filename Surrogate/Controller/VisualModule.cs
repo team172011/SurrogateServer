@@ -83,12 +83,12 @@ namespace Surrogate.Modules
             return GetTitle();
         }
 
-        public string GetTitle()
+        public virtual string GetTitle()
         {
             return _properties.GetProperty(_properties.KeyName, "Kein Titel verfügbar");
         }
 
-        public string GetDescription()
+        public virtual string GetDescription()
         {
             return _properties.GetProperty(_properties.KeyDescription, "Keine Beschreibung verfügbar");
         }

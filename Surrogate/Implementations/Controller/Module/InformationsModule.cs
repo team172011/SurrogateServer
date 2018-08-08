@@ -11,9 +11,11 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace Surrogate.Implementations.Controller.Module
@@ -39,7 +41,7 @@ namespace Surrogate.Implementations.Controller.Module
 
         public override bool IsRunning()
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public override void Start(ModuleInfo info)
@@ -49,65 +51,106 @@ namespace Surrogate.Implementations.Controller.Module
 
         internal ObservableCollection<Patient> GetPatientRows()
         {
-            var reader = _database.ExecuteQuery("Select * from Patients");
             ObservableCollection<Patient> rows = new ObservableCollection<Patient>();
-            if (reader.HasRows)
-            {                
-                while (reader.Read())
+            try
+            {
+                var reader = _database.ExecuteQuery("Select * from Patients");
+                if (reader.HasRows)
                 {
-                    
-                    Patient patient = new Patient(reader.GetInt64(0), reader.GetString(1).Trim(), reader.GetString(2).Trim(), reader.GetDateTime(3), reader.GetString(4).Trim(), reader.GetDateTime(5));
-                    rows.Add(patient);
+                    while (reader.Read())
+                    {
+
+                        Patient patient = new Patient(reader.GetInt64(0), reader.GetString(1).Trim(), reader.GetString(2).Trim(), reader.GetDateTime(3), reader.GetString(4).Trim(), reader.GetDateTime(5));
+                        rows.Add(patient);
+                    }
                 }
+                reader.Close();
             }
-            reader.Close();
+            catch(Exception e)
+            {
+                log.Error(e.Message);
+                MessageBox.Show("Das Verbidnen mit der Datenbank ist nicht möglich. Patientendaten können nicht gelesen werden","Keine Verbindung");
+            }
             return rows;
         }
 
         internal ObservableCollection<History> GetHistoryRows(long id)
         {
-            var reader = _database.ExecuteQuery(String.Format("Select * from PatientHistory Where CaseID = {0}", id));
             ObservableCollection<History> rows = new ObservableCollection<History>();
-            if (reader.HasRows)
+            try
             {
-                while (reader.Read())
+                var reader = _database.ExecuteQuery(String.Format("Select * from PatientHistory Where PatientID = {0}", id));
+                if (reader.HasRows)
                 {
-                    rows.Add(new History(reader.GetInt64(0), reader.GetInt64(1), reader.GetDateTime(2), reader.GetString(3).Trim(), reader.GetString(4).Trim()));
+                    while (reader.Read())
+                    {
+                        rows.Add(new History(reader.GetInt64(0), reader.GetInt64(1), reader.GetDateTime(2), reader.GetString(3).Trim(), reader.GetString(4).Trim()));
+                    }
                 }
+                reader.Close();
             }
-            reader.Close();
+            catch (Exception e)
+            {
+                log.Error(e.Message);
+                MessageBox.Show("Das Verbidnen mit der Datenbank ist nicht möglich. Patientenhistoriedaten können nicht gelesen werden", "Keine Verbindung");
+            }
             return rows;
         }
 
         internal ObservableCollection<Material> GetMaterialRows()
         {
-            var reader = _database.ExecuteQuery("Select * from Materials");
             ObservableCollection<Material> rows = new ObservableCollection<Material>();
-            if (reader.HasRows)
+            try
             {
-                while (reader.Read())
+                var reader = _database.ExecuteQuery("Select * from Materials");
+
+                if (reader.HasRows)
                 {
-                    Material row = new Material(reader.GetInt64(0), reader.GetString(1).Trim(), reader.GetString(2).Trim(), reader.GetString(3).Trim(), reader.GetInt64(4), reader.GetInt64(5));
-                    rows.Add(row);
+                    while (reader.Read())
+                    {
+                        Material row = new Material(reader.GetInt64(0), reader.GetString(1).Trim(), reader.GetString(2).Trim(), reader.GetString(3).Trim(), reader.GetInt64(4), reader.GetInt64(5));
+                        rows.Add(row);
+                    }
                 }
+                reader.Close();
             }
-            reader.Close();
+            catch (Exception e)
+            {
+                log.Error(e.Message);
+                MessageBox.Show("Das Verbidnen mit der Datenbank ist nicht möglich. Materialdaten können nicht gelesen werden", "Keine Verbindung");
+            }
             return rows;
         }
 
         internal void SavePatients(Collection<Patient> patients)
         {
-            foreach (var row in patients)
+            try
             {
-                _database.ExecuteNonQuery(String.Format("EXEC insertOrUpdatePatients {0}, '{1}', '{2}', '{3}', '{4}', '{5}';", row.Id, row.Name, row.Firstname, row.Birthday, row.Adress, row.Entry));
+                foreach (var row in patients)
+                {
+                    _database.ExecuteNonQuery(String.Format("EXEC insertOrUpdatePatients {0}, '{1}', '{2}', '{3}', '{4}', '{5}';", row.Id, row.Name, row.Firstname, row.Birthday, row.Adress, row.Entry));
+                }
+            }
+            catch (Exception e)
+            {
+                log.Error(e.Message);
+                MessageBox.Show("Das Verbidnen mit der Datenbank ist nicht möglich. Patientendaten können nicht eingefügt werden", "Keine Verbindung");
             }
         }
 
         internal void SaveMaterials(Collection<Material> mats)
         {
-            foreach (var row in mats)
+            try
             {
-                _database.ExecuteNonQuery(String.Format("EXEC insertOrUpdateMaterials {0}, '{1}', '{2}', '{3}', {4}, {5};", row.Id, row.Name, row.Description, row.Unit, row.Stock, row.MinStock));
+                foreach (var row in mats)
+                {
+                    _database.ExecuteNonQuery(String.Format("EXEC insertOrUpdateMaterials {0}, '{1}', '{2}', '{3}', {4}, {5};", row.Id, row.Name, row.Description, row.Unit, row.Stock, row.MinStock));
+                }
+            }
+            catch (Exception e)
+            {
+                log.Error(e.Message);
+                MessageBox.Show("Das Verbidnen mit der Datenbank ist nicht möglich. Materialdaten können nicht eingefügt werden", "Keine Verbindung");
             }
         }
     }

@@ -1,7 +1,0 @@
-﻿
-SQL-Server von Console aus starten
--- sqlcmd -S MSI\SQLEXPRESS -E
-
-EmguCV 3.4
-   EmguWorld.dll einbinden
-   x64 und x86 Ordner nach Debug kopieren

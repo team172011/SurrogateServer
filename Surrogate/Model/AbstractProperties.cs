@@ -21,10 +21,17 @@ namespace Surrogate.Model
         public string KeyImagePath => "ImagePath";
         public string KeyInternet => "Internet";
 
-        public static readonly string propertiesPath = @"C:\Users\ITM1\source\repos\Surrogate\Surrogate\resources\properties\";
+        public static readonly string propertiesPath = Directory.GetCurrentDirectory()+"/Resources/properties/";
 
 
-
+        public AbstractProperties()
+        {
+            if (!Directory.Exists(propertiesPath))
+            {
+                Directory.CreateDirectory(propertiesPath);
+                System.Diagnostics.Debug.WriteLine(propertiesPath + "created");
+            }
+        }
         public abstract string Description { get; }
         public abstract string ImagePath { get; }
         public abstract string Name { get; }

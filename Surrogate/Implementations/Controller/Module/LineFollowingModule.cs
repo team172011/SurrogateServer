@@ -53,96 +53,96 @@ namespace Surrogate.Implementations.Controller.Module
                     using (Image<Hsv, Byte> imageFrame = _currentVideoCapture.QueryFrame().ToImage<Hsv, Byte>())
                     using (Image<Bgr, Byte> original = _currentVideoCapture.QueryFrame().ToImage<Bgr, Byte>())
                     {
-                            var originalC = original.Copy();
-                            if (imageFrame != null && original != null)
+                    var originalC = original.Copy();
+                    if (imageFrame != null && original != null)
+                    {
+                        Image<Gray, Byte> mask = imageFrame.Convert<Hsv, Byte>().InRange(GetProperties().Lower, GetProperties().Upper);
+                        if (GetProperties().Inverted)
+                        {
+                            mask = mask.Not();
+                        }
+                        Mat filtered = new Mat();
+                        CvInvoke.BitwiseAnd(imageFrame, imageFrame, filtered, mask: mask); // filter image by upper and lower hsv space values
+
+                        var smoothed = filtered.ToImage<Gray, Byte>().ThresholdBinary(new Gray(0), new Gray(255)).SmoothGaussian(1);
+                        var dilated = smoothed.Dilate(8);
+
+                        VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint();
+
+                        CvInvoke.FindContours(dilated, contours, null, RetrType.List, ChainApproxMethod.ChainApproxSimple);
+                        var Stop = false;
+                        if (contours.Size > 0)
+                        {
+                            var biggestContour = contours[0];
+                            var biggestContourSize = CvInvoke.ContourArea(biggestContour);
+                            for (int i = 1; i < contours.Size; i++) // find the biggest contour
                             {
-                                Image<Gray, Byte> mask = imageFrame.Convert<Hsv, Byte>().InRange(GetProperties().Lower, GetProperties().Upper);
-                                if (GetProperties().Inverted)
+                                var sizeCurrent = CvInvoke.ContourArea(contours[i]);
+                                if (sizeCurrent > biggestContourSize)
                                 {
-                                    mask = mask.Not();
+                                    biggestContour = contours[i];
+                                    biggestContourSize = sizeCurrent;
                                 }
-                                Mat filtered = new Mat();
-                                CvInvoke.BitwiseAnd(imageFrame, imageFrame, filtered, mask: mask); // filter image by upper and lower hsv space values
+                            }
+                            if (biggestContour.Size > original.Size.Height / 10)
+                            {
+                                Rectangle rec = CvInvoke.BoundingRectangle(biggestContour);
+                                RotatedRect rrec = CvInvoke.MinAreaRect(biggestContour);
 
-                                var smoothed = filtered.ToImage<Gray, Byte>().ThresholdBinary(new Gray(0), new Gray(255)).SmoothGaussian(1);
-                                //var eroded = smoothed.Erode(8);
-                                var dilated = smoothed.Dilate(8);
+                                original.Draw(rec, new Bgr(0, 0, 255), 2);
+                                original.Draw(rrec, new Bgr(0, 255, 0), 2);
+                                original.Draw(new CircleF(rrec.Center, 5), new Bgr(0, 0, 0), 2);
+                                original.Draw(biggestContour.ToArray(), new Bgr(255, 0, 0), 2);
 
-                                VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint();
-
-                                CvInvoke.FindContours(dilated, contours, null, RetrType.List, ChainApproxMethod.ChainApproxSimple);
-                                var Stop = false;
-                                if (contours.Size > 0)
+                                double x = rrec.Center.X;
+                                double width = imageFrame.Width;
+                                double leftMin = width * 0.4;
+                                double rightMax = width * 0.6;
+                                int speed = GetProperties().GetIntegerProperty(GetProperties().keyDefaultSpeed, 20);
+                                int steer = GetProperties().GetIntegerProperty(GetProperties().keyDefaultSteer, 80);
+                                if (x < leftMin)
                                 {
-                                    var biggestContour = contours[0];
-                                    var biggestContourSize = CvInvoke.ContourArea(biggestContour);
-                                    for (int i = 1; i < contours.Size; i++) // find the biggest contour
-                                    {
-                                        var sizeCurrent = CvInvoke.ContourArea(contours[i]);
-                                        if (sizeCurrent > biggestContourSize)
-                                        {
-                                            biggestContour = contours[i];
-                                            biggestContourSize = sizeCurrent;
-                                        }
-                                    }
-                                    if (biggestContour.Size > original.Size.Height / 10)
-                                    {
-                                        Rectangle rec = CvInvoke.BoundingRectangle(biggestContour);
-                                        RotatedRect rrec = CvInvoke.MinAreaRect(biggestContour);
-
-                                        original.Draw(rec, new Bgr(0, 0, 255), 2);
-                                        original.Draw(rrec, new Bgr(0, 255, 0), 2);
-                                        original.Draw(new CircleF(rrec.Center, 5), new Bgr(0, 0, 0), 2);
-                                        original.Draw(biggestContour.ToArray(), new Bgr(255, 0, 0), 2);
-
-                                        double x = rrec.Center.X;
-                                        double width = imageFrame.Width;
-                                        double leftMin = width * 0.4;
-                                        double rightMax = width * 0.6;
-
-                                        if (x < leftMin)
-                                        {
-                                            //log.Debug("nach links");
-                                            Motor.Instance.LeftSpeedValue = -80;
-                                            Motor.Instance.RightSpeedValue = 80;
-                                        }
-                                        else if (x > rightMax)
-                                        {
-                                            //log.Debug("nach rechts");
-                                            Motor.Instance.LeftSpeedValue = 80;
-                                            Motor.Instance.RightSpeedValue = -80;
-                                        }
-                                        else
-                                        {
-                                            //log.Debug("Geradeaus");
-                                            Motor.Instance.LeftSpeedValue = 20;
-                                            Motor.Instance.RightSpeedValue = 20;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        Stop = true; // size of contour not big enough
-                                    }
+                                    //log.Debug("nach links");
+                                    Motor.Instance.LeftSpeedValue = -steer;
+                                    Motor.Instance.RightSpeedValue = steer;
+                                }
+                                else if (x > rightMax)
+                                {
+                                    //log.Debug("nach rechts");
+                                    Motor.Instance.LeftSpeedValue = steer;
+                                    Motor.Instance.RightSpeedValue = -steer;
                                 }
                                 else
                                 {
-                                    Stop = true; // no contour found
+                                    //log.Debug("Geradeaus");
+                                    Motor.Instance.LeftSpeedValue = speed;
+                                    Motor.Instance.RightSpeedValue = speed;
                                 }
-
-                                if (Stop)
-                                {
-                                    log.Debug("stop");
-                                    Motor.Instance.LeftSpeedValue = 0;
-                                    Motor.Instance.RightSpeedValue = 0;
-                                }
-
-                                PublishFrame(0, originalC, "Original Input");
-                                PublishFrame(1, filtered.ToImage<Bgr, Byte>(), "Mask");
-                                PublishFrame(2, mask, "Mask BITW_AND Original");
-                                PublishFrame(3, smoothed, "Smoothed");
-                                PublishFrame(4, dilated, "Dilated");
-                                PublishFrame(5, original, "Result");
                             }
+                            else
+                            {
+                                Stop = true; // size of contour not big enough
+                            }
+                        }
+                        else
+                        {
+                            Stop = true; // no contour found
+                        }
+
+                        if (Stop)
+                        {
+                            log.Debug("stop");
+                            Motor.Instance.LeftSpeedValue = 0;
+                            Motor.Instance.RightSpeedValue = 0;
+                        }
+
+                        PublishFrame(0, originalC, "Original Input");
+                        PublishFrame(1, filtered.ToImage<Bgr, Byte>(), "Mask");
+                        PublishFrame(2, mask, "Mask BITW_AND Original");
+                        PublishFrame(3, smoothed, "Smoothed");
+                        PublishFrame(4, dilated, "Dilated");
+                        PublishFrame(5, original, "Result");
+                    }
                     }
             
             } //end if(!ShouldStop) 
@@ -253,20 +253,18 @@ namespace Surrogate.Implementations.Controller.Module
                 _currentVideoCapture.Dispose();
             }
             _currentVideoCapture = new VideoCapture(GetProperties().CamNum);
-            try {
-                var test = _currentVideoCapture.QueryFrame().ToImage<Bgr, Byte>();
-            } catch (Exception e)
+            if (_currentVideoCapture.QueryFrame() == null)
             {
-                log.Error("Could not use camera. Switching to default "+e.Message);
-                GetProperties().CamNum = 0;
-                Start(info);
+                MessageBox.Show("Verbindung zur Kamera nicht möglich", "Keine Verbindung");
+                log.Error("Could not use camera. " + GetProperties().CamNum);
+                return;
             }
 
             // disable xbox controller
             SurrogateFramework.MainController.ProcessHandler.EndProcess(FrameworkConstants.ControllerProcessName);
             log.Debug(String.Format("Using lower: {0} and upper: {1} as hsv space", GetProperties().Lower, GetProperties().Upper));
             Motor.Instance.Start();
-            _worker = new System.Threading.Timer(LineFollowing,info,1000,50);
+            _worker = new System.Threading.Timer(LineFollowing,info,100,50);
         }
 
         public override bool IsRunning()
@@ -277,6 +275,7 @@ namespace Surrogate.Implementations.Controller.Module
         public override void Stop()
         {
             base.Stop();
+            _currentVideoCapture?.Dispose();
             _worker?.Dispose();
             _isRunning = false;
             SurrogateFramework.MainController.ProcessHandler.StartProcess(FrameworkConstants.ControllerProcessName);
@@ -298,11 +297,13 @@ namespace Surrogate.Implementations.Controller.Module
 
     public class LineFollowingProperties : HsvModulProperties
     {
+        public readonly String keyDefaultSpeed = "Speed";
+        public readonly String keyDefaultSteer = "Steer";
 
 
         public LineFollowingProperties() : base("Linie folgen","Modul zum Folgen einer farbigen Linie", motor:true, floorCam:true)
         {
-            SetProperty(KeyImagePath, @"C:\Users\ITM1\source\repos\Surrogate\Surrogate\resources\linefollowing_controller_icon.png");
+            SetProperty(KeyImagePath, System.IO.Directory.GetCurrentDirectory() + "/Resources/linefollowing_controller_icon.png", true);
             Load();
 
             // set default values if no exist
@@ -316,6 +317,8 @@ namespace Surrogate.Implementations.Controller.Module
 
             SetProperty(Key_Inverted, false, false);
             SetProperty(Key_CamNum, CamNum, false);
+            SetProperty(keyDefaultSpeed, "20", false);
+            SetProperty(keyDefaultSteer, "80", false);
             Save();
         }
     }

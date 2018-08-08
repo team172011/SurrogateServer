@@ -14,7 +14,6 @@ using Surrogate.Modules;
 using Surrogate.Roboter.MMotor;
 using Surrogate.View;
 using System;
-using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
@@ -25,7 +24,8 @@ namespace Surrogate.Implementations.Controller.Module
     {
         private Image _currentImage;
         private VideoCapture _currentVideoCapture;
-        private BackgroundWorker _worker;
+        private System.Threading.Timer _worker;
+        private volatile bool _isRunning;
 
         public BallFollowingModule() : base(new BallFollowingProperties())
         {
@@ -37,54 +37,43 @@ namespace Surrogate.Implementations.Controller.Module
         /// Starts the ball following logic
         /// </summary>
         /// <param name="sender">not needed</param>
-        /// <param name="e">not needed</param>
-        public void BallFollowing(object sender=null, EventArgs e=null)
+        public void BallFollowing(object sender=null)
         {
-            Motor.Instance.Start();
-            Image<Hsv, byte> initFrame = _currentVideoCapture.QueryFrame().ToImage<Hsv, Byte>();
-            double max_x = initFrame.Width;
+            Image<Bgr, byte> original = _currentVideoCapture.QueryFrame().ToImage<Bgr, Byte>();
+            double max_x = original.Width;
             double middle_x = max_x/2;
             double entity = 1000 / middle_x;
-
-            log.Debug(String.Format("Using lower: {0} and upper: {1} as hsv space", GetProperties().Lower, GetProperties().Upper));
-            while (!ShouldStop)
+            using (Image<Hsv, byte> imageFrame = _currentVideoCapture.QueryFrame().ToImage<Hsv, Byte>())
             {
-                using (Image<Hsv, byte> imageFrame = _currentVideoCapture.QueryFrame().ToImage<Hsv, Byte>())
+                if (imageFrame != null)
                 {
+                    CircleF detectedCircle = SearchCircle(imageFrame);
 
-                    if (imageFrame != null)
+                    if (detectedCircle.Radius >= GetProperties().MinRadius)
                     {
-                        Image<Hsv, Byte> original = imageFrame.Clone();
-                        CircleF detectedCircle = SearchCircle(imageFrame);
+                        original.Draw(detectedCircle, new Bgr(0, 255, 255), 2);
+                        original.Draw(new CircleF(detectedCircle.Center, 2), new Bgr(0, 255, 255), 2);
 
-                        if (detectedCircle.Radius >= GetProperties().MinRadius)
+                        double current_x = detectedCircle.Center.X;
+                        double p = 0; 
+
+                        if (current_x >= middle_x)
                         {
-                            original.Draw(detectedCircle, new Hsv(0, 255, 255), 2);
-                            original.Draw(new CircleF(detectedCircle.Center, 2), new Hsv(0, 255, 255), 2);
-
-                            double current_x = detectedCircle.Center.X;
-                            double p = 0; 
-
-                            if (current_x >= middle_x)
-                            {
-                                p = entity * (current_x - middle_x); // p = 1000 => ganz rechts vom roboter
-                            }
-                            else
-                            {
-                                p = -entity * (middle_x - current_x); // p = -1000 => ganz links vom roboter
-                            }
-
-                            WriteMotorCommand(p, detectedCircle.Radius);
+                            p = entity * (current_x - middle_x); // p = 1000 => ganz rechts vom roboter
                         }
                         else
                         {
-                            Motor.Instance.LeftSpeedValue = 0;
-                            Motor.Instance.RightSpeedValue = 0;
+                            p = -entity * (middle_x - current_x); // p = -1000 => ganz links vom roboter
                         }
+                        WriteMotorCommand(p, detectedCircle.Radius);
                     }
-                    PublishFrame(1, imageFrame, "Original Input");
+                    else
+                    {
+                        log.Debug("anhalten");
+                        Motor.Instance.PullUp();
+                    }
                 }
-
+                PublishFrame(1, original, "Original Input");
             }
         }
 
@@ -102,11 +91,7 @@ namespace Surrogate.Implementations.Controller.Module
             }
             double acceleration = 1 - (radius-properties.MinRadius) / properties.MaxRadius;
             int speed = (int)(acceleration * 100); // 100 = maximum speed
-            if (speed < 0)
-            {
-                speed = 0;
-            }
-
+            speed = Math.Max(0, speed);
             int leftspeed = speed;
             int rightspeed = speed;
 
@@ -122,34 +107,33 @@ namespace Surrogate.Implementations.Controller.Module
                 leftspeed = (int)(speed + (steermultiplier * 100) * 2);
                 rightspeed = (int)(speed - (steermultiplier * 100) * 2);
             }
-
+            int maxMinSpeed = GetProperties().GetMaxMinSpeed();
             if (leftspeed >= 0)
             {
-                leftspeed = Math.Min(100, leftspeed);
+                leftspeed = Math.Min(maxMinSpeed, leftspeed);
             }
             else
             {
-                leftspeed = Math.Max(-100, leftspeed);
+                leftspeed = Math.Max(-maxMinSpeed, leftspeed);
             }
 
             if (rightspeed >= 0)
             {
-                rightspeed = Math.Min(100, rightspeed);
+                rightspeed = Math.Min(maxMinSpeed, rightspeed);
             }
             else
             {
-                rightspeed = Math.Max(-100, rightspeed);
+                rightspeed = Math.Max(-maxMinSpeed, rightspeed);
             }
 
             Motor.Instance.LeftSpeedValue = leftspeed;
             Motor.Instance.RightSpeedValue = rightspeed;
 
-            //log.Debug(String.Format("leftspeed: {0}, rightspeed: {1}", leftspeed, rightspeed));
+            log.Debug(String.Format("leftspeed: {0}, rightspeed: {1}", leftspeed, rightspeed));
         }
 
         /// <summary>
         /// Search for a circle structure in the imageFrame at a specific hsv level.
-        /// 
         /// </summary>
         /// <param name="imageFrame"></param>
         /// <returns>
@@ -168,8 +152,8 @@ namespace Surrogate.Implementations.Controller.Module
             CvInvoke.BitwiseAnd(imageFrame, imageFrame, filtered, mask: mask); // filter image by specific upper and lower hsv space values
 
             var smoothed = filtered.ToImage<Gray, Byte>().SmoothGaussian(5);
-            var eroded = smoothed.Erode(8);
-            var dilated = eroded.Dilate(8);
+            //var eroded = smoothed.Erode(8);
+            var dilated = smoothed.Dilate(8);
 
             VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint();
 
@@ -250,12 +234,14 @@ namespace Surrogate.Implementations.Controller.Module
 
         public override bool IsRunning()
         {
-            return _worker != null && _worker.IsBusy;
+            return _worker != null && _isRunning;
         }
 
         public override void OnDisselected()
         {
             base.OnDisselected();
+            Stop();
+            _currentVideoCapture?.Dispose();
             SurrogateFramework.MainController.ProcessHandler.StartProcess(FrameworkConstants.ControllerProcessName);
         }
 
@@ -269,16 +255,26 @@ namespace Surrogate.Implementations.Controller.Module
         {
             _currentImage = info.Image;
             ShouldStop = false;
-            if (IsRunning()) return;
+            if(_currentVideoCapture != null)
+            {
+                _currentVideoCapture.Dispose();
+            }
             _currentVideoCapture = new VideoCapture(GetProperties().CamNum);
-            _worker = new BackgroundWorker();
-            _worker.DoWork += BallFollowing;
-            _worker.RunWorkerAsync();
+            if(_currentVideoCapture.QueryFrame() == null)
+            {
+                MessageBox.Show("Die aktuelle Kamera ist nicht verfügbar", "Kamera nicht verfügbar");
+                return;
+            }
+            Motor.Instance.Start();
+            log.Debug(String.Format("Using lower: {0} and upper: {1} as hsv space", GetProperties().Lower, GetProperties().Upper));
+            _worker = new System.Threading.Timer(BallFollowing, null, 100, 50);
         }
 
         public override void Stop()
         {
             base.Stop();
+            _worker?.Dispose();
+            _isRunning = false;
         }
 
         /// <summary>
@@ -298,6 +294,7 @@ namespace Surrogate.Implementations.Controller.Module
         public readonly string Key_MinRadius = "Min_Radius";
         public readonly string Key_MaxRadius = "Max_Radius";
         public readonly string Key_Tolerance = "Tolerance";
+        public readonly string Key_MaxMinSpeed = "MaxMinSpeed";
 
         /// <summary>
         /// get/set the MinRadius property
@@ -317,7 +314,7 @@ namespace Surrogate.Implementations.Controller.Module
 
         public BallFollowingProperties() : base("Ball folgen", "Nutzt eine Kamera, um einem speziellen Ball zu folgen", motor: true, floorCam: true)
         {
-            SetProperty(KeyImagePath, @"C:\Users\ITM1\source\repos\Surrogate\Surrogate\resources\ballFollowing_controller_icon.png");
+            SetProperty(KeyImagePath, System.IO.Directory.GetCurrentDirectory() + "/Resources/ballFollowing_controller_icon.png", true);
             Load();
 
             // set default values if no exist
@@ -334,8 +331,14 @@ namespace Surrogate.Implementations.Controller.Module
             SetProperty(Key_MinRadius, 20, false);
             SetProperty(Key_MaxRadius, 100, false);
 
-            SetProperty(Key_Tolerance, 100, true);
+            SetProperty(Key_Tolerance, 100, false);
+            SetProperty(Key_MaxMinSpeed, 100, false);
             Save();
+        }
+
+        public int GetMaxMinSpeed()
+        {
+            return GetIntegerProperty(Key_MaxMinSpeed, 100);
         }
     }
 

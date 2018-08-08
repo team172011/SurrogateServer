@@ -110,12 +110,12 @@ namespace Surrogate.Implementations.Handler
             throw new NotImplementedException();
         }
 
-        public String GetTitle()
+        public override String GetTitle()
         {
             return "Verbindungsmanager";
         }
 
-        public String GetDescription()
+        public override String  GetDescription()
         {
             return "Handler-Klasse zum verwalten der Verbindungen";
         }

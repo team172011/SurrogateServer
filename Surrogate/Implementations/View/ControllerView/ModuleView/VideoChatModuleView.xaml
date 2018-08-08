@@ -1,0 +1,85 @@
+﻿<base:ModuleViewBase x:Class="Surrogate.View.VideoChatModuleView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:OpenTok="clr-namespace:OpenTok;assembly=WPFVideoRenderer"
+        xmlns:base="clr-namespace:Surrogate.View"
+        mc:Ignorable="d">
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Left">
+            <!-- Label, ListView and Button for Contacts-->
+            <Label Content="Kontakte" FontWeight="Bold"/>
+            <ListView x:Name="lvContacts" Background="Transparent">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListViewItem}">
+                        <EventSetter Event="MouseDoubleClick" Handler="ListViewItem_MouseDoubleClick" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <StackPanel Width="150" MaxHeight="50" Grid.Column="0" Grid.Row="0" Orientation="Horizontal" >
+                                <StackPanel.Resources>
+                                    <Style TargetType="StackPanel">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsOnline}" Value="True">
+                                                <Setter Property="Background" Value="#009900"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsOnline}" Value="False">
+                                                <Setter Property="Background" Value="#8c8c8c"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </StackPanel.Resources>
+                                <TextBlock VerticalAlignment="Center" Text="{Binding FirstName}" FontWeight="ExtraBlack" TextWrapping="Wrap" Padding="10"/>
+                            </StackPanel>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <Button HorizontalAlignment="Center" x:Name="btnAddContact" Click="BtnAddContact_Click" Content="Kontakt hinzufügen" Style="{StaticResource LinkButton}"/>
+            <Button HorizontalAlignment="Center" x:Name="btnChangeCamera" Click="BtnChangeCamera_Click"  Content="Kamera wechseln" Style="{StaticResource LinkButton}"/>
+            <Button HorizontalAlignment="Center" x:Name="btnNewWindow" Click="BtnNewWindow_Click"  Content="Vollbild" Style="{StaticResource LinkButton}"/>
+            <ToggleButton Margin="5,5,5,5" x:Name="btnMute" Content="Kein Ton Übertragen" Click="BtnMute_Click" IsThreeState="false"/>
+            <ToggleButton Margin="5,5,5,5" x:Name="btnOnline" Content="Online gehen" Click="BtnConnect_Click" IsThreeState="False"/>
+        </StackPanel>
+        <!-- Publisher and Renderer Frames -->
+            <Grid x:Name="viewerGrid">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+                
+            <StackPanel x:Name="subscriberWrapper" HorizontalAlignment="Center"  VerticalAlignment="Bottom" Grid.Column="0" Grid.ColumnSpan="2">
+                <OpenTok:VideoRenderer  x:Name="SubscriberVideo"   Height="500" Width="500">
+                </OpenTok:VideoRenderer>
+            </StackPanel>
+
+
+                <Border Grid.Column="1" Grid.Row="0" CornerRadius="3" BorderBrush="{StaticResource FadeOutRight}" BorderThickness="4" Height="200" Width="200" VerticalAlignment="Top" HorizontalAlignment="Right">
+                <OpenTok:VideoRenderer Grid.Column="1" Grid.Row="0" x:Name="PublisherVideo" Height="200" Width="200" >
+                    </OpenTok:VideoRenderer>
+            </Border>
+
+            <!-- Button hang up -->
+                <DockPanel Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2">
+                <StackPanel>
+                    <Button Background="OrangeRed" Content="Auflegen" Click="BtnHangUp_Click"/>
+
+                </StackPanel>
+            </DockPanel>
+            </Grid>
+
+    </DockPanel>
+</base:ModuleViewBase>

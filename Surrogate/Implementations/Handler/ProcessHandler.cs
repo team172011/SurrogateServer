@@ -3,14 +3,10 @@
 // Martin-Luther-Universitaet Halle-Wittenberg
 // Lehrstuhl Wirtschaftsinformatik und Operation Research
 // Autor: Wimmer, Simon-Justus Wimmer (simonjustuswimmer@googlemail.com)
-using Surrogat.Handler;
 using Surrogate.Model.Handler;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Surrogate.Implementations.Handler
 {

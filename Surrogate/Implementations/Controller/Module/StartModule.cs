@@ -62,7 +62,7 @@ namespace Surrogate.Implementations
     {
         public StartProperties() : base("Start", "Startbildschirm")
         {
-            SetProperty(base.KeyImagePath, @"C:\Users\ITM1\source\repos\Surrogate\Surrogate\resources\start_controller_icon.png");
+            SetProperty(base.KeyImagePath, System.IO.Directory.GetCurrentDirectory() + "/Resources/start_controller_icon.png");
         }
     }
 }

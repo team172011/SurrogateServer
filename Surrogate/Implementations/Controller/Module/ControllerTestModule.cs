@@ -86,11 +86,8 @@ namespace Surrogate.Implementations.Controller.Module
         /// <param name="info"></param>
         public override async void Start(ControllerTestInfo info)
         {
-            if (_shouldStop)
-            {
-                return;
-            }
-
+            Stop();
+            _shouldStop = false;
             controller.Update();
 
             switch (info.Case)
@@ -112,10 +109,8 @@ namespace Surrogate.Implementations.Controller.Module
             OnIsRunngingChanged(true);
             try
             {
-                if (!simulate)
-                {
-                    Motor.Instance.Start();
-                }
+                Motor.Instance.Start(simulate);
+
                 Tuple<int, int> speedValues = new Tuple<int, int>(0,0);
                 while (!_shouldStop && !controller.Buttons.Equals(GamepadButtonFlags.A))
                 {
@@ -127,7 +122,7 @@ namespace Surrogate.Implementations.Controller.Module
                         Motor.Instance.RightSpeedValue = (speedValues.Item2);
                         if (simulate)
                         {
-                            System.Diagnostics.Debug.WriteLine(String.Format("Leftspeed: {0}, Rightspeed: {1}", speedValues.Item1, speedValues.Item2));
+                            log.Info(String.Format("Leftspeed: {0}, Rightspeed: {1}", speedValues.Item1, speedValues.Item2));
                         }
                     }
                 }
@@ -211,7 +206,7 @@ namespace Surrogate.Implementations.Controller.Module
         private void Selected(Object sender, EventArgs e)
         {
             SurrogateFramework.MainController.ProcessHandler.EndProcess(FrameworkConstants.ControllerProcessName);
-            //SearchController();
+            _shouldStop = false;
             FireChangeEvents();
         }
 
@@ -231,7 +226,7 @@ namespace Surrogate.Implementations.Controller.Module
 
         public override bool IsRunning()
         {
-            throw new NotImplementedException();
+            return true;
         }
     }
 
@@ -239,7 +234,7 @@ namespace Surrogate.Implementations.Controller.Module
     {
         public ControllerTestProperties() : base("Controller Test", "Modul zum Testen des Controllers und der Steuerung", true, false, false, false, false, false)
         {
-            SetProperty(base.KeyImagePath, @"C:\Users\ITM1\source\repos\Surrogate\Surrogate\resources\xbox_controller_icon.jpg");
+            SetProperty(KeyImagePath, System.IO.Directory.GetCurrentDirectory() + "/Resources/xbox_controller_icon.jpg");
         }
     }
 

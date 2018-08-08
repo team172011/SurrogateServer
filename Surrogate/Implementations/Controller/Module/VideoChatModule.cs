@@ -20,6 +20,7 @@ namespace Surrogate.Implementations
     using System.Data;
     using System.Data.SqlClient;
     using Surrogate.Roboter.MCamera;
+    using System.Windows;
 
     /// <summary>
     /// Module for the video chat application using the TopBox libraries
@@ -61,9 +62,9 @@ namespace Surrogate.Implementations
             _session.Error += Session_Error;
             _session.StreamReceived += Session_StreamReceived;
             _session.StreamDropped += Session_StreamDropped;
-            _session.Connect(GetProperties().GetProperty(GetProperties().Key_TOKEN, "no token available"));
+            
 
-            SystemDatabase db = (SystemDatabase)SurrogateFramework.MainController.ConnectionHandler.GetConnection(FrameworkConstants.DatabaseName);
+            IDatabaseConnection db = (IDatabaseConnection)SurrogateFramework.MainController.ConnectionHandler.GetConnection(FrameworkConstants.DatabaseName);
             IDictionary<string, SqlDbType> columns = new Dictionary<string, SqlDbType>
             {
                 { "ID", SqlDbType.Int },
@@ -71,23 +72,28 @@ namespace Surrogate.Implementations
                 { "Firstname", SqlDbType.Text},
                 { "Name", SqlDbType.Text }
             };
-            if(db.CreateTableIfNotExists(VideoChatProperties.TableName, columns))
+
+            try
             {
-                // Add example Data
-                db.ExecuteNonQuery(String.Format("INSERT INTO {0} (ID, username, Firstname, Name) VALUES(1,'simonjw','Simon','Wimmer')", VideoChatProperties.TableName));
-                db.ExecuteNonQuery(String.Format("INSERT INTO {0} (ID, username, Firstname, Name) VALUES(2,'drmueller','Dr. Mueller','Hans')", VideoChatProperties.TableName));
+                SqlDataReader resultsReader = db.ExecuteQuery(String.Format("SELECT * FROM {0}", VideoChatProperties.TableName));
+                if (resultsReader.HasRows)
+                {
+                    while (resultsReader.Read())
+                    {
+                        var contact = new VideoChatContact(resultsReader.GetInt32(0), resultsReader.GetString(1), resultsReader.GetString(2), resultsReader.GetString(3));
+                        _availableContacts.Add(contact.Username, contact);
+                    }
+                }
+                resultsReader.Close();
+            }
+            catch (Exception sqlException)
+            {
+                _availableContacts.Add("simonjw", new VideoChatContact(1,"simonjw","simon","wimmer"));
+                _availableContacts.Add("drmueller", new VideoChatContact(2, "drmueller", "Dr. Hans", "Mueller"));
+                MessageBox.Show("Es konnten keine Kontakte aus der Datenbanktabelle geladen werden. Beispieldaten wurden eingefügt.","Fehler in Datenbankverbindung");
+                log.Debug(sqlException.Message);
             }
 
-            SqlDataReader resultsReader = db.ExecuteQuery(String.Format("SELECT * FROM {0}", VideoChatProperties.TableName));
-            if (resultsReader.HasRows)
-            {
-                while (resultsReader.Read())
-                {
-                    var contact = new VideoChatContact(resultsReader.GetInt32(0), resultsReader.GetString(1), resultsReader.GetString(2), resultsReader.GetString(3));
-                    _availableContacts.Add(contact.Username,contact);
-                }
-            }
-            resultsReader.Close();
             InvokeContactData();
         }
 
@@ -147,20 +153,32 @@ namespace Surrogate.Implementations
 
         public override void Start(VideoChatInfo info)
         {
-
+            _CurrentPublisher = new Publisher(Context.Instance, renderer: _view.PublisherVideo, name: "Surrogate");
+            _session.Connect(GetProperties().GetProperty(GetProperties().Key_TOKEN, "no token available"));
         }
 
+        public void Mute(bool mute)
+        {
+            if(_CurrentPublisher != null) _CurrentPublisher.PublishAudio = mute;
+        }
         public override void Stop()
         {
-            _session?.Disconnect();
-            _CurrentPublisher?.Dispose();
+            try
+            {
+                _session?.Disconnect();
+                _CurrentPublisher?.Dispose();
+            } catch(OpenTokException oe)
+            {
+                log.Error("Fehler beim Beenden:"+oe.Message);
+            }
+
         }
 
         private void Session_Connected(object sender, EventArgs e)
         {
             log.Debug(String.Format("Connected to session with {0} {1} {2}", GetProperties().GetProperty(GetProperties().Key_API_KEY,"api key not available"),
                 GetProperties().GetProperty(GetProperties().Key_SESSION_ID, "session id not available"), GetProperties().GetProperty(GetProperties().Key_TOKEN, "token not available")));
-            
+            _session.Publish(_CurrentPublisher);
         }
 
         private void Session_Disconnected(object sender, EventArgs e)
@@ -215,7 +233,7 @@ namespace Surrogate.Implementations
                 return;
             }
             _CurrentSubscriber = new Subscriber(Context.Instance, stream, _view.SubscriberVideo);
-            
+
             try
             {
                 _session.Subscribe(_CurrentSubscriber);
@@ -231,8 +249,7 @@ namespace Surrogate.Implementations
 
         public override void OnSelected()
         {
-            _CurrentPublisher = new Publisher(Context.Instance, renderer: _view.PublisherVideo,name:"Surrogate");
-            _session.Publish(_CurrentPublisher);
+            
         }
 
         public override void OnDisselected()
@@ -245,8 +262,6 @@ namespace Surrogate.Implementations
             return true;
         }
     }
-
-
 
     public class VideoChatProperties : ModulePropertiesBase
     {
@@ -264,7 +279,7 @@ namespace Surrogate.Implementations
         {
             JObject json = Roboter.MInternet.Internet.GetJSON(@"https://pscagebot.herokuapp.com/session");
 
-            SetProperty(base.KeyImagePath, @"C:\Users\ITM1\source\repos\Surrogate\Surrogate\resources\videochat_controller_icon.jpg");
+            SetProperty(KeyImagePath, System.IO.Directory.GetCurrentDirectory() + "/Resources/videochat_controller_icon.jpg");
             SetProperty(Key_API_KEY, json.GetValue("apiKey").ToString());
             SetProperty(Key_URI, @"https://pscagebot.herokuapp.com/session");
             SetProperty(Key_SESSION_ID,json.GetValue("sessionId").ToString());

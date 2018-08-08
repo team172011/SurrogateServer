@@ -10,6 +10,7 @@ using Surrogate.Roboter.MMotor;
 using Surrogate.Model.Module;
 using Surrogate.Model;
 using System.Windows.Controls;
+using System.Windows;
 
 namespace Surrogate.Implementations
 {
@@ -17,7 +18,7 @@ namespace Surrogate.Implementations
 
     public class MotorTestModule : VisualModule<ModulePropertiesBase, ModuleInfo>
     {
-        public Motor _motor;
+        public Motor _motor = Motor.Instance;
         public override IModuleProperties Properties => GetProperties();
 
         public MotorTestModule() : base(new ModulePropertiesBase("Motor testen", "Modul zum Testen verschiedener Motorparameter", motor:true))
@@ -31,7 +32,7 @@ namespace Surrogate.Implementations
 
         public override bool IsRunning()
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public override void OnDisselected()
@@ -44,15 +45,20 @@ namespace Surrogate.Implementations
 
         public override void Start(ModuleInfo info)
         {
+            if(_motor == null || !_motor.IsConnected())
+            {
+                MessageBox.Show("Es besteht keine Verbindung mit dem Motor", "Motorverbindung fehlt");
+                return;
+            }
             MotorTestInfo mInfo = (MotorTestInfo)info;
             
-            switch (mInfo.GetDirection)
+            switch (mInfo.SpeedDirection)
             {
                 case MotorTestInfo.Direction.Backwards:
                     {
                         try
                         {
-
+                            _motor.Start();
                             _motor.LeftSpeedValue = (-100);
                             _motor.RightSpeedValue = (-100);
                         } catch(Exception pnve)
@@ -65,9 +71,10 @@ namespace Surrogate.Implementations
                     {
                         try
                         {
+                            _motor.Start();
                             _motor.LeftSpeedValue = (100);
                             _motor.RightSpeedValue = (100);
-                        } catch (Exception pnve)
+                        } catch (NullReferenceException pnve)
                         {
                             log.Error("Could not connect to motor: " + pnve.Message + "\n " + pnve.StackTrace);
                         }
@@ -77,6 +84,7 @@ namespace Surrogate.Implementations
                     {
                         try
                         {
+                            _motor.Start();
                             _motor.LeftSpeedValue = (-100);
                             _motor.RightSpeedValue = (100);
                         } catch (Exception pnve)
@@ -89,6 +97,7 @@ namespace Surrogate.Implementations
                     {
                         try
                         {
+                            _motor.Start();
                             Motor.Instance.LeftSpeedValue = (100);
                             Motor.Instance.RightSpeedValue = (-100);
                             } catch(Exception pnve)
@@ -102,6 +111,7 @@ namespace Surrogate.Implementations
                         try
                         {
 
+                            _motor.Start();
                             Motor.Instance.LeftSpeedValue = (0);
                             Motor.Instance.RightSpeedValue = (200);
                         }
@@ -115,6 +125,7 @@ namespace Surrogate.Implementations
                     {
                         try
                         {
+                            _motor.Start();
                             Motor.Instance.LeftSpeedValue = (100);
                             Motor.Instance.RightSpeedValue = (0);
                         }
@@ -128,6 +139,7 @@ namespace Surrogate.Implementations
                     {
                         try
                         {
+                            _motor.Start();
                             Motor.Instance.PullUp();
                         } catch(Exception pnve)
                         {
@@ -146,13 +158,12 @@ namespace Surrogate.Implementations
 
         public class MotorTestInfo : ModuleInfo
         {
-            private Direction _direction;
 
-            public Direction GetDirection { get => _direction;}
+            public Direction SpeedDirection { get;}
 
             public MotorTestInfo(Direction direction)
             {
-                this._direction = direction;
+                SpeedDirection = direction;
             }
             public enum Direction
             {

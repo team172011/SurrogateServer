@@ -19,11 +19,11 @@ namespace Surrogate.Implementations.Processes
     [System.ComponentModel.DesignerCategory("Code")]
     public class ControllerProcess : BackgroundWorker
     {
-        private readonly IMotor _motor;
+        private readonly IMotorConnection _motor;
         private readonly IRemoteController _controller;
         protected static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public ControllerProcess(IMotor motor, IRemoteController controller){
+        public ControllerProcess(IMotorConnection motor, IRemoteController controller){
             WorkerSupportsCancellation = true;
             _motor = motor;
             _controller = controller;

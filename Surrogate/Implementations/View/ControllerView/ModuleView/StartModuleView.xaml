@@ -1,0 +1,20 @@
+﻿<base:ModuleViewBase x:Class="Surrogate.View.StartModuleView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:base="clr-namespace:Surrogate.View">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"  />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <TextBlock HorizontalAlignment="Center" Grid.Column="0" Grid.Row="0" 
+                    FontSize="20" FontStyle="Oblique" FontWeight="Heavy" Text="Surrogate Application Framework"/>
+        <TextBlock HorizontalAlignment="Center" Grid.Column="0" Grid.Row="1"
+                   FontSize="15"
+                   TextWrapping="Wrap"><Run Text="Willkomen im Surrogate-Programm-Framework. Wählen Sie das gewünschte Modul aus der Liste am"/><Run Text=" linken"/><Run Text=" Rand."/></TextBlock>
+    </Grid>
+</base:ModuleViewBase>

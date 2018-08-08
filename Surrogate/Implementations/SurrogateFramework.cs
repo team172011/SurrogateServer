@@ -23,7 +23,7 @@ namespace Surrogate.Implementations
         {
             MainController.ModulHandler.AddModule(module);
 
-            // if module is connection, register the connection
+            // if module is connection, register the connection also
             if (module is IConnection connection)
             {
                 AddConnection(connection);
@@ -81,11 +81,13 @@ namespace Surrogate.Implementations
 
         public static readonly string ControllerProcessName = "ControllerProcess";
 
-        public static readonly string DefaultImagePath = @"C:\Users\ITM1\source\repos\Surrogate\Surrogate\resources\robot.jpg";
+        public static readonly string DefaultImagePath = System.IO.Directory.GetCurrentDirectory()+"/Resources/robot.jpg";
 
         public static readonly string InternalCameraName = "Interne Kamera";
         public static readonly int InternalCameraId = 0;
 
         public static readonly int Numbercams = 3;
+
+        public static readonly string DbmsConnectionString = @"server=localhost\SQLEXPRESS;database=Surrogate;Integrated Security=True;";
     }
 }
